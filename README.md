@@ -15,3 +15,5 @@ Programming Team Read the Docs - https://team573programmingdocs.readthedocs.io/e
   Includes:
     
     Best Practices
+
+Test Commit To Make Sure Pull Requests Are Required
