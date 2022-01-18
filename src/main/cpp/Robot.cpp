@@ -14,7 +14,9 @@ also: merge into main before each event, Before event create event branch and me
 */
 
 #include "Robot.h"
-
+#include "Drive.h"
+#include "Appendage.h"
+#include "Led.h"
 #include <fmt/core.h>
 
 #include <frc/smartdashboard/SmartDashboard.h>
