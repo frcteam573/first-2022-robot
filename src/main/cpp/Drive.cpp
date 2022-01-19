@@ -1,6 +1,7 @@
 #include "Drive.h"
 #include "rev/CANSparkMax.h"
 #include "frc/DoubleSolenoid.h"
+#include "frc/ADXRS450_Gyro.h"
 
 using namespace std;
 
@@ -26,6 +27,8 @@ Drive::Drive(){
         m_rightdrive = new rev::CANSparkMax{rightdriveID, rev::CANSparkMax::MotorType::kBrushless};
         m_rightdrive2 = new rev::CANSparkMax{rightdriveID2, rev::CANSparkMax::MotorType::kBrushless};
 
+        s_gyro = new frc::ADXRS450_Gyro();
+
     // Climb motors, sensors, and pneumatics
     
         m_leftclimb = new rev::CANSparkMax{leftclimbID, rev::CANSparkMax::MotorType::kBrushless};
@@ -49,6 +52,29 @@ Drive::Drive(){
     m_rightdrive -> Set(right_out);
     m_rightdrive2 -> Set(right_out);
 }
+
+//DRIVE STRAIGHT//
+        void Drive::drive_straight(bool first, double joystick_y){
+       
+            if (first)
+            {
+                s_gyro -> Reset();
+            }
+            
+        double error = 0-s_gyro -> GetAngle();
+        double constant = 0.3;
+
+        double turn_out = constant*error; 
+
+           double left_out = joystick_y + turn_out;
+           double right_out = joystick_y + turn_out;
+
+        m_leftdrive -> Set(left_out);
+        m_leftdrive2 -> Set(left_out);
+        m_rightdrive -> Set(right_out);
+        m_rightdrive2 -> Set(right_out);
+
+        }
 
 /* CLIMBING */
 
@@ -75,13 +101,33 @@ Drive::Drive(){
             //unlock climbers and hold
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
             
-            m_leftclimb -> Set(0);
-            m_rightclimb -> Set(0);
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
         }
 
         void Drive::climber_tiltin(){  
-            p_climbertilt-> Set(frc::DoubleSolenoid::Value::kForward);
-      
+            p_climbertilt -> Set(frc::DoubleSolenoid::Value::kForward);
         }
 
+        void Drive::climber_tiltout(){  
+            p_climbertilt -> Set(frc::DoubleSolenoid::Value::kReverse);
+        }
 
+/* CAMERA INTAKE */
+
+    void Drive::camera_intake(double camera_x, double joystick_y){
+       
+       double error = 0-camera_x;
+       double constant = 0.3;
+
+        double turn_out = constant*error; 
+
+           double left_out = joystick_y + turn_out;
+           double right_out = joystick_y + turn_out;
+
+        m_leftdrive -> Set(left_out);
+        m_leftdrive2 -> Set(left_out);
+        m_rightdrive -> Set(right_out);
+        m_rightdrive2 -> Set(right_out);
+
+    }

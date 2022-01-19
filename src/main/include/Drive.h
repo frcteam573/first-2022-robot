@@ -3,6 +3,7 @@
 #include "Drive.h"
 #include "rev/CANSparkMax.h"
 #include "frc/DoubleSolenoid.h"
+#include "frc/ADXRS450_Gyro.h"
 
 #pragma once
 
@@ -21,6 +22,7 @@ class Drive {
         rev::CANSparkMax * m_rightclimb;
         frc::DoubleSolenoid * p_climberlock;
         frc::DoubleSolenoid * p_climbertilt;
+        frc::ADXRS450_Gyro * s_gyro;
 
     
     public:
@@ -30,7 +32,11 @@ class Drive {
         void climber_retract();
         void climber_hold();
         void climber_tiltin();
-        void climber_tiltout(); 
+        void climber_tiltout();
+        void camera_intake(double camera_x, double joystick_y);
+        void drive_straight(bool first, double joystick_y);
+
+
 };
 
 #endif
