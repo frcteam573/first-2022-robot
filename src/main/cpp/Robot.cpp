@@ -88,10 +88,10 @@ void Robot::TeleopPeriodic() {
   double c1_joy_rightdrive = controller1.GetRawAxis(5);
   //bool c1_btn_back = controller1.GetRawButton(7);
   //bool c1_btn_start = controller1.GetRawButton(8);
-  //double c1_righttrigger = controller1.GetRawAxis(3);
-  //double c1_lefttrigger = controller1.GetRawAxis(2);
-  //bool c1_leftbmp = controller1.GetRawButton(5);
-  //bool c1_rightbmp = controller1.GetRawButton(6);
+  double c1_righttrigger = controller1.GetRawAxis(3);
+  double c1_lefttrigger = controller1.GetRawAxis(2);
+  bool c1_leftbmp = controller1.GetRawButton(5);
+  bool c1_rightbmp = controller1.GetRawButton(6);
   bool c1_btn_b = controller1.GetRawButton(2);
   //bool c1_btn_x = controller1.GetRawButton(3);
   bool c1_btn_a = controller1.GetRawButton(1);
@@ -150,8 +150,32 @@ void Robot::TeleopPeriodic() {
       MyDrive.Joystick_Drive(c1_joy_leftdrive, c1_joy_rightdrive);
 
     }
+/* CLIMBER CODE */
+
+  if (c1_righttrigger < -0.5){
+    MyDrive.climber_extend();
 
   }
+
+    else if (c1_lefttrigger> 0.5){
+      MyDrive.climber_retract();
+    }
+
+    else{
+      MyDrive.climber_hold();
+    }
+
+    if (c1_leftbmp){
+      MyDrive.climber_tiltin();
+
+    }
+
+    else if (c1_rightbmp){
+      MyDrive.climber_tiltout();
+    }
+
+
+  } //end of teleop periodic
 
 void Robot::DisabledInit() {}
 
