@@ -3,7 +3,7 @@
 
 #pragma once
 #include "rev/CANSparkMax.h"
-#include "rev/CANEncoder.h"
+#include "rev/SparkMaxRelativeEncoder.h"
 #include <frc/DoubleSolenoid.h>
 
 using namespace std;
@@ -15,7 +15,7 @@ private:
     rev::CANSparkMax *m_Intake;
     frc::DoubleSolenoid *p_Intake;
     rev::CANSparkMax *m_Shooter;
-    rev::CANEncoder *s_Shooter_Encoder;
+    rev::SparkMaxRelativeEncoder *s_Shooter_Encoder;
 
 public:
     Appendage();
@@ -25,6 +25,8 @@ public:
     void Intake_Up();
     void Intake_Down();
 
-    int Shooter_Encoder();
+    void Shooter_Encoder();
+    void Shooter_Off();
+    double Get_Distance();
 };
 #endif

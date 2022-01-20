@@ -111,9 +111,11 @@ void Robot::TeleopPeriodic() {
   bool c2_rightbumper = controller2.GetRawButton(6);
   bool c2_leftbumper = controller2.GetRawButton(5);
   bool c2_right_trigger = controller2.GetRawAxis(3);
-  bool c2_left_trigger = controller2.GetRawAxis(2);*/
+ */
+
 
   //----------------------------------------------------------------------------
+  double c2_left_trigger = controller2.GetRawAxis(2);
  
   // Read in camera Stuff
   
@@ -174,6 +176,17 @@ void Robot::TeleopPeriodic() {
       MyDrive.climber_tiltout();
     }
 
+    /*
+     * shooter encoder
+     */
+    if (c2_left_trigger >= 0.5)
+    {
+      MyAppendage.Shooter_Encoder();
+    }
+    else
+    {
+      MyAppendage.Shooter_Off();
+    }
 
   } //end of teleop periodic
 

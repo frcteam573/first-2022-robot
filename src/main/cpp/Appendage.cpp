@@ -12,6 +12,7 @@ Appendage::Appendage()
     m_Intake = new rev::CANSparkMax{m_IntakeId, rev::CANSparkMax::MotorType::kBrushless}; // actually 1
     p_Intake = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_IntakeId_a, p_IntakeId_b};
     m_Shooter = new rev::CANSparkMax{m_ShooterId, rev::CANSparkMax::MotorType::kBrushless};
+    rev::SparkMaxRelativeEncoder s_Shooter_Encoder =  m_Shooter->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42);
 }
 
 /*
@@ -57,7 +58,31 @@ void Appendage::Intake_Down()
 /*
  * Allows shooter to position when shooting
  */
-int Appendage::Shooter_Encoder(){
-    double output;
-    return output;
+void Appendage::Shooter_Encoder(){
+    double output, target = 3000, current = s_Shooter_Encoder->GetVelocity(), err = target - current, kP = 0.01;
+    output = err * kP;
+    m_Shooter -> Set(output);
 }
+
+/*
+ * Turns off
+ */
+void Appendage::Shooter_Off()
+{
+    m_Shooter->Set(0);
+}
+
+/*
+ * Uses camera to measure distance away from goal
+ */
+double Appendage::Get_Distance()
+{
+    double distance,
+        height1, height2,                                 // height1 is the height of the goal, height2 is the height of the robot,
+        angle1, angle2;                                   // angle1 is the smalled angle, andgle2 is the bigger angle
+
+    height1 = 1, height2 = 0.5, angle1 = 15, angle2 = 35; // height are in meters, angles are in degrees
+    distance = (height1 - height2) / tan(angle1 + angle2);
+    return distance;
+}
+
