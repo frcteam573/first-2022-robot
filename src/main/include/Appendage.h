@@ -5,6 +5,7 @@
 #include "rev/CANSparkMax.h"
 #include "rev/SparkMaxRelativeEncoder.h"
 #include <frc/DoubleSolenoid.h>
+#include "frc/smartdashboard/SmartDashboard.h"
 
 using namespace std;
 
