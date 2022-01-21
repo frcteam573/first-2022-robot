@@ -178,14 +178,17 @@ void Robot::TeleopPeriodic() {
 
 //--------------------Shooter Code -----------------------------------
     
-    if (c2_left_trigger >= 0.5)
+    if (c2_left_trigger >= 0.5){
       MyAppendage.Shooter_Encoder();
-    else
+    }
+      
+    else{
       MyAppendage.Shooter_Off();
-
+    }
 
 // -------------------------------------------------------------------
-  } //end of teleop periodic
+
+} //end of teleop periodic
 
 void Robot::DisabledInit() {}
 
