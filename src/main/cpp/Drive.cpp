@@ -14,8 +14,8 @@ Drive::Drive(){
     int rightclimbID = 5;   
     int climberlockIDa = 0;
     int climberlockIDb = 1;
-    int climber_tilta = 2;
-    int climber_tiltb = 3;
+    int climber_tiltIDa = 2;
+    int climber_tiltIDb = 3;
 
 // Define motors, sensors, and pneumatics here
     // Drive motors, sensors, and pneumatics
@@ -36,7 +36,7 @@ Drive::Drive(){
         m_leftclimb->SetInverted(true);  
 
         p_climberlock = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climberlockIDa, climberlockIDb};  
-        p_climbertilt = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climberlockIDa, climberlockIDb};
+        p_climbertilt = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climber_tiltIDa, climber_tiltIDb};
 }
 
 /* JOYSTICK DRIVE */

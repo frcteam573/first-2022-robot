@@ -63,7 +63,15 @@ void Appendage::Intake_Down()
  * Allows shooter to position when shooting
  */
 void Appendage::Shooter_Encoder(){
+    
+    //  The two lines below are needed for prototype testing. They allow for control of the system from the Driver Station. 
+    //  When uncommented the line below these must be commented out.
+    /*double output, target = frc::SmartDashboard::GetNumber("Target",3000), current = s_Shooter_Encoder->GetVelocity(), err = target - current, kP = frc::SmartDashboard::GetNumber("kP",0.01);
+    //frc::SmartDashboard::PutNumber("Current",current);*/
+    
     double output, target = 3000, current = s_Shooter_Encoder->GetVelocity(), err = target - current, kP = 0.01;
+    
+    
     output = err * kP;
     m_Shooter -> Set(output);
 }
