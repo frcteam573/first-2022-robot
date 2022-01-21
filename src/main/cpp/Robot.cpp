@@ -98,24 +98,23 @@ void Robot::TeleopPeriodic() {
 
   //-----------------------------------------------------------------------------
   //------------ Operator Controller --------------------------------------------
-  /*double c2_joy_left = controller2.GetRawAxis(1);
-  bool c2_btn_a = controller2.GetRawButton(1);
-  bool c2_btn_b = controller2.GetRawButton(2);
-  bool c2_btn_y = controller2.GetRawButton(4);
-  bool c2_btn_x = controller2.GetRawButton(3);
-  bool c2_btn_lb = controller2.GetRawButton(5);
-  bool c2_btn_rb = controller2.GetRawButton(6);
-  double c2_dpad = controller2.GetPOV(0);
-  bool c2_btn_back = controller2.GetRawButton(7);
-  bool c2_btn_start = controller2.GetRawButton(8);
-  bool c2_rightbumper = controller2.GetRawButton(6);
-  bool c2_leftbumper = controller2.GetRawButton(5);
-  bool c2_right_trigger = controller2.GetRawAxis(3);
-  bool c2_left_trigger = controller2.GetRawAxis(2);*/
-
+  //double c2_joy_left = controller2.GetRawAxis(1);
+  //bool c2_btn_a = controller2.GetRawButton(1);
+  //bool c2_btn_b = controller2.GetRawButton(2);
+  //bool c2_btn_y = controller2.GetRawButton(4);
+  //bool c2_btn_x = controller2.GetRawButton(3);
+  //bool c2_btn_lb = controller2.GetRawButton(5);
+  //bool c2_btn_rb = controller2.GetRawButton(6);
+  //double c2_dpad = controller2.GetPOV(0);
+  //bool c2_btn_back = controller2.GetRawButton(7);
+  //bool c2_btn_start = controller2.GetRawButton(8);
+  //bool c2_rightbumper = controller2.GetRawButton(6);
+  //bool c2_leftbumper = controller2.GetRawButton(5);
+  //bool c2_right_trigger = controller2.GetRawAxis(3);
+  double c2_left_trigger = controller2.GetRawAxis(2);
   //----------------------------------------------------------------------------
- 
-  // Read in camera Stuff
+  
+  // -------- Read in camera Stuff -----------------------------------------------
   
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
   table->PutNumber("ledMode", 1);
@@ -132,7 +131,9 @@ void Robot::TeleopPeriodic() {
   //float camera_y = table->GetNumber("ty", 0);
   //float camera_s = table->GetNumber("ts", 0);
 
-  /* DRIVE CODE */
+  // ----------------------------------------------------------
+
+  /*--------------------- DRIVE CODE -------------------------- */
 
   if (c1_btn_b){
     MyDrive.drive_straight(drive_straight_first, c1_joy_leftdrive);
@@ -150,7 +151,7 @@ void Robot::TeleopPeriodic() {
       MyDrive.Joystick_Drive(c1_joy_leftdrive, c1_joy_rightdrive);
 
     }
-/* CLIMBER CODE */
+/* ---------------------- CLIMBER CODE -----------------------------*/
 
   if (c1_righttrigger < -0.5){
     MyDrive.climber_extend();
@@ -173,8 +174,17 @@ void Robot::TeleopPeriodic() {
     else if (c1_rightbmp){
       MyDrive.climber_tiltout();
     }
+// -------------------------------------------------------------------
+
+//--------------------Shooter Code -----------------------------------
+    
+    if (c2_left_trigger >= 0.5)
+      MyAppendage.Shooter_Encoder();
+    else
+      MyAppendage.Shooter_Off();
 
 
+// -------------------------------------------------------------------
   } //end of teleop periodic
 
 void Robot::DisabledInit() {}
