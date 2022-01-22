@@ -25,6 +25,7 @@ class Robot : public frc::TimedRobot {
   //Include subsystem object definitions here
   Drive MyDrive; 
   Appendage MyAppendage;
+  Led MyLed;
 
   void RobotInit() override;
   void RobotPeriodic() override;

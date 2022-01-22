@@ -1,5 +1,6 @@
 #ifndef Drive_H
 #define Drive_H
+
 #include "Drive.h"
 #include "rev/CANSparkMax.h"
 #include "frc/DoubleSolenoid.h"
@@ -27,8 +28,9 @@ class Drive {
         frc::ADXRS450_Gyro * s_gyro;
         rev::SparkMaxRelativeEncoder * s_leftclimber_enc;
         rev::SparkMaxRelativeEncoder * s_rightclimber_enc;
+        rev::SparkMaxRelativeEncoder * s_rightdrive_enc;
+        rev::SparkMaxRelativeEncoder * s_leftdrive_enc;   
 
-    
     public:
         Drive();
         void Joystick_Drive(double LeftStick, double RightStick);
@@ -40,7 +42,7 @@ class Drive {
         void camera_intake(double camera_x, double joystick_y);
         void drive_straight(bool first, double joystick_y);
         void dashboard();
-
+        void gyro_reset();
 
 };
 

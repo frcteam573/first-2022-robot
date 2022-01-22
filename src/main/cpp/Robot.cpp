@@ -153,12 +153,12 @@ void Robot::TeleopPeriodic() {
     }
 /* ---------------------- CLIMBER CODE -----------------------------*/
 
-  if (c1_righttrigger < -0.5){
+  if (c1_righttrigger > 0.5){
     MyDrive.climber_extend();
 
   }
 
-    else if (c1_lefttrigger> 0.5){
+    else if (c1_lefttrigger > 0.5){
       MyDrive.climber_retract();
     }
 
@@ -187,6 +187,54 @@ void Robot::TeleopPeriodic() {
     }
 
 // -------------------------------------------------------------------
+
+//---------------------LED CODE----------------------------------
+
+/*
+bool ready_to_fire = false;
+if (camera_exist && aligned && wheel_speed){
+
+  MyLed.led_control("Hot_Pink");
+  ready_to_fire = true;
+  
+}
+else if ((camera_exist && !aligned && wheel_speed) || (camera_exist && aligned && !wheel_speed)){
+
+  MyLed.led_control("Blue");
+  
+}
+
+else if (camera_exist && !aligned && !wheel_speed){
+
+  MyLed.led_control("White");
+  
+}
+else {
+
+  MyLed.led_control("Black");
+  
+}
+bool camera_exist1 = false;
+if (camera_exist == 1){
+  camera_exist1 = true;
+}
+
+  frc::SmartDashboard::PutBoolean("Ready to Fire", ready_to_fire);
+  frc::SmartDashboard::PutBoolean("In Camera", camera_exist1);
+  frc::SmartDashboard::PutBoolean("Wheel at Speed", wheel_speed);
+  frc::SmartDashboard::PutBoolean("Aligned", aligned);
+
+*/
+
+// -------------------------------------------------------------------
+
+// --------- dashboard code ---------------
+
+//MyLog.Dashboard();
+//MyLog.PDPTotal();
+MyDrive.dashboard();
+//MyAppendage.dashboard();
+
 // ---------------- Dashboard -----------------------
   MyDrive.dashboard();
 
