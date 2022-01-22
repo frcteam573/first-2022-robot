@@ -187,7 +187,10 @@ void Robot::TeleopPeriodic() {
     }
 
 // -------------------------------------------------------------------
+// ---------------- Dashboard -----------------------
+  MyDrive.dashboard();
 
+// ------------------------------------------
 } //end of teleop periodic
 
 void Robot::DisabledInit() {}

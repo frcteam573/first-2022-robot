@@ -4,6 +4,8 @@
 #include "rev/CANSparkMax.h"
 #include "frc/DoubleSolenoid.h"
 #include "frc/ADXRS450_Gyro.h"
+#include "frc/smartdashboard/SmartDashboard.h"
+#include "rev/SparkMaxRelativeEncoder.h"
 
 #pragma once
 
@@ -23,6 +25,8 @@ class Drive {
         frc::DoubleSolenoid * p_climberlock;
         frc::DoubleSolenoid * p_climbertilt;
         frc::ADXRS450_Gyro * s_gyro;
+        rev::SparkMaxRelativeEncoder * s_leftclimber_enc;
+        rev::SparkMaxRelativeEncoder * s_rightclimber_enc;
 
     
     public:
@@ -35,6 +39,7 @@ class Drive {
         void climber_tiltout();
         void camera_intake(double camera_x, double joystick_y);
         void drive_straight(bool first, double joystick_y);
+        void dashboard();
 
 
 };
