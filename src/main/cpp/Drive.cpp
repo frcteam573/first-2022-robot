@@ -38,8 +38,8 @@ Drive::Drive(){
         p_climberlock = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climberlockIDa, climberlockIDb};  
         p_climbertilt = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climber_tiltIDa, climber_tiltIDb};
 
-        rev::SparkMaxRelativeEncoder s_leftclimber_enc = m_leftclimb->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42);
-        rev::SparkMaxRelativeEncoder s_rightclimber_enc = m_rightclimb->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42);
+        s_leftclimber_enc = new rev::SparkMaxRelativeEncoder{m_leftclimb->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+        s_rightclimber_enc = new rev::SparkMaxRelativeEncoder{m_rightclimb->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
 }
 
 /* JOYSTICK DRIVE */
@@ -136,6 +136,6 @@ Drive::Drive(){
     }
     void Drive::dashboard(){
         frc::SmartDashboard::PutNumber("Gryo",s_gyro->GetAngle());
-        //frc::SmartDashboard::PutNumber("Left Climb Enc", s_leftclimber_enc->GetPosition());
-        //frc::SmartDashboard::PutNumber("Right Climb Enc", s_rightclimber_enc->GetPosition());
+        frc::SmartDashboard::PutNumber("Left Climb Enc", s_leftclimber_enc->GetPosition());
+        frc::SmartDashboard::PutNumber("Right Climb Enc", s_rightclimber_enc->GetPosition());
     }

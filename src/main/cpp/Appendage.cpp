@@ -17,7 +17,7 @@ Appendage::Appendage()
     p_Intake = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_IntakeId_a, p_IntakeId_b};
 
     // CANEncoder was deprecated as of 2022
-    rev::SparkMaxRelativeEncoder s_Shooter_Encoder =  m_Shooter->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42);
+    s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
 }
 /*
  * Allows robot to Intake Balls
