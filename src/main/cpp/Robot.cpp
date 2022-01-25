@@ -190,7 +190,7 @@ void Robot::TeleopPeriodic() {
 
 //---------------------LED CODE----------------------------------
 
-/*
+/* This is copy and paste from 2021 Robot code. Will need to be updated for 2022
 bool ready_to_fire = false;
 if (camera_exist && aligned && wheel_speed){
 
@@ -234,9 +234,6 @@ if (camera_exist == 1){
 //MyLog.PDPTotal();
 MyDrive.dashboard();
 //MyAppendage.dashboard();
-
-// ---------------- Dashboard -----------------------
-  MyDrive.dashboard();
 
 // ------------------------------------------
 } //end of teleop periodic
