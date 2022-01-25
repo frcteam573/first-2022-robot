@@ -16,30 +16,39 @@ Drive::Drive(){
     int climberlockIDb = 1;
     int climber_tiltIDa = 2;
     int climber_tiltIDb = 3;
+    int rightdriveencID_a = 7;
+    int rightdriveencID_b = 8;
+    int leftdriveencID_a = 9;
+    int leftdriveencID_b = 10;
+
 
 // Define motors, sensors, and pneumatics here
     // Drive motors, sensors, and pneumatics
 
         m_leftdrive = new rev::CANSparkMax{leftdriveID, rev::CANSparkMax::MotorType::kBrushless}; //actually 1
         m_leftdrive2 = new rev::CANSparkMax{leftdriveID2, rev::CANSparkMax::MotorType::kBrushless};
-        m_leftdrive->SetInverted(true);
-        m_leftdrive2->SetInverted(true);
+        m_leftdrive -> SetInverted(true);
+        m_leftdrive2 -> SetInverted(true);
         m_rightdrive = new rev::CANSparkMax{rightdriveID, rev::CANSparkMax::MotorType::kBrushless};
         m_rightdrive2 = new rev::CANSparkMax{rightdriveID2, rev::CANSparkMax::MotorType::kBrushless};
 
-        s_gyro = new frc::ADXRS450_Gyro();
+        s_gyro = new frc::ADXRS450_Gyro(frc::SPI::Port::kOnboardCS0);
 
     // Climb motors, sensors, and pneumatics
     
         m_leftclimb = new rev::CANSparkMax{leftclimbID, rev::CANSparkMax::MotorType::kBrushless};
         m_rightclimb = new rev::CANSparkMax{rightclimbID, rev::CANSparkMax::MotorType::kBrushless};
-        m_leftclimb->SetInverted(true);  
+        m_leftclimb -> SetInverted(true);  
 
         p_climberlock = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climberlockIDa, climberlockIDb};  
         p_climbertilt = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climber_tiltIDa, climber_tiltIDb};
 
-        s_leftclimber_enc = new rev::SparkMaxRelativeEncoder{m_leftclimb->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
-        s_rightclimber_enc = new rev::SparkMaxRelativeEncoder{m_rightclimb->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+        s_leftclimber_enc = new rev::SparkMaxRelativeEncoder{m_leftclimb -> GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+        s_rightclimber_enc = new rev::SparkMaxRelativeEncoder{m_rightclimb -> GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+
+        s_leftdrive_enc = new rev::SparkMaxRelativeEncoder{m_leftdrive -> GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+        s_rightdrive_enc = new rev::SparkMaxRelativeEncoder{m_rightdrive -> GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+
 }
 
 /* JOYSTICK DRIVE */
@@ -102,7 +111,7 @@ Drive::Drive(){
         void Drive::climber_hold(){
            
             //unlock climbers and hold
-            p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
+            p_climberlock -> Set(frc::DoubleSolenoid::Value::kForward);
             
                 m_leftclimb -> Set(0);
                 m_rightclimb -> Set(0);
@@ -134,8 +143,16 @@ Drive::Drive(){
         m_rightdrive2 -> Set(right_out);
 
     }
+
+    void Drive::gyro_reset(){
+        s_gyro -> Reset();
+
+    }
+
     void Drive::dashboard(){
-        frc::SmartDashboard::PutNumber("Gryo",s_gyro->GetAngle());
-        frc::SmartDashboard::PutNumber("Left Climb Enc", s_leftclimber_enc->GetPosition());
-        frc::SmartDashboard::PutNumber("Right Climb Enc", s_rightclimber_enc->GetPosition());
+        frc::SmartDashboard::PutNumber("Gryo",s_gyro -> GetAngle());
+        frc::SmartDashboard::PutNumber("Left Climb Enc", s_leftclimber_enc -> GetPosition());
+        frc::SmartDashboard::PutNumber("Right Climb Enc", s_rightclimber_enc -> GetPosition());
+        frc::SmartDashboard::PutNumber("Right Drive Enc", s_rightdrive_enc -> GetPosition()); 
+        frc::SmartDashboard::PutNumber("Left Drive Enc", s_leftdrive_enc -> GetPosition());       
     }
