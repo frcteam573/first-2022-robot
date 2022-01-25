@@ -160,3 +160,17 @@ double Appendage::Articulate(double distance){
 
     return output;
 }
+
+/*
+ * Remaps a number
+ */
+double Remap_Val(double i, double threshold)
+{
+    if ((threshold > 0 && i > threshold) || 
+        (threshold < 0 && i < threshold))
+    {
+        i = threshold;
+    }
+
+    return i;
+}

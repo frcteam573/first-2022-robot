@@ -38,5 +38,7 @@ public:
     double Get_Distance(double camera_y);
     bool Rotate(double camera_exists, double camera_x, bool direction);
     double Articulate(double distance);
+
+    double Remap_Val(double i, double threshold);
 };
 #endif
