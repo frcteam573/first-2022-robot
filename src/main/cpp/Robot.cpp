@@ -144,10 +144,11 @@ void Robot::TeleopPeriodic() {
   //--------CAMERA VALUES-----------------//
   float camera_x = table->GetNumber("tx", 0);
     
-  //float camera_exist = table->GetNumber("tv", 0);
+  float camera_exist = table->GetNumber("tv", 0);
   //float image_size = table->GetNumber("ta", 0);
-  //float camera_y = table->GetNumber("ty", 0);
-  //float camera_s = table->GetNumber("ts", 0);
+  float camera_y = table->GetNumber("ty", 0);
+
+  double distance = MyAppendage.Get_Distance(camera_y);
 
   // ----------------------------------------------------------
 
@@ -204,14 +205,18 @@ void Robot::TeleopPeriodic() {
   }
 // -------------------------------------------------------------------
 
-//--------------------Shooter Code -----------------------------------
-    
-    if (c2_left_trigger >= 0.5){
+    //--------------------Shooter Code -----------------------------------
+
+    if (c2_left_trigger >= 0.5)
+    {
       MyAppendage.Shooter_Encoder();
+      MyAppendage.Rotate(camera_exist, camera_x, 1);
+      MyAppendage.Articulate(distance);
     }
-      
-    else{
+    else
+    {
       MyAppendage.Shooter_Off();
+      MyAppendage.Rotate(camera_exist, camera_x, 0);
     }
 
 // -------------------------------------------------------------------
