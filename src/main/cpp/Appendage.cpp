@@ -32,8 +32,7 @@ Appendage::Appendage()
 }
 /* Creates Dashboard Inputs Needed for Appendage */
 void Appendage::DashboardCreate(){
-// Dashboard input creations
-
+    
 // Dashboard input inital decs.
     static double shooter_p_in = 1;
     static double shooter_target_in = 3000;
