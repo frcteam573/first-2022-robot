@@ -30,6 +30,7 @@ void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+  alliance_color = "red";
 }
 
 /**
@@ -54,9 +55,18 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
+
+  auto color = ds.GetAlliance();	
+  
+  if (color == frc::DriverStation::Alliance::kBlue){
+    alliance_color = "blue";
+  }
+
   m_autoSelected = m_chooser.GetSelected();
+
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
+
   fmt::print("Auto selected: {}\n", m_autoSelected);
 
   if (m_autoSelected == kAutoNameCustom) {
@@ -77,6 +87,12 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {
 
   drive_straight_first = true;
+
+  auto color = ds.GetAlliance();	
+  
+  if (color == frc::DriverStation::Alliance::kBlue){
+    alliance_color = "blue";
+  }
 
 }
 void Robot::TeleopPeriodic() {

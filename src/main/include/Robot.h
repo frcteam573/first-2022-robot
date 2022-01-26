@@ -16,6 +16,7 @@
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
+#include "frc/DriverStation.h"
 
 
 class Robot : public frc::TimedRobot {
@@ -50,9 +51,10 @@ class Robot : public frc::TimedRobot {
 
   frc::Joystick controller1{0}; // Driver controller
   frc::Joystick controller2{1}; // Operator controller
+  frc::DriverStation ds;
 
 
   bool drive_straight_first;
-
+  string alliance_color;
  
 };
