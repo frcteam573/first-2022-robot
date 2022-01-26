@@ -16,10 +16,6 @@ Drive::Drive(){
     int climberlockIDb = 1;
     int climber_tiltIDa = 2;
     int climber_tiltIDb = 3;
-    int rightdriveencID_a = 7;
-    int rightdriveencID_b = 8;
-    int leftdriveencID_a = 9;
-    int leftdriveencID_b = 10;
 
 
 // Define motors, sensors, and pneumatics here
@@ -161,8 +157,15 @@ double Drive::deadband(double input, double deadband_size){
 
     /* Path Following */ 
            
-            void Drive::drive_PID(double setpoint_left_pos, double setpoint_right_pos, double setpoint_left_speed, double setpoint_right_speed, double heading, int count) {
+            void Drive::drive_PID(vector<double>value_in, int count) {
             
+            //Breakdown input vector
+            double setpoint_left_pos = value_in[0];
+            double setpoint_right_pos = value_in[1];
+            double setpoint_left_speed = value_in[2];
+            double setpoint_right_speed = value_in[3];
+            double heading = value_in[4];
+
             if(count ==0){
                 //Gyro->Reset();
                 s_leftdrive_enc -> SetPosition(0);

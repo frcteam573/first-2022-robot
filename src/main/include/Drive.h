@@ -44,7 +44,7 @@ class Drive {
         void dashboard();
         void gyro_reset();
         double deadband(double input, double deadband_size);
-        void drive_PID(double setpoint_left_pos, double setpoint_right_pos, double setpoint_left_speed, double setpoint_right_speed, double heading, int count);
+        void drive_PID(vector<double>value_in, int count);
         
 };
 
