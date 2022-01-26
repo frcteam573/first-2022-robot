@@ -56,7 +56,7 @@ void Robot::RobotPeriodic() {}
  */
 void Robot::AutonomousInit() {
 
-  auto color = ds.GetAlliance();	
+  auto color = frc::DriverStation::GetInstance().GetAlliance();	
   
   if (color == frc::DriverStation::Alliance::kBlue){
     alliance_color = "blue";
@@ -86,13 +86,18 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {
 
-  drive_straight_first = true;
+   drive_straight_first = true;
 
-  auto color = ds.GetAlliance();	
+  auto color = frc::DriverStation::GetInstance().GetAlliance();	
   
   if (color == frc::DriverStation::Alliance::kBlue){
     alliance_color = "blue";
   }
+  
+    endgame_unlock = false;
+
+
+
 
 }
 void Robot::TeleopPeriodic() {
@@ -102,8 +107,8 @@ void Robot::TeleopPeriodic() {
 
   double c1_joy_leftdrive = controller1.GetRawAxis(1);
   double c1_joy_rightdrive = controller1.GetRawAxis(5);
-  //bool c1_btn_back = controller1.GetRawButton(7);
-  //bool c1_btn_start = controller1.GetRawButton(8);
+  bool c1_btn_back = controller1.GetRawButton(7);
+  bool c1_btn_start = controller1.GetRawButton(8);
   double c1_righttrigger = controller1.GetRawAxis(3);
   double c1_lefttrigger = controller1.GetRawAxis(2);
   bool c1_leftbmp = controller1.GetRawButton(5);
@@ -169,27 +174,36 @@ void Robot::TeleopPeriodic() {
     }
 /* ---------------------- CLIMBER CODE -----------------------------*/
 
-  if (c1_righttrigger > 0.5){
-    MyDrive.climber_extend();
+  if (c1_btn_back && c1_btn_start){
+    endgame_unlock = true;
 
   }
 
-    else if (c1_lefttrigger > 0.5){
-      MyDrive.climber_retract();
-    }
+  if (endgame_unlock){
 
-    else{
-      MyDrive.climber_hold();
-    }
+      if (c1_righttrigger > 0.5){
+        MyDrive.climber_extend();
 
-    if (c1_leftbmp){
-      MyDrive.climber_tiltin();
+      }
 
-    }
+        else if (c1_lefttrigger > 0.5){
+          MyDrive.climber_retract();
+        }
 
-    else if (c1_rightbmp){
-      MyDrive.climber_tiltout();
-    }
+        else{
+          MyDrive.climber_hold();
+        }
+
+        if (c1_leftbmp){
+          MyDrive.climber_tiltin();
+
+        }
+
+        else if (c1_rightbmp){
+          MyDrive.climber_tiltout();
+        }
+
+  }
 // -------------------------------------------------------------------
 
 //--------------------Shooter Code -----------------------------------

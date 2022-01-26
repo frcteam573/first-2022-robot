@@ -51,10 +51,9 @@ class Robot : public frc::TimedRobot {
 
   frc::Joystick controller1{0}; // Driver controller
   frc::Joystick controller2{1}; // Operator controller
-  frc::DriverStation ds;
-
 
   bool drive_straight_first;
   string alliance_color;
+  bool endgame_unlock;
  
 };
