@@ -6,7 +6,8 @@ Appendage::Appendage()
 {
     // Define motors, sensors, and pneumatics here
     int m_IntakeId = 3;
-    int m_ShooterId = 6;
+    int m_ShooterId1 = 14;
+    int m_ShooterId2 = 2;
     int m_SusanId = 13;
     int m_HoodId = 12;
 
@@ -14,7 +15,8 @@ Appendage::Appendage()
     int p_IntakeId_b = 15;
 
     m_Intake = new rev::CANSparkMax{m_IntakeId, rev::CANSparkMax::MotorType::kBrushless};
-    m_Shooter = new rev::CANSparkMax{m_ShooterId, rev::CANSparkMax::MotorType::kBrushless};
+    m_Shooter1 = new rev::CANSparkMax{m_ShooterId1, rev::CANSparkMax::MotorType::kBrushless};
+    m_Shooter2 = new rev::CANSparkMax{m_ShooterId2, rev::CANSparkMax::MotorType::kBrushless};
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
     m_Hood = new rev::CANSparkMax{m_HoodId, rev::CANSparkMax::MotorType::kBrushless};
 
@@ -22,7 +24,7 @@ Appendage::Appendage()
 
     // CANEncoder was deprecated as of 2022
     
-    s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+    s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter1->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
     s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
     s_Hood_Encoder = new rev::SparkMaxRelativeEncoder{m_Hood->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
 
@@ -102,7 +104,8 @@ void Appendage::Shooter_Encoder(){
     
     
     output = err * kP;
-    m_Shooter -> Set(output);
+    m_Shooter1 -> Set(output);
+    m_Shooter2 -> Set(output);
 
     //Output to dash for testing
     frc::SmartDashboard::PutNumber("Shooter Target Out", shooter_target_in);
@@ -117,7 +120,8 @@ void Appendage::Shooter_Encoder(){
  */
 void Appendage::Shooter_Off()
 {
-    m_Shooter->Set(0);
+    m_Shooter1->Set(0);
+    m_Shooter2->Set(0);
 }
 
 /*

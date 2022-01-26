@@ -16,7 +16,8 @@ private:
     frc::DoubleSolenoid *p_Intake;
 
     rev::CANSparkMax *m_Intake;
-    rev::CANSparkMax *m_Shooter;
+    rev::CANSparkMax *m_Shooter1;
+    rev::CANSparkMax *m_Shooter2;
     rev::CANSparkMax *m_Susan;
     rev::CANSparkMax *m_Hood;
 
@@ -48,6 +49,6 @@ public:
 
     static double shooter_p_in;
     static double shooter_target_in;
-    
+
 };
 #endif
