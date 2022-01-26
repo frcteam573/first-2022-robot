@@ -31,6 +31,7 @@ void Robot::RobotInit() {
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   alliance_color = "red"; // Default evaluated in auto and teleop inits
+  turret_direction = true; // Initial turrent scan direction
 }
 
 /**
@@ -210,13 +211,14 @@ void Robot::TeleopPeriodic() {
     if (c2_left_trigger >= 0.5)
     {
       MyAppendage.Shooter_Encoder();
-      MyAppendage.Rotate(camera_exist, camera_x, 1);
+      turret_direction = MyAppendage.Rotate(camera_exist, camera_x, turret_direction);
       MyAppendage.Articulate(distance);
     }
     else
     {
       MyAppendage.Shooter_Off();
-      MyAppendage.Rotate(camera_exist, camera_x, 0);
+      MyAppendage.Rotate_Off();
+      //turret_direction = MyAppendage.Rotate(camera_exist, camera_x, turret_direction);
     }
 
 // -------------------------------------------------------------------

@@ -113,7 +113,7 @@ bool Appendage::Rotate(double camera_exists, double camera_x, bool direction)
 {
     double error,
         k = 0.3,
-        output,
+        output = 0,
         currEnc, maxEnc = 4000, minEnc = 1000;
 
     if (camera_exists <= 0)
@@ -121,30 +121,48 @@ bool Appendage::Rotate(double camera_exists, double camera_x, bool direction)
         currEnc = s_Susan_Encoder->GetPosition();
         if (currEnc > maxEnc)
         {
-            m_Susan->Set(-1);
+            output = -1;
         }
         else if (currEnc < minEnc)
         {
-            m_Susan->Set(1);
+            output = 1;
         }
         else if (currEnc >= minEnc && currEnc <= maxEnc)
         {
             if (direction)
             {
-                m_Susan->Set(1);
+                output = 1;
             }
             else
             {
-                m_Susan->Set(-1);
+                output = -1;
             }
         }
     }
+    else{
 
-    error = 0 - camera_x;
-    output = k * error;
-    m_Susan->Set(output);
+        error = 0 - camera_x;
+        output = k * error;
 
-    return output;
+    }
+
+    if(output >= 0){
+        direction = true;
+    }
+    else{
+        direction = false;
+    }
+
+    m_Susan->Set(output);    
+    return direction;
+}
+
+/*
+ * Turns off the turret Rotation
+ */
+void Appendage::Rotate_Off()
+{
+    m_Susan->Set(0);
 }
 
 double Appendage::Articulate(double distance){
@@ -167,10 +185,9 @@ double Appendage::Articulate(double distance){
  */
 double Remap_Val(double i, double threshold)
 {
-    if ((threshold > 0 && i > threshold) || 
-        (threshold < 0 && i < threshold))
+    if (abs(i) > threshold)
     {
-        i = threshold;
+        i = i/abs(i) * threshold;
     }
 
     return i;
