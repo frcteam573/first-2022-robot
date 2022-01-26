@@ -7,17 +7,24 @@ Appendage::Appendage()
     // Define motors, sensors, and pneumatics here
     int m_IntakeId = 3;
     int m_ShooterId = 6;
+    int m_SusanId = 13;
+    int m_HoodId = 12;
 
     int p_IntakeId_a = 14;
     int p_IntakeId_b = 15;
 
     m_Intake = new rev::CANSparkMax{m_IntakeId, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter = new rev::CANSparkMax{m_ShooterId, rev::CANSparkMax::MotorType::kBrushless};
+    m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
+    m_Hood = new rev::CANSparkMax{m_HoodId, rev::CANSparkMax::MotorType::kBrushless};
 
     p_Intake = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_IntakeId_a, p_IntakeId_b};
 
     // CANEncoder was deprecated as of 2022
+    
     s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+    s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
+    s_Hood_Encoder = new rev::SparkMaxRelativeEncoder{m_Hood->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
 }
 /*
  * Allows robot to Intake Balls
@@ -87,14 +94,84 @@ void Appendage::Shooter_Off()
 /*
  * Uses camera to measure distance away from goal
  */
-double Appendage::Get_Distance()
+double Appendage::Get_Distance(double camera_y)
 {
     double distance,
         heightGoal, heightBot,
-        angleSmall, angleBig;
+        angleSmall, angleBig = camera_y;
 
     // height are in meters, angles are in degrees
-    heightGoal = 1, heightBot = 0.5, angleSmall = 15, angleBig = 35;
+    heightGoal = 1, heightBot = 0.5, angleSmall = 15, angleBig = 30;
     distance = (heightGoal - heightBot) / tan(angleSmall + angleBig);
     return distance;
+}
+
+/*
+ * Moves Turret
+ */
+bool Appendage::Rotate(double camera_exists, double camera_x, bool direction)
+{
+    double error,
+        k = 0.3,
+        output,
+        currEnc, maxEnc = 4000, minEnc = 1000;
+
+    if (camera_exists <= 0)
+    {
+        currEnc = s_Susan_Encoder->GetPosition();
+        if (currEnc > maxEnc)
+        {
+            m_Susan->Set(-1);
+        }
+        else if (currEnc < minEnc)
+        {
+            m_Susan->Set(1);
+        }
+        else if (currEnc >= minEnc && currEnc <= maxEnc)
+        {
+            if (direction)
+            {
+                m_Susan->Set(1);
+            }
+            else
+            {
+                m_Susan->Set(-1);
+            }
+        }
+    }
+
+    error = 0 - camera_x;
+    output = k * error;
+    m_Susan->Set(output);
+
+    return output;
+}
+
+double Appendage::Articulate(double distance){
+    double setpoint = distance,
+        curr,
+        error,
+        kP = 0.3,
+        output;
+
+    curr = s_Hood_Encoder->GetPosition();
+    error = setpoint - curr;
+    output = error * kP;
+    m_Hood -> Set(output);
+
+    return output;
+}
+
+/*
+ * Remaps a number
+ */
+double Remap_Val(double i, double threshold)
+{
+    if ((threshold > 0 && i > threshold) || 
+        (threshold < 0 && i < threshold))
+    {
+        i = threshold;
+    }
+
+    return i;
 }

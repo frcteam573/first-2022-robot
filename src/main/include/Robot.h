@@ -16,6 +16,7 @@
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
+#include "frc/DriverStation.h"
 
 
 class Robot : public frc::TimedRobot {
@@ -51,8 +52,8 @@ class Robot : public frc::TimedRobot {
   frc::Joystick controller1{0}; // Driver controller
   frc::Joystick controller2{1}; // Operator controller
 
-
   bool drive_straight_first;
-
+  string alliance_color; // Hold current alliance color for auto ball pickup
+  bool endgame_unlock;  // Lock to prevent accidental climber deployment
  
 };
