@@ -53,7 +53,7 @@ class Robot : public frc::TimedRobot {
   frc::Joystick controller2{1}; // Operator controller
 
   bool drive_straight_first;
-  string alliance_color;
-  bool endgame_unlock;
+  string alliance_color; // Hold current alliance color for auto ball pickup
+  bool endgame_unlock;  // Lock to prevent accidental climber deployment
  
 };

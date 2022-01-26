@@ -30,7 +30,7 @@ void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-  alliance_color = "red";
+  alliance_color = "red"; // Default evaluated in auto and teleop inits
 }
 
 /**
@@ -56,14 +56,14 @@ void Robot::RobotPeriodic() {}
  */
 void Robot::AutonomousInit() {
 
-  auto color = frc::DriverStation::GetInstance().GetAlliance();	
-  
+  // Get alliance station color
+  static auto color = frc::DriverStation::GetAlliance();	
   if (color == frc::DriverStation::Alliance::kBlue){
     alliance_color = "blue";
   }
 
-  m_autoSelected = m_chooser.GetSelected();
 
+  m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
 
@@ -86,19 +86,16 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {
 
+  // Setting teleop variables
    drive_straight_first = true;
+   endgame_unlock = false;
 
-  auto color = frc::DriverStation::GetInstance().GetAlliance();	
-  
+  // Get alliance station color
+  static auto color = frc::DriverStation::GetAlliance();	
   if (color == frc::DriverStation::Alliance::kBlue){
     alliance_color = "blue";
   }
-  
-    endgame_unlock = false;
-
-
-
-
+    
 }
 void Robot::TeleopPeriodic() {
 
@@ -174,6 +171,7 @@ void Robot::TeleopPeriodic() {
     }
 /* ---------------------- CLIMBER CODE -----------------------------*/
 
+// Climber lock / unlock check
   if (c1_btn_back && c1_btn_start){
     endgame_unlock = true;
 
