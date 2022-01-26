@@ -21,9 +21,10 @@ Appendage::Appendage()
     p_Intake = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_IntakeId_a, p_IntakeId_b};
 
     // CANEncoder was deprecated as of 2022
+    
     s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
-    s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::EncoderType::kHallSensor, 4096)};
-    s_Hood_Encoder = new rev::SparkMaxRelativeEncoder{m_Hood->GetEncoder(rev::SparkMaxRelativeEncoder::EncoderType::kHallSensor, 4096)};
+    s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
+    s_Hood_Encoder = new rev::SparkMaxRelativeEncoder{m_Hood->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
 }
 /*
  * Allows robot to Intake Balls
@@ -100,7 +101,7 @@ double Appendage::Get_Distance(double camera_y)
         angleSmall, angleBig = camera_y;
 
     // height are in meters, angles are in degrees
-    heightGoal = 1, heightBot = 0.5, angleSmall = 15, angleBig;
+    heightGoal = 1, heightBot = 0.5, angleSmall = 15, angleBig = 30;
     distance = (heightGoal - heightBot) / tan(angleSmall + angleBig);
     return distance;
 }

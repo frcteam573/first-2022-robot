@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "Paths.h"
+
 using namespace std;
 
 class Paths {
@@ -12,7 +14,7 @@ class Paths {
 
  public:
   Paths();
-  double ReturnTableVal(int count, int select, int brian);
+  double ReturnTableVal(int count, int select);
  
 
 };
