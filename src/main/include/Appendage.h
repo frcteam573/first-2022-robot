@@ -24,6 +24,8 @@ private:
     rev::SparkMaxRelativeEncoder *s_Susan_Encoder;
     rev::SparkMaxRelativeEncoder *s_Hood_Encoder;
 
+    
+
 public:
     Appendage();
     void Intake_In();
@@ -41,5 +43,11 @@ public:
     double Articulate(double distance);
 
     double Remap_Val(double i, double threshold);
+
+    void DashboardCreate();
+
+    static double shooter_p_in;
+    static double shooter_target_in;
+    
 };
 #endif

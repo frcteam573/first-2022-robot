@@ -25,6 +25,19 @@ Appendage::Appendage()
     s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
     s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
     s_Hood_Encoder = new rev::SparkMaxRelativeEncoder{m_Hood->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
+
+    
+}
+/* Creates Dashboard Inputs Needed for Appendage */
+void Appendage::DashboardCreate(){
+// Dashboard input creations
+
+// Dashboard input inital decs.
+    static double shooter_p_in = 1;
+    static double shooter_target_in = 3000;
+
+  frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
+  frc::SmartDashboard::PutNumber("Shooter Target In", shooter_target_in);
 }
 /*
  * Allows robot to Intake Balls
@@ -76,11 +89,27 @@ void Appendage::Shooter_Encoder(){
     /*double output, target = frc::SmartDashboard::GetNumber("Target",3000), current = s_Shooter_Encoder->GetVelocity(), err = target - current, kP = frc::SmartDashboard::GetNumber("kP",0.01);
     //frc::SmartDashboard::PutNumber("Current",current);*/
     
-    double output, target = 3000, current = s_Shooter_Encoder->GetVelocity(), err = target - current, kP = 0.01;
+    double output, target = 3000;
+    double current = s_Shooter_Encoder->GetVelocity(); //Need to figure out conversion factor to input units
+     // Read in value from dashboard
+    double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 1);
+    double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
+
+    double kP = shooter_p_in;
+    target = shooter_target_in;
+    double err = target - current;
+
     
     
     output = err * kP;
     m_Shooter -> Set(output);
+
+    //Output to dash for testing
+    frc::SmartDashboard::PutNumber("Shooter Target Out", shooter_target_in);
+    frc::SmartDashboard::PutNumber("Shooter Current", current);
+    frc::SmartDashboard::PutNumber("Shooter Error", err);
+    frc::SmartDashboard::PutNumber("Shooter P Out", shooter_p_in);
+    frc::SmartDashboard::PutNumber("Shooter Output", output);
 }
 
 /*

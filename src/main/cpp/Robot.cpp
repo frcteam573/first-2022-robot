@@ -26,12 +26,16 @@ also: merge into main before each event, Before event create event branch and me
 #include <frc/smartdashboard/SmartDashboard.h>
 
 
+
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   alliance_color = "red"; // Default evaluated in auto and teleop inits
   turret_direction = true; // Initial turrent scan direction
+
+  // Dashboard input creations
+  MyAppendage.DashboardCreate();
 }
 
 /**
