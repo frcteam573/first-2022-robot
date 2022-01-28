@@ -102,7 +102,7 @@ void Appendage::Shooter_Encoder(){
 
     
     
-    output = err * kP;
+    output = -.8;//err * kP;  //Negative is shooting out currently6
     m_Shooter1 -> Set(output);
     m_Shooter2 -> Set(output);
 
