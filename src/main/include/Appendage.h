@@ -24,8 +24,7 @@ private:
     rev::SparkMaxRelativeEncoder *s_Shooter_Encoder;
     rev::SparkMaxRelativeEncoder *s_Susan_Encoder;
     rev::SparkMaxRelativeEncoder *s_Hood_Encoder;
-
-    
+   
 
 public:
     Appendage();
@@ -34,6 +33,7 @@ public:
     void Intake_Off();
     void Intake_Up();
     void Intake_Down();
+    double Remap_Val(double i, double threshold);
 
     void Shooter_Encoder();
     void Shooter_Off();
@@ -43,12 +43,13 @@ public:
     void Rotate_Off();
     double Articulate(double distance);
 
-    double Remap_Val(double i, double threshold);
+    
 
     void DashboardCreate();
 
     static double shooter_p_in;
     static double shooter_target_in;
+    static double shooter_f_in;
 
 };
 #endif

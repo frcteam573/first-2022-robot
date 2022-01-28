@@ -32,15 +32,31 @@ Appendage::Appendage()
 
     
 }
+
+/*
+ * Remaps a number
+ */
+double Appendage::Remap_Val(double i, double threshold)
+{
+    if (abs(i) > threshold)
+    {
+        i = i/abs(i) * threshold;
+    }
+
+    return i;
+}
+
 /* Creates Dashboard Inputs Needed for Appendage */
 void Appendage::DashboardCreate(){
     
 // Dashboard input inital decs.
     static double shooter_p_in = 1;
     static double shooter_target_in = 3000;
+    static double shooter_f_in = 0.2;
 
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
   frc::SmartDashboard::PutNumber("Shooter Target In", shooter_target_in);
+  frc::SmartDashboard::PutNumber("Shooter Feed Forward In", shooter_f_in);
 }
 /*
  * Allows robot to Intake Balls
@@ -86,32 +102,27 @@ void Appendage::Intake_Down()
  * Allows shooter to position when shooting
  */
 void Appendage::Shooter_Encoder(){
+     
     
-    //  The two lines below are needed for prototype testing. They allow for control of the system from the Driver Station. 
-    //  When uncommented the line below these must be commented out.
-    /*double output, target = frc::SmartDashboard::GetNumber("Target",3000), current = s_Shooter_Encoder->GetVelocity(), err = target - current, kP = frc::SmartDashboard::GetNumber("kP",0.01);
-    //frc::SmartDashboard::PutNumber("Current",current);*/
-    
-    double output, target = 3000;
     double current = s_Shooter_Encoder->GetVelocity(); //Need to figure out conversion factor to input units
-     // Read in value from dashboard
+    
+    // Read in value from dashboard
     double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 1);
     double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
+    double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
     double kP = shooter_p_in;
-    target = shooter_target_in;
+    double target = shooter_target_in;
+
+    double gear_ratio = 1/1.5; // Gear ratio betwee shooter motor encoder and shooter wheel
+
+    current = current * gear_ratio;
+
     double err = target - current;
 
-    
-    
-    output = err * kP;  
+    double output = (err * kP) + shooter_f_in;  
 
-    if (abs(output) > 0.99)
-    {
-        output = output/abs(output) * 0.99;
-    }
-
-    //output = Remap_Val(output, 0.99);
+    output = this->Remap_Val(output, 0.99);
 
     m_Shooter1 -> Set(output);
     m_Shooter2 -> Set(output);
@@ -222,15 +233,4 @@ double Appendage::Articulate(double distance){
     return output;
 }
 
-/*
- * Remaps a number
- */
-double Remap_Val(double i, double threshold)
-{
-    if (abs(i) > threshold)
-    {
-        i = i/abs(i) * threshold;
-    }
 
-    return i;
-}
