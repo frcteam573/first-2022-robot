@@ -114,7 +114,7 @@ void Appendage::Shooter_Encoder(){
     double kP = shooter_p_in;
     double target = shooter_target_in;
 
-    double gear_ratio = 1/1.5; // Gear ratio betwee shooter motor encoder and shooter wheel
+    double gear_ratio = 1/1.5; // Gear ratio between shooter motor encoder and shooter wheel
 
     current = current * gear_ratio;
 
