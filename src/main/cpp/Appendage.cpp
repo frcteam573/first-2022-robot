@@ -17,6 +17,8 @@ Appendage::Appendage()
     m_Intake = new rev::CANSparkMax{m_IntakeId, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter1 = new rev::CANSparkMax{m_ShooterId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter2 = new rev::CANSparkMax{m_ShooterId2, rev::CANSparkMax::MotorType::kBrushless};
+    m_Shooter1 -> SetInverted(true);
+    m_Shooter2 -> SetInverted(true);
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
     m_Hood = new rev::CANSparkMax{m_HoodId, rev::CANSparkMax::MotorType::kBrushless};
 
@@ -102,7 +104,15 @@ void Appendage::Shooter_Encoder(){
 
     
     
-    output = -.8;//err * kP;  //Negative is shooting out currently6
+    output = err * kP;  
+
+    if (abs(output) > 0.99)
+    {
+        output = output/abs(output) * 0.99;
+    }
+
+    //output = Remap_Val(output, 0.99);
+
     m_Shooter1 -> Set(output);
     m_Shooter2 -> Set(output);
 
