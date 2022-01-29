@@ -104,7 +104,7 @@ void Appendage::Intake_Down()
 void Appendage::Shooter_Encoder(){
      
     
-    double current = s_Shooter_Encoder->GetVelocity(); //Need to figure out conversion factor to input units
+    double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
     
     // Read in value from dashboard
     double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 1);
