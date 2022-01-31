@@ -220,16 +220,19 @@ void Robot::TeleopPeriodic() {
 
     if (c2_rightbumper)
     {
-      MyAppendage.Intake_In();
+      MyAppendage.Intake1_In();
+      MyAppendage.Intake2_In();
     }
     else
     {
-      MyAppendage.Intake_Off();
+      MyAppendage.Intake1_Off();
+      MyAppendage.Intake2_Off();
     }
 
     if (c2_btn_y)
     {
-      MyAppendage.Intake_Out();
+      MyAppendage.Intake1_Out();
+      MyAppendage.Intake2_Out();
     }
 
     //--------------------Shooter Code -----------------------------------
