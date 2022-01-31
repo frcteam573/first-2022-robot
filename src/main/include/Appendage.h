@@ -35,7 +35,7 @@ public:
     void Intake_Down();
     double Remap_Val(double i, double threshold);
 
-    void Shooter_Encoder();
+    bool Shooter_Encoder();
     void Shooter_Off();
 
     double Get_Distance(double camera_y);

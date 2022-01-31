@@ -82,8 +82,46 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
+
+ // -------- Read in camera Stuff -----------------------------------------------
+  
+  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+  table->PutNumber("ledMode", 1);
+  table->PutNumber("camMode", 0);
+
+  // -----------PIPELINE STUFF-----------//
+  table->PutNumber("pipeline", 0);
+
+  //--------CAMERA VALUES-----------------//
+  float camera_x = table->GetNumber("tx", 0);
+    
+  float camera_exist = table->GetNumber("tv", 0);
+  //float image_size = table->GetNumber("ta", 0);
+  float camera_y = table->GetNumber("ty", 0);
+
   if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
+    MyDrive.camera_intake(camera_x, 0.8);
+    MyAppendage.Intake_Down();
+    MyAppendage.Intake_In();
+
+      if (camera_exist){
+        MyDrive.camera_intake(camera_x, 0.8);
+        MyAppendage.Intake_Down();
+        MyAppendage.Intake_In();  
+      }
+          else {
+            double distance = MyAppendage.Get_Distance(camera_y);
+            bool align = MyAppendage.Rotate(camera_exist, camera_x, true);
+            bool rotate = MyAppendage.Articulate(distance);
+            bool atspeed = MyAppendage.Shooter_Encoder();
+
+              if (align && rotate && atspeed){
+                //fire ball
+              }
+          }
+
+
+
   } else {
     // Default Auto goes here
   }
@@ -131,8 +169,7 @@ void Robot::TeleopPeriodic() {
   //double c2_dpad = controller2.GetPOV(0);
   //bool c2_btn_back = controller2.GetRawButton(7);
   //bool c2_btn_start = controller2.GetRawButton(8);
-  //bool c2_rightbumper = controller2.GetRawButton(6);
-  //bool c2_leftbumper = controller2.GetRawButton(5);
+  //bool v
   //bool c2_right_trigger = controller2.GetRawAxis(3);
   double c2_left_trigger = controller2.GetRawAxis(2);
   //----------------------------------------------------------------------------

@@ -101,7 +101,7 @@ void Appendage::Intake_Down()
 /*
  * Allows shooter to position when shooting
  */
-void Appendage::Shooter_Encoder(){
+bool Appendage::Shooter_Encoder(){
      
     
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
@@ -122,6 +122,12 @@ void Appendage::Shooter_Encoder(){
 
     double output = (err * kP) + shooter_f_in;  
 
+    bool atspeed = false;
+
+    if (abs (err) < 250){
+        atspeed = true;
+    }
+
     output = this->Remap_Val(output, 0.99);
 
     m_Shooter1 -> Set(output);
@@ -133,6 +139,7 @@ void Appendage::Shooter_Encoder(){
     frc::SmartDashboard::PutNumber("Shooter Error", err);
     frc::SmartDashboard::PutNumber("Shooter P Out", shooter_p_in);
     frc::SmartDashboard::PutNumber("Shooter Output", output);
+    return atspeed;
 }
 
 /*
