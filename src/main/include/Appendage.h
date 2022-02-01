@@ -30,13 +30,9 @@ private:
 
 public:
     Appendage();
-    void Intake1_In();
-    void Intake1_Out();
-    void Intake1_Off();
-
-    void Intake2_In();
-    void Intake2_Out();
-    void Intake2_Off();
+    void Intake_In();
+    void Intake_Out();
+    void Intake_Off();
 
     void Feeder_In();
     void Feeder_Out();

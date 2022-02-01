@@ -66,7 +66,7 @@ void Appendage::DashboardCreate(){
 /*
  * Allows robot to Intake Balls
  */
-void Appendage::Intake1_In()
+void Appendage::Intake_In()
 {
     m_Intake1->Set(1);
 }
@@ -74,40 +74,17 @@ void Appendage::Intake1_In()
 /*
  * Allows robot to Intake Balls (Reverse)
  */
-void Appendage::Intake1_Out()
+void Appendage::Intake_Out()
 {
-    m_Intake1->SetInverted(1);
+    m_Intake1->SetInverted(-1);
 }
 
 /*
  * Turns off the intake
  */
-void Appendage::Intake1_Off()
+void Appendage::Intake_Off()
 {
     m_Intake1->Set(0);
-}
-/*
- * Allows robot to Intake Balls
- */
-void Appendage::Intake2_In()
-{
-    m_Intake2->Set(-1);
-}
-
-/*
- * Allows robot to Intake Balls (Reverse)
- */
-void Appendage::Intake2_Out()
-{
-    m_Intake2->SetInverted(-1);
-}
-
-/*
- * Turns off the intake
- */
-void Appendage::Intake2_Off()
-{
-    m_Intake2->Set(0);
 }
 /*
  * Allows robot to Intake Balls
@@ -115,6 +92,7 @@ void Appendage::Intake2_Off()
 void Appendage::Feeder_In()
 {
     m_Feeder->Set(1);
+    m_Intake2 ->Set(1);
 }
 
 /*
@@ -122,7 +100,8 @@ void Appendage::Feeder_In()
  */
 void Appendage::Feeder_Out()
 {
-    m_Feeder->SetInverted(1);
+    m_Feeder->SetInverted(-1);
+    m_Intake2 ->Set(-1);
 }
 
 /*
@@ -131,6 +110,7 @@ void Appendage::Feeder_Out()
 void Appendage::Feeder_Off()
 {
     m_Feeder->Set(0);
+    m_Intake2 ->Set(0);
 }
 
 /*

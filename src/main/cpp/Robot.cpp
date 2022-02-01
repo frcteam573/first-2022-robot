@@ -116,9 +116,11 @@ void Robot::AutonomousPeriodic() {
             bool align = MyAppendage.Rotate(camera_exist, camera_x, true);
             bool rotate = MyAppendage.Articulate(distance);
             bool atspeed = MyAppendage.Shooter_Encoder();
+            MyAppendage.Feeder_Off();
 
               if (align && rotate && atspeed){
-                //fire ball
+                MyAppendage.Feeder_In();
+
               }
           }
   }   
@@ -275,19 +277,19 @@ void Robot::TeleopPeriodic() {
 
     if (c2_rightbumper)
     {
-      MyAppendage.Intake1_In();
-      MyAppendage.Intake2_In();
+      MyAppendage.Intake_In();
+
     }
     else
     {
-      MyAppendage.Intake1_Off();
-      MyAppendage.Intake2_Off();
+      MyAppendage.Intake_Off();
+
     }
 
     if (c2_btn_y)
     {
-      MyAppendage.Intake1_Out();
-      MyAppendage.Intake2_Out();
+      MyAppendage.Intake_Out();
+
     }
 
     //--------------------Shooter Code -----------------------------------
