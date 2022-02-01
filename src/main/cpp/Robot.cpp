@@ -24,6 +24,7 @@ also: merge into main before each event, Before event create event branch and me
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <tuple>
 
 void Robot::RobotInit()
 {
@@ -91,6 +92,11 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic()
 {
 
+  //Reset shooter variables
+  bool align = false;
+  bool atspeed = false;
+  bool rotate = false;
+
   // -------- Read in Shooter camera Stuff -----------------------------------------------
 
   std::shared_ptr<nt::NetworkTable> table_s = nt::NetworkTableInstance::GetDefault().GetTable("Limelight_Shooter");
@@ -118,14 +124,19 @@ void Robot::AutonomousPeriodic()
   table_i->PutNumber("camMode", 0);
 
   // -----------PIPELINE STUFF-----------//
-  table_i->PutNumber("pipeline", 0);
+  if(alliance_color == "blue"){
+    table_i->PutNumber("pipeline", 0); // Blue color detection pipeline
+  }
+  else{
+    table_i->PutNumber("pipeline", 1); // Red color detection pipeline
+  }
 
   //--------CAMERA VALUES-----------------//
   float intake_camera_x = table_i->GetNumber("tx", 0);
 
   float intake_camera_exist = table_i->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
-  float intake_camera_y = table_i->GetNumber("ty", 0);
+  //float intake_camera_y = table_i->GetNumber("ty", 0);
 
   // ----------------------------------------------------------
 
@@ -142,7 +153,7 @@ void Robot::AutonomousPeriodic()
     else
     {
       double distance = MyAppendage.Get_Distance(shooter_camera_y);
-      bool align = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, true);
+      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
       bool rotate = MyAppendage.Articulate(distance);
       bool atspeed = MyAppendage.Shooter_Encoder();
       MyAppendage.Feeder_Off();
@@ -193,6 +204,7 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
 
+  //Reset shooter variables
   bool align = false;
   bool atspeed = false;
   bool rotate = false;
@@ -259,14 +271,21 @@ void Robot::TeleopPeriodic()
   table_i->PutNumber("camMode", 0);
 
   // -----------PIPELINE STUFF-----------//
-  table_i->PutNumber("pipeline", 0);
+
+  if(alliance_color == "blue"){
+    table_i->PutNumber("pipeline", 0); // Blue color detection pipeline
+  }
+  else{
+    table_i->PutNumber("pipeline", 1); // Red color detection pipeline
+  }
+  
 
   //--------CAMERA VALUES-----------------//
   float intake_camera_x = table_i->GetNumber("tx", 0);
 
   float intake_camera_exist = table_i->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
-  float intake_camera_y = table_i->GetNumber("ty", 0);
+  //float intake_camera_y = table_i->GetNumber("ty", 0);
 
   // ----------------------------------------------------------
 
@@ -357,8 +376,8 @@ void Robot::TeleopPeriodic()
   if (c2_left_trigger >= 0.5)
   {
     atspeed = MyAppendage.Shooter_Encoder();
-    rotate = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
-    align = MyAppendage.Articulate(distance);
+    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
+    rotate = MyAppendage.Articulate(distance);
   }
   else
   {

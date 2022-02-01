@@ -6,6 +6,7 @@
 #include "rev/SparkMaxRelativeEncoder.h"
 #include <frc/DoubleSolenoid.h>
 #include "frc/smartdashboard/SmartDashboard.h"
+#include <tuple>
 
 using namespace std;
 
@@ -46,7 +47,7 @@ public:
     void Shooter_Off();
 
     double Get_Distance(double camera_y);
-    bool Rotate(double camera_exists, double camera_x, bool direction);
+    std::tuple<bool, bool> Rotate(double camera_exists, double camera_x, bool direction);
     void Rotate_Off();
     double Articulate(double distance);
 
