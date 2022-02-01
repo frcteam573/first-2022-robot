@@ -240,7 +240,7 @@ void Robot::TeleopPeriodic()
   bool c2_rightbumper = controller2.GetRawButton(6);
   bool c2_leftbumper = controller2.GetRawButton(5);
 
-  // bool c2_right_trigger = controller2.GetRawAxis(3);
+  double c2_right_trigger = controller2.GetRawAxis(3);
   double c2_left_trigger = controller2.GetRawAxis(2);
   //----------------------------------------------------------------------------
 
@@ -361,29 +361,36 @@ void Robot::TeleopPeriodic()
   {
     MyAppendage.Intake_In();
   }
+  else if (c2_btn_y)
+  {
+    MyAppendage.Intake_Out();
+  }
   else
   {
     MyAppendage.Intake_Off();
-  }
-
-  if (c2_btn_y)
-  {
-    MyAppendage.Intake_Out();
   }
 
   //--------------------Shooter Code -----------------------------------
 
   if (c2_left_trigger >= 0.5)
   {
+    //Get shooter aligned and up to speed
     atspeed = MyAppendage.Shooter_Encoder();
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
     rotate = MyAppendage.Articulate(distance);
+
+    if(align && rotate && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+      MyAppendage.Feeder_In();
+    }
+    else{
+      MyAppendage.Feeder_Off();
+    }
   }
   else
   {
     MyAppendage.Shooter_Off();
     MyAppendage.Rotate_Off();
-    // turret_direction = MyAppendage.Rotate(camera_exist, camera_x, turret_direction);
+    MyAppendage.Feeder_Off();
   }
 
   // -------------------------------------------------------------------
@@ -416,7 +423,6 @@ void Robot::TeleopPeriodic()
   // MyLog.Dashboard();
   // MyLog.PDPTotal();
   MyDrive.dashboard();
-
   MyAppendage.dashboard();
 
   // ------------------------------------------
