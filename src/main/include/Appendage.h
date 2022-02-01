@@ -6,6 +6,7 @@
 #include "rev/SparkMaxRelativeEncoder.h"
 #include <frc/DoubleSolenoid.h>
 #include "frc/smartdashboard/SmartDashboard.h"
+#include <tuple>
 
 using namespace std;
 
@@ -15,9 +16,11 @@ private:
     // Define motor, sensors, and pnematic pointers here
     frc::DoubleSolenoid *p_Intake;
 
-    rev::CANSparkMax *m_Intake;
+    rev::CANSparkMax *m_Intake1;
+    rev::CANSparkMax *m_Intake2;
     rev::CANSparkMax *m_Shooter1;
     rev::CANSparkMax *m_Shooter2;
+    rev::CANSparkMax *m_Feeder;
     rev::CANSparkMax *m_Susan;
     rev::CANSparkMax *m_Hood;
 
@@ -31,25 +34,33 @@ public:
     void Intake_In();
     void Intake_Out();
     void Intake_Off();
+
+    void Feeder_In();
+    void Feeder_Out();
+    void Feeder_Off();
+
     void Intake_Up();
     void Intake_Down();
     double Remap_Val(double i, double threshold);
 
-    void Shooter_Encoder();
+    bool Shooter_Encoder();
     void Shooter_Off();
 
     double Get_Distance(double camera_y);
-    bool Rotate(double camera_exists, double camera_x, bool direction);
+    std::tuple<bool, bool> Rotate(double camera_exists, double camera_x, bool direction);
     void Rotate_Off();
     double Articulate(double distance);
 
-    
 
     void DashboardCreate();
 
     static double shooter_p_in;
     static double shooter_target_in;
     static double shooter_f_in;
+
+    void dashboard();
+
+
 
 };
 #endif
