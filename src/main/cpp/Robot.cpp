@@ -177,14 +177,17 @@ void Robot::TeleopPeriodic() {
   //double c2_joy_left = controller2.GetRawAxis(1);
   //bool c2_btn_a = controller2.GetRawButton(1);
   //bool c2_btn_b = controller2.GetRawButton(2);
-  //bool c2_btn_y = controller2.GetRawButton(4);
+  bool c2_btn_y = controller2.GetRawButton(4);
   //bool c2_btn_x = controller2.GetRawButton(3);
   //bool c2_btn_lb = controller2.GetRawButton(5);
   //bool c2_btn_rb = controller2.GetRawButton(6);
   //double c2_dpad = controller2.GetPOV(0);
   //bool c2_btn_back = controller2.GetRawButton(7);
   //bool c2_btn_start = controller2.GetRawButton(8);
-  //bool v
+
+  bool c2_rightbumper = controller2.GetRawButton(6);
+  bool c2_leftbumper = controller2.GetRawButton(5);
+
   //bool c2_right_trigger = controller2.GetRawAxis(3);
   double c2_left_trigger = controller2.GetRawAxis(2);
   //----------------------------------------------------------------------------
@@ -261,6 +264,31 @@ void Robot::TeleopPeriodic() {
 
   }
 // -------------------------------------------------------------------
+
+    //--------------------Intake Code -----------------------------------
+    if (c2_leftbumper)
+    {
+      MyAppendage.Intake_Down();
+    } else {
+      MyAppendage.Intake_Up();
+    }
+
+    if (c2_rightbumper)
+    {
+      MyAppendage.Intake1_In();
+      MyAppendage.Intake2_In();
+    }
+    else
+    {
+      MyAppendage.Intake1_Off();
+      MyAppendage.Intake2_Off();
+    }
+
+    if (c2_btn_y)
+    {
+      MyAppendage.Intake1_Out();
+      MyAppendage.Intake2_Out();
+    }
 
     //--------------------Shooter Code -----------------------------------
 

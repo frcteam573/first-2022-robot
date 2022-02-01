@@ -15,9 +15,11 @@ private:
     // Define motor, sensors, and pnematic pointers here
     frc::DoubleSolenoid *p_Intake;
 
-    rev::CANSparkMax *m_Intake;
+    rev::CANSparkMax *m_Intake1;
+    rev::CANSparkMax *m_Intake2;
     rev::CANSparkMax *m_Shooter1;
     rev::CANSparkMax *m_Shooter2;
+    rev::CANSparkMax *m_Feeder;
     rev::CANSparkMax *m_Susan;
     rev::CANSparkMax *m_Hood;
 
@@ -28,9 +30,18 @@ private:
 
 public:
     Appendage();
-    void Intake_In();
-    void Intake_Out();
-    void Intake_Off();
+    void Intake1_In();
+    void Intake1_Out();
+    void Intake1_Off();
+
+    void Intake2_In();
+    void Intake2_Out();
+    void Intake2_Off();
+
+    void Feeder_In();
+    void Feeder_Out();
+    void Feeder_Off();
+
     void Intake_Up();
     void Intake_Down();
     double Remap_Val(double i, double threshold);

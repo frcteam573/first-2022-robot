@@ -5,20 +5,25 @@ using namespace std;
 Appendage::Appendage()
 {
     // Define motors, sensors, and pneumatics here
-    int m_IntakeId = 3;
+    int m_IntakeId1 = 3;
+    int m_IntakeId2 = 11;
     int m_ShooterId1 = 14;
     int m_ShooterId2 = 2;
+    int m_FeederId = 6;
     int m_SusanId = 13;
     int m_HoodId = 12;
 
     int p_IntakeId_a = 14;
     int p_IntakeId_b = 15;
 
-    m_Intake = new rev::CANSparkMax{m_IntakeId, rev::CANSparkMax::MotorType::kBrushless};
+    m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
+    m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter1 = new rev::CANSparkMax{m_ShooterId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter2 = new rev::CANSparkMax{m_ShooterId2, rev::CANSparkMax::MotorType::kBrushless};
+
     m_Shooter1 -> SetInverted(true);
     m_Shooter2 -> SetInverted(true);
+    m_Feeder = new rev::CANSparkMax{m_FeederId, rev::CANSparkMax::MotorType::kBrushless};
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
     m_Hood = new rev::CANSparkMax{m_HoodId, rev::CANSparkMax::MotorType::kBrushless};
 
@@ -61,25 +66,71 @@ void Appendage::DashboardCreate(){
 /*
  * Allows robot to Intake Balls
  */
-void Appendage::Intake_In()
+void Appendage::Intake1_In()
 {
-    m_Intake->Set(1);
+    m_Intake1->Set(1);
 }
 
 /*
  * Allows robot to Intake Balls (Reverse)
  */
-void Appendage::Intake_Out()
+void Appendage::Intake1_Out()
 {
-    m_Intake->SetInverted(1);
+    m_Intake1->SetInverted(1);
 }
 
 /*
  * Turns off the intake
  */
-void Appendage::Intake_Off()
+void Appendage::Intake1_Off()
 {
-    m_Intake->Set(0);
+    m_Intake1->Set(0);
+}
+/*
+ * Allows robot to Intake Balls
+ */
+void Appendage::Intake2_In()
+{
+    m_Intake2->Set(-1);
+}
+
+/*
+ * Allows robot to Intake Balls (Reverse)
+ */
+void Appendage::Intake2_Out()
+{
+    m_Intake2->SetInverted(-1);
+}
+
+/*
+ * Turns off the intake
+ */
+void Appendage::Intake2_Off()
+{
+    m_Intake2->Set(0);
+}
+/*
+ * Allows robot to Intake Balls
+ */
+void Appendage::Feeder_In()
+{
+    m_Feeder->Set(1);
+}
+
+/*
+ * Allows robot to Intake Balls (Reverse)
+ */
+void Appendage::Feeder_Out()
+{
+    m_Feeder->SetInverted(1);
+}
+
+/*
+ * Turns off the intake
+ */
+void Appendage::Feeder_Off()
+{
+    m_Feeder->Set(0);
 }
 
 /*
