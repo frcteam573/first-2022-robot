@@ -41,14 +41,13 @@ class Robot : public frc::TimedRobot {
 
 
 
-
  private:
 
   frc::SendableChooser<std::string> m_chooser;
   const std::string kAutoNameDefault = "Drive Back";
   const std::string kAutoNameCustom = "2 Ball shoot";
   const std::string kAutoNameCustom1 = "4 Ball Shoot";
-  
+
   std::string m_autoSelected;
 
 
@@ -60,5 +59,6 @@ class Robot : public frc::TimedRobot {
   string alliance_color; // Hold current alliance color for auto ball pickup
   bool endgame_unlock;  // Lock to prevent accidental climber deployment
   bool turret_direction; // Hold current turret direction to prevent jumping when scanning
+  int counter; 
  
 };

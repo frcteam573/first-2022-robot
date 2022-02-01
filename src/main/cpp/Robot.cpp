@@ -30,6 +30,8 @@ also: merge into main before each event, Before event create event branch and me
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
+  m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1);
+
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   alliance_color = "red"; // Default evaluated in auto and teleop inits
   turret_direction = true; // Initial turrent scan direction
@@ -60,6 +62,8 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
+
+   counter = 0;
 
   // Get alliance station color
   static auto color = frc::DriverStation::GetAlliance();	
@@ -100,9 +104,7 @@ void Robot::AutonomousPeriodic() {
   float camera_y = table->GetNumber("ty", 0);
 
   if (m_autoSelected == kAutoNameCustom) {
-    MyDrive.camera_intake(camera_x, 0.8);
-    MyAppendage.Intake_Down();
-    MyAppendage.Intake_In();
+    // 2 Ball Autonomous
 
       if (camera_exist){
         MyDrive.camera_intake(camera_x, 0.8);
@@ -119,12 +121,25 @@ void Robot::AutonomousPeriodic() {
                 //fire ball
               }
           }
-
-
-
-  } else {
-    // Default Auto goes here
+  }   
+  
+  else if (m_autoSelected == kAutoNameCustom1){
+      //4  Ball Autonomous
   }
+
+  else {
+    
+      if (counter < 100 ){    //100 = 2 seconds
+        MyDrive.Joystick_Drive(0.5, 0.5);
+      }
+
+        else {
+          MyDrive.Joystick_Drive(0, 0);
+        }
+  }
+
+    counter ++;
+
 }
 
 void Robot::TeleopInit() {
