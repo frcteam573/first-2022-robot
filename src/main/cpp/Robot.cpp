@@ -193,6 +193,10 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
 
+  bool align = false;
+  bool atspeed = false;
+  bool rotate = false;
+
   //********** Read in Joystick Values ******************************************
   //------------- Driver Controller ---------------------------------------------
 
@@ -352,9 +356,9 @@ void Robot::TeleopPeriodic()
 
   if (c2_left_trigger >= 0.5)
   {
-    MyAppendage.Shooter_Encoder();
-    turret_direction = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
-    MyAppendage.Articulate(distance);
+    atspeed = MyAppendage.Shooter_Encoder();
+    rotate = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
+    align = MyAppendage.Articulate(distance);
   }
   else
   {
@@ -367,41 +371,24 @@ void Robot::TeleopPeriodic()
 
   //---------------------LED CODE----------------------------------
 
-  /* This is copy and paste from 2021 Robot code. Will need to be updated for 2022
-  bool ready_to_fire = false;
-  if (camera_exist && aligned && wheel_speed){
-
-    MyLed.led_control("Hot_Pink");
-    ready_to_fire = true;
-
+  if (endgame_unlock){
+    MyLed.led_control("Rainbow");
   }
-  else if ((camera_exist && !aligned && wheel_speed) || (camera_exist && aligned && !wheel_speed)){
+    else if (intake_camera_exist){
+      MyLed.led_control("White");
+    }
 
-    MyLed.led_control("Blue");
+    else if (align && rotate && !atspeed){
+      MyLed.led_control("Yellow");
+    }
 
-  }
+    else if (align && rotate && atspeed){
+      MyLed.led_control("Green");
+    }
 
-  else if (camera_exist && !aligned && !wheel_speed){
-
-    MyLed.led_control("White");
-
-  }
-  else {
-
-    MyLed.led_control("Black");
-
-  }
-  bool camera_exist1 = false;
-  if (camera_exist == 1){
-    camera_exist1 = true;
-  }
-
-    frc::SmartDashboard::PutBoolean("Ready to Fire", ready_to_fire);
-    frc::SmartDashboard::PutBoolean("In Camera", camera_exist1);
-    frc::SmartDashboard::PutBoolean("Wheel at Speed", wheel_speed);
-    frc::SmartDashboard::PutBoolean("Aligned", aligned);
-
-  */
+    else{
+       MyLed.led_control("Black");
+    }
 
   // -------------------------------------------------------------------
 
@@ -410,7 +397,8 @@ void Robot::TeleopPeriodic()
   // MyLog.Dashboard();
   // MyLog.PDPTotal();
   MyDrive.dashboard();
-  // MyAppendage.dashboard();
+
+  MyAppendage.dashboard();
 
   // ------------------------------------------
 } // end of teleop periodic

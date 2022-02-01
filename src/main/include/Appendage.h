@@ -50,13 +50,16 @@ public:
     void Rotate_Off();
     double Articulate(double distance);
 
-    
 
     void DashboardCreate();
 
     static double shooter_p_in;
     static double shooter_target_in;
     static double shooter_f_in;
+
+    void dashboard();
+
+
 
 };
 #endif

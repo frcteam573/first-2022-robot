@@ -271,4 +271,9 @@ double Appendage::Articulate(double distance){
     return output;
 }
 
-
+/*Appendage Dashboard*/
+    void Appendage::dashboard(){
+        frc::SmartDashboard::PutNumber("Shooter Enc", s_Shooter_Encoder -> GetVelocity());
+        frc::SmartDashboard::PutNumber("Susan Enc", s_Susan_Encoder -> GetPosition());
+        frc::SmartDashboard::PutNumber("Hood Enc", s_Hood_Encoder -> GetPosition()); 
+    }
