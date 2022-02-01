@@ -133,7 +133,6 @@ void Robot::AutonomousPeriodic()
 
   //--------CAMERA VALUES-----------------//
   float intake_camera_x = table_i->GetNumber("tx", 0);
-
   float intake_camera_exist = table_i->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
   //float intake_camera_y = table_i->GetNumber("ty", 0);
@@ -170,7 +169,7 @@ void Robot::AutonomousPeriodic()
     // 4  Ball Autonomous
   }
 
-  else
+  else // Simple drive straight auto
   {
 
     if (counter < 100)
@@ -255,7 +254,6 @@ void Robot::TeleopPeriodic()
 
   //--------CAMERA VALUES-----------------//
   float shooter_camera_x = table_s->GetNumber("tx", 0);
-
   float shooter_camera_exist = table_s->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
   float shooter_camera_y = table_s->GetNumber("ty", 0);
@@ -282,7 +280,6 @@ void Robot::TeleopPeriodic()
 
   //--------CAMERA VALUES-----------------//
   float intake_camera_x = table_i->GetNumber("tx", 0);
-
   float intake_camera_exist = table_i->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
   //float intake_camera_y = table_i->GetNumber("ty", 0);
@@ -291,19 +288,19 @@ void Robot::TeleopPeriodic()
 
   /*--------------------- DRIVE CODE -------------------------- */
 
-  if (c1_btn_b)
+  if (c1_btn_b) // Drive Straight with Gyro
   {
     MyDrive.drive_straight(drive_straight_first, c1_joy_leftdrive);
 
     drive_straight_first = false;
   }
 
-  else if (c1_btn_a)
+  else if (c1_btn_a) // Auto pickup with camera
   {
     MyDrive.camera_intake(intake_camera_x, c1_joy_leftdrive);
   }
 
-  else
+  else // Joystick drive
   {
     drive_straight_first = true;
 
@@ -320,6 +317,7 @@ void Robot::TeleopPeriodic()
   if (endgame_unlock)
   {
 
+    // Extend / Retract Arms
     if (c1_righttrigger > 0.5)
     {
       MyDrive.climber_extend();
@@ -335,6 +333,7 @@ void Robot::TeleopPeriodic()
       MyDrive.climber_hold();
     }
 
+    // Tilt Climber Arms
     if (c1_leftbmp)
     {
       MyDrive.climber_tiltin();
@@ -348,6 +347,7 @@ void Robot::TeleopPeriodic()
   // -------------------------------------------------------------------
 
   //--------------------Intake Code -----------------------------------
+  // Extend / Retract Intake
   if (c2_leftbumper)
   {
     MyAppendage.Intake_Down();
@@ -357,6 +357,7 @@ void Robot::TeleopPeriodic()
     MyAppendage.Intake_Up();
   }
 
+  // Run Intake In / Out
   if (c2_rightbumper)
   {
     MyAppendage.Intake_In();
