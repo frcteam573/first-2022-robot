@@ -2,7 +2,7 @@
 import csv
 import os
 
-inputfile = "straight"
+inputfile = "pick_two_balls_p2"
 with open(inputfile+'_left.csv', 'rU') as csvfile:
 
     csvstr = str(csvfile.name)

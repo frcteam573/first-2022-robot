@@ -5,18 +5,25 @@ using namespace std;
 Appendage::Appendage()
 {
     // Define motors, sensors, and pneumatics here
-    int m_IntakeId = 3;
+    int m_IntakeId1 = 3;
+    int m_IntakeId2 = 11;
     int m_ShooterId1 = 14;
     int m_ShooterId2 = 2;
+    int m_FeederId = 6;
     int m_SusanId = 13;
     int m_HoodId = 12;
 
     int p_IntakeId_a = 14;
     int p_IntakeId_b = 15;
 
-    m_Intake = new rev::CANSparkMax{m_IntakeId, rev::CANSparkMax::MotorType::kBrushless};
+    m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
+    m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter1 = new rev::CANSparkMax{m_ShooterId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter2 = new rev::CANSparkMax{m_ShooterId2, rev::CANSparkMax::MotorType::kBrushless};
+
+    m_Shooter1 -> SetInverted(true);
+    m_Shooter2 -> SetInverted(true);
+    m_Feeder = new rev::CANSparkMax{m_FeederId, rev::CANSparkMax::MotorType::kBrushless};
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
     m_Hood = new rev::CANSparkMax{m_HoodId, rev::CANSparkMax::MotorType::kBrushless};
 
@@ -30,22 +37,38 @@ Appendage::Appendage()
 
     
 }
+
+/*
+ * Remaps a number
+ */
+double Appendage::Remap_Val(double i, double threshold)
+{
+    if (abs(i) > threshold)
+    {
+        i = i/abs(i) * threshold;
+    }
+
+    return i;
+}
+
 /* Creates Dashboard Inputs Needed for Appendage */
 void Appendage::DashboardCreate(){
     
 // Dashboard input inital decs.
     static double shooter_p_in = 1;
     static double shooter_target_in = 3000;
+    static double shooter_f_in = 0.2;
 
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
   frc::SmartDashboard::PutNumber("Shooter Target In", shooter_target_in);
+  frc::SmartDashboard::PutNumber("Shooter Feed Forward In", shooter_f_in);
 }
 /*
  * Allows robot to Intake Balls
  */
 void Appendage::Intake_In()
 {
-    m_Intake->Set(1);
+    m_Intake1->Set(1);
 }
 
 /*
@@ -53,7 +76,7 @@ void Appendage::Intake_In()
  */
 void Appendage::Intake_Out()
 {
-    m_Intake->SetInverted(1);
+    m_Intake1->SetInverted(-1);
 }
 
 /*
@@ -61,7 +84,33 @@ void Appendage::Intake_Out()
  */
 void Appendage::Intake_Off()
 {
-    m_Intake->Set(0);
+    m_Intake1->Set(0);
+}
+/*
+ * Allows robot to Intake Balls
+ */
+void Appendage::Feeder_In()
+{
+    m_Feeder->Set(1);
+    m_Intake2 ->Set(1);
+}
+
+/*
+ * Allows robot to Intake Balls (Reverse)
+ */
+void Appendage::Feeder_Out()
+{
+    m_Feeder->SetInverted(-1);
+    m_Intake2 ->Set(-1);
+}
+
+/*
+ * Turns off the intake
+ */
+void Appendage::Feeder_Off()
+{
+    m_Feeder->Set(0);
+    m_Intake2 ->Set(0);
 }
 
 /*
@@ -83,26 +132,35 @@ void Appendage::Intake_Down()
 /*
  * Allows shooter to position when shooting
  */
-void Appendage::Shooter_Encoder(){
+bool Appendage::Shooter_Encoder(){
+     
     
-    //  The two lines below are needed for prototype testing. They allow for control of the system from the Driver Station. 
-    //  When uncommented the line below these must be commented out.
-    /*double output, target = frc::SmartDashboard::GetNumber("Target",3000), current = s_Shooter_Encoder->GetVelocity(), err = target - current, kP = frc::SmartDashboard::GetNumber("kP",0.01);
-    //frc::SmartDashboard::PutNumber("Current",current);*/
+    double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
     
-    double output, target = 3000;
-    double current = s_Shooter_Encoder->GetVelocity(); //Need to figure out conversion factor to input units
-     // Read in value from dashboard
+    // Read in value from dashboard
     double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 1);
     double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
+    double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
     double kP = shooter_p_in;
-    target = shooter_target_in;
+    double target = shooter_target_in;
+
+    double gear_ratio = 1/1.5; // Gear ratio between shooter motor encoder and shooter wheel
+
+    current = current * gear_ratio;
+
     double err = target - current;
 
-    
-    
-    output = err * kP;
+    double output = (err * kP) + shooter_f_in;  
+
+    bool atspeed = false;
+
+    if (abs (err) < 250){
+        atspeed = true;
+    }
+
+    output = this->Remap_Val(output, 0.99);
+
     m_Shooter1 -> Set(output);
     m_Shooter2 -> Set(output);
 
@@ -112,6 +170,7 @@ void Appendage::Shooter_Encoder(){
     frc::SmartDashboard::PutNumber("Shooter Error", err);
     frc::SmartDashboard::PutNumber("Shooter P Out", shooter_p_in);
     frc::SmartDashboard::PutNumber("Shooter Output", output);
+    return atspeed;
 }
 
 /*
@@ -141,12 +200,14 @@ double Appendage::Get_Distance(double camera_y)
 /*
  * Moves Turret
  */
-bool Appendage::Rotate(double camera_exists, double camera_x, bool direction)
+std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction)
 {
     double error,
         k = 0.3,
         output = 0,
         currEnc, maxEnc = 4000, minEnc = 1000;
+
+    bool align = false;
 
     if (camera_exists <= 0)
     {
@@ -176,6 +237,10 @@ bool Appendage::Rotate(double camera_exists, double camera_x, bool direction)
         error = 0 - camera_x;
         output = k * error;
 
+        if(abs(error)<2){
+            align = true;
+        }
+
     }
 
     if(output >= 0){
@@ -186,7 +251,7 @@ bool Appendage::Rotate(double camera_exists, double camera_x, bool direction)
     }
 
     m_Susan->Set(output);    
-    return direction;
+    return std::make_tuple(align,direction);
 }
 
 /*
@@ -212,15 +277,9 @@ double Appendage::Articulate(double distance){
     return output;
 }
 
-/*
- * Remaps a number
- */
-double Remap_Val(double i, double threshold)
-{
-    if (abs(i) > threshold)
-    {
-        i = i/abs(i) * threshold;
+/*Appendage Dashboard*/
+    void Appendage::dashboard(){
+        frc::SmartDashboard::PutNumber("Shooter Enc", s_Shooter_Encoder -> GetVelocity());
+        frc::SmartDashboard::PutNumber("Susan Enc", s_Susan_Encoder -> GetPosition());
+        frc::SmartDashboard::PutNumber("Hood Enc", s_Hood_Encoder -> GetPosition()); 
     }
-
-    return i;
-}

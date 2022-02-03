@@ -97,12 +97,23 @@ double Drive::deadband(double input, double deadband_size){
 /* CLIMBING */
 
         void Drive::climber_extend(){
-           
-            //unlock climbers and extend
-            p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
-            
-            m_leftclimb -> Set(1);
-            m_rightclimb -> Set(1);
+
+            if (s_leftclimber_enc->GetPosition() < 4000) {
+                //unlock climbers and extend
+                p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
+                
+                m_leftclimb -> Set(1);
+                m_rightclimb -> Set(1);
+
+            }
+
+                else{
+                    p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
+                    
+                    m_leftclimb -> Set(0);
+                    m_rightclimb -> Set(0);
+
+                }
         }
 
         void Drive::climber_retract(){

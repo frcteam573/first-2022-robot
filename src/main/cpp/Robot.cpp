@@ -24,14 +24,16 @@ also: merge into main before each event, Before event create event branch and me
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <tuple>
 
-
-
-void Robot::RobotInit() {
+void Robot::RobotInit()
+{
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
+  m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1);
+
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-  alliance_color = "red"; // Default evaluated in auto and teleop inits
+  alliance_color = "red";  // Default evaluated in auto and teleop inits
   turret_direction = true; // Initial turrent scan direction
 
   // Dashboard input creations
@@ -59,14 +61,17 @@ void Robot::RobotPeriodic() {}
  * if-else structure below with additional strings. If using the SendableChooser
  * make sure to add them to the chooser code above as well.
  */
-void Robot::AutonomousInit() {
+void Robot::AutonomousInit()
+{
+
+  counter = 0;
 
   // Get alliance station color
-  static auto color = frc::DriverStation::GetAlliance();	
-  if (color == frc::DriverStation::Alliance::kBlue){
+  static auto color = frc::DriverStation::GetAlliance();
+  if (color == frc::DriverStation::Alliance::kBlue)
+  {
     alliance_color = "blue";
   }
-
 
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
@@ -74,35 +79,134 @@ void Robot::AutonomousInit() {
 
   fmt::print("Auto selected: {}\n", m_autoSelected);
 
-  if (m_autoSelected == kAutoNameCustom) {
+  if (m_autoSelected == kAutoNameCustom)
+  {
     // Custom Auto goes here
-  } else {
+  }
+  else
+  {
     // Default Auto goes here
   }
 }
 
-void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
+void Robot::AutonomousPeriodic()
+{
+
+  //Reset shooter variables
+  bool align = false;
+  bool atspeed = false;
+  bool rotate = false;
+
+  // -------- Read in Shooter camera Stuff -----------------------------------------------
+
+  std::shared_ptr<nt::NetworkTable> table_s = nt::NetworkTableInstance::GetDefault().GetTable("Limelight_Shooter");
+  table_s->PutNumber("ledMode", 1);
+  table_s->PutNumber("camMode", 0);
+
+  // -----------PIPELINE STUFF-----------//
+  table_s->PutNumber("pipeline", 0);
+
+  //--------CAMERA VALUES-----------------//
+  float shooter_camera_x = table_s->GetNumber("tx", 0);
+
+  float shooter_camera_exist = table_s->GetNumber("tv", 0);
+  // float image_size = table->GetNumber("ta", 0);
+  float shooter_camera_y = table_s->GetNumber("ty", 0);
+
+  double distance = MyAppendage.Get_Distance(shooter_camera_y);
+
+  // ----------------------------------------------------------
+
+  // -------- Read in Intake camera Stuff -----------------------------------------------
+
+  std::shared_ptr<nt::NetworkTable> table_i = nt::NetworkTableInstance::GetDefault().GetTable("Limelight_Intake");
+  table_i->PutNumber("ledMode", 1);
+  table_i->PutNumber("camMode", 0);
+
+  // -----------PIPELINE STUFF-----------//
+  if(alliance_color == "blue"){
+    table_i->PutNumber("pipeline", 0); // Blue color detection pipeline
   }
+  else{
+    table_i->PutNumber("pipeline", 1); // Red color detection pipeline
+  }
+
+  //--------CAMERA VALUES-----------------//
+  float intake_camera_x = table_i->GetNumber("tx", 0);
+  float intake_camera_exist = table_i->GetNumber("tv", 0);
+  // float image_size = table->GetNumber("ta", 0);
+  //float intake_camera_y = table_i->GetNumber("ty", 0);
+
+  // ----------------------------------------------------------
+
+  if (m_autoSelected == kAutoNameCustom)
+  {
+    // 2 Ball Autonomous
+
+    if (intake_camera_exist)
+    {
+      MyDrive.camera_intake(intake_camera_x, 0.8);
+      MyAppendage.Intake_Down();
+      MyAppendage.Intake_In();
+    }
+    else
+    {
+      double distance = MyAppendage.Get_Distance(shooter_camera_y);
+      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
+      bool rotate = MyAppendage.Articulate(distance);
+      bool atspeed = MyAppendage.Shooter_Encoder();
+      MyAppendage.Feeder_Off();
+
+      if (align && rotate && atspeed)
+      {
+        MyAppendage.Feeder_In();
+      }
+    }
+  }
+
+  else if (m_autoSelected == kAutoNameCustom1)
+  {
+    // 4  Ball Autonomous
+  }
+
+  else // Simple drive straight auto
+  {
+
+    if (counter < 100)
+    { // 100 = 2 seconds
+      MyDrive.Joystick_Drive(0.5, 0.5);
+    }
+
+    else
+    {
+      MyDrive.Joystick_Drive(0, 0);
+    }
+  }
+
+  counter++;
 }
 
-void Robot::TeleopInit() {
+void Robot::TeleopInit()
+{
 
   // Setting teleop variables
-   drive_straight_first = true;
-   endgame_unlock = false;
+  drive_straight_first = true;
+  endgame_unlock = false;
 
   // Get alliance station color
-  static auto color = frc::DriverStation::GetAlliance();	
-  if (color == frc::DriverStation::Alliance::kBlue){
+  static auto color = frc::DriverStation::GetAlliance();
+  if (color == frc::DriverStation::Alliance::kBlue)
+  {
     alliance_color = "blue";
   }
-    
 }
-void Robot::TeleopPeriodic() {
+void Robot::TeleopPeriodic()
+{
+
+  //Reset shooter variables
+  bool align = false;
+  bool atspeed = false;
+  bool rotate = false;
 
   //********** Read in Joystick Values ******************************************
   //------------- Driver Controller ---------------------------------------------
@@ -116,166 +220,216 @@ void Robot::TeleopPeriodic() {
   bool c1_leftbmp = controller1.GetRawButton(5);
   bool c1_rightbmp = controller1.GetRawButton(6);
   bool c1_btn_b = controller1.GetRawButton(2);
-  //bool c1_btn_x = controller1.GetRawButton(3);
+  // bool c1_btn_x = controller1.GetRawButton(3);
   bool c1_btn_a = controller1.GetRawButton(1);
 
   //-----------------------------------------------------------------------------
   //------------ Operator Controller --------------------------------------------
-  //double c2_joy_left = controller2.GetRawAxis(1);
-  //bool c2_btn_a = controller2.GetRawButton(1);
-  //bool c2_btn_b = controller2.GetRawButton(2);
-  //bool c2_btn_y = controller2.GetRawButton(4);
-  //bool c2_btn_x = controller2.GetRawButton(3);
-  //bool c2_btn_lb = controller2.GetRawButton(5);
-  //bool c2_btn_rb = controller2.GetRawButton(6);
-  //double c2_dpad = controller2.GetPOV(0);
-  //bool c2_btn_back = controller2.GetRawButton(7);
-  //bool c2_btn_start = controller2.GetRawButton(8);
-  //bool c2_rightbumper = controller2.GetRawButton(6);
-  //bool c2_leftbumper = controller2.GetRawButton(5);
-  //bool c2_right_trigger = controller2.GetRawAxis(3);
+  // double c2_joy_left = controller2.GetRawAxis(1);
+  // bool c2_btn_a = controller2.GetRawButton(1);
+  // bool c2_btn_b = controller2.GetRawButton(2);
+  bool c2_btn_y = controller2.GetRawButton(4);
+  // bool c2_btn_x = controller2.GetRawButton(3);
+  // bool c2_btn_lb = controller2.GetRawButton(5);
+  // bool c2_btn_rb = controller2.GetRawButton(6);
+  // double c2_dpad = controller2.GetPOV(0);
+  // bool c2_btn_back = controller2.GetRawButton(7);
+  // bool c2_btn_start = controller2.GetRawButton(8);
+
+  bool c2_rightbumper = controller2.GetRawButton(6);
+  bool c2_leftbumper = controller2.GetRawButton(5);
+
+  double c2_right_trigger = controller2.GetRawAxis(3);
   double c2_left_trigger = controller2.GetRawAxis(2);
   //----------------------------------------------------------------------------
-  
-  // -------- Read in camera Stuff -----------------------------------------------
-  
-  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
-  table->PutNumber("ledMode", 1);
-  table->PutNumber("camMode", 0);
+
+  // -------- Read in Shooter camera Stuff -----------------------------------------------
+
+  std::shared_ptr<nt::NetworkTable> table_s = nt::NetworkTableInstance::GetDefault().GetTable("Limelight_Shooter");
+  table_s->PutNumber("ledMode", 1);
+  table_s->PutNumber("camMode", 0);
 
   // -----------PIPELINE STUFF-----------//
-  table->PutNumber("pipeline", 0);
+  table_s->PutNumber("pipeline", 0);
 
   //--------CAMERA VALUES-----------------//
-  float camera_x = table->GetNumber("tx", 0);
-    
-  float camera_exist = table->GetNumber("tv", 0);
-  //float image_size = table->GetNumber("ta", 0);
-  float camera_y = table->GetNumber("ty", 0);
+  float shooter_camera_x = table_s->GetNumber("tx", 0);
+  float shooter_camera_exist = table_s->GetNumber("tv", 0);
+  // float image_size = table->GetNumber("ta", 0);
+  float shooter_camera_y = table_s->GetNumber("ty", 0);
 
-  double distance = MyAppendage.Get_Distance(camera_y);
+  double distance = MyAppendage.Get_Distance(shooter_camera_y);
+
+  // ----------------------------------------------------------
+
+  // -------- Read in Intake camera Stuff -----------------------------------------------
+
+  std::shared_ptr<nt::NetworkTable> table_i = nt::NetworkTableInstance::GetDefault().GetTable("Limelight_Intake");
+  table_i->PutNumber("ledMode", 1);
+  table_i->PutNumber("camMode", 0);
+
+  // -----------PIPELINE STUFF-----------//
+
+  if(alliance_color == "blue"){
+    table_i->PutNumber("pipeline", 0); // Blue color detection pipeline
+  }
+  else{
+    table_i->PutNumber("pipeline", 1); // Red color detection pipeline
+  }
+  
+
+  //--------CAMERA VALUES-----------------//
+  float intake_camera_x = table_i->GetNumber("tx", 0);
+  float intake_camera_exist = table_i->GetNumber("tv", 0);
+  // float image_size = table->GetNumber("ta", 0);
+  //float intake_camera_y = table_i->GetNumber("ty", 0);
 
   // ----------------------------------------------------------
 
   /*--------------------- DRIVE CODE -------------------------- */
 
-  if (c1_btn_b){
+  if (c1_btn_b) // Drive Straight with Gyro
+  {
     MyDrive.drive_straight(drive_straight_first, c1_joy_leftdrive);
 
     drive_straight_first = false;
   }
 
-    else if (c1_btn_a){
-      MyDrive.camera_intake(camera_x, c1_joy_leftdrive);
+  else if (c1_btn_a) // Auto pickup with camera
+  {
+    MyDrive.camera_intake(intake_camera_x, c1_joy_leftdrive);
+  }
+
+  else // Joystick drive
+  {
+    drive_straight_first = true;
+
+    MyDrive.Joystick_Drive(c1_joy_leftdrive, c1_joy_rightdrive);
+  }
+  /* ---------------------- CLIMBER CODE -----------------------------*/
+
+  // Climber lock / unlock check
+  if (c1_btn_back && c1_btn_start)
+  {
+    endgame_unlock = true;
+  }
+
+  if (endgame_unlock)
+  {
+
+    // Extend / Retract Arms
+    if (c1_righttrigger > 0.5)
+    {
+      MyDrive.climber_extend();
+    }
+
+    else if (c1_lefttrigger > 0.5)
+    {
+      MyDrive.climber_retract();
+    }
+
+    else
+    {
+      MyDrive.climber_hold();
+    }
+
+    // Tilt Climber Arms
+    if (c1_leftbmp)
+    {
+      MyDrive.climber_tiltin();
+    }
+
+    else if (c1_rightbmp)
+    {
+      MyDrive.climber_tiltout();
+    }
+  }
+  // -------------------------------------------------------------------
+
+  //--------------------Intake Code -----------------------------------
+  // Extend / Retract Intake
+  if (c2_leftbumper)
+  {
+    MyAppendage.Intake_Down();
+  }
+  else
+  {
+    MyAppendage.Intake_Up();
+  }
+
+  // Run Intake In / Out
+  if (c2_rightbumper)
+  {
+    MyAppendage.Intake_In();
+  }
+  else if (c2_btn_y)
+  {
+    MyAppendage.Intake_Out();
+  }
+  else
+  {
+    MyAppendage.Intake_Off();
+  }
+
+  //--------------------Shooter Code -----------------------------------
+
+  if (c2_left_trigger >= 0.5)
+  {
+    //Get shooter aligned and up to speed
+    atspeed = MyAppendage.Shooter_Encoder();
+    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
+    rotate = MyAppendage.Articulate(distance);
+
+    if(align && rotate && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+      MyAppendage.Feeder_In();
+    }
+    else{
+      MyAppendage.Feeder_Off();
+    }
+  }
+  else
+  {
+    MyAppendage.Shooter_Off();
+    MyAppendage.Rotate_Off();
+    MyAppendage.Feeder_Off();
+  }
+
+  // -------------------------------------------------------------------
+
+  //---------------------LED CODE----------------------------------
+
+  if (endgame_unlock){
+    MyLed.led_control("Rainbow");
+  }
+    else if (intake_camera_exist){
+      MyLed.led_control("White");
+    }
+
+    else if (align && rotate && !atspeed){
+      MyLed.led_control("Yellow");
+    }
+
+    else if (align && rotate && atspeed){
+      MyLed.led_control("Green");
     }
 
     else{
-      drive_straight_first = true;
-
-      MyDrive.Joystick_Drive(c1_joy_leftdrive, c1_joy_rightdrive);
-
-    }
-/* ---------------------- CLIMBER CODE -----------------------------*/
-
-// Climber lock / unlock check
-  if (c1_btn_back && c1_btn_start){
-    endgame_unlock = true;
-
-  }
-
-  if (endgame_unlock){
-
-      if (c1_righttrigger > 0.5){
-        MyDrive.climber_extend();
-
-      }
-
-        else if (c1_lefttrigger > 0.5){
-          MyDrive.climber_retract();
-        }
-
-        else{
-          MyDrive.climber_hold();
-        }
-
-        if (c1_leftbmp){
-          MyDrive.climber_tiltin();
-
-        }
-
-        else if (c1_rightbmp){
-          MyDrive.climber_tiltout();
-        }
-
-  }
-// -------------------------------------------------------------------
-
-    //--------------------Shooter Code -----------------------------------
-
-    if (c2_left_trigger >= 0.5)
-    {
-      MyAppendage.Shooter_Encoder();
-      turret_direction = MyAppendage.Rotate(camera_exist, camera_x, turret_direction);
-      MyAppendage.Articulate(distance);
-    }
-    else
-    {
-      MyAppendage.Shooter_Off();
-      MyAppendage.Rotate_Off();
-      //turret_direction = MyAppendage.Rotate(camera_exist, camera_x, turret_direction);
+       MyLed.led_control("Black");
     }
 
-// -------------------------------------------------------------------
+  // -------------------------------------------------------------------
 
-//---------------------LED CODE----------------------------------
+  // --------- dashboard code ---------------
 
-/* This is copy and paste from 2021 Robot code. Will need to be updated for 2022
-bool ready_to_fire = false;
-if (camera_exist && aligned && wheel_speed){
-
-  MyLed.led_control("Hot_Pink");
-  ready_to_fire = true;
-  
-}
-else if ((camera_exist && !aligned && wheel_speed) || (camera_exist && aligned && !wheel_speed)){
-
-  MyLed.led_control("Blue");
-  
-}
-
-else if (camera_exist && !aligned && !wheel_speed){
-
-  MyLed.led_control("White");
-  
-}
-else {
-
-  MyLed.led_control("Black");
-  
-}
-bool camera_exist1 = false;
-if (camera_exist == 1){
-  camera_exist1 = true;
-}
-
-  frc::SmartDashboard::PutBoolean("Ready to Fire", ready_to_fire);
-  frc::SmartDashboard::PutBoolean("In Camera", camera_exist1);
-  frc::SmartDashboard::PutBoolean("Wheel at Speed", wheel_speed);
-  frc::SmartDashboard::PutBoolean("Aligned", aligned);
-
-*/
-
-// -------------------------------------------------------------------
-
-// --------- dashboard code ---------------
 
 MyLog.Dashboard();
 MyLog.PDPTotal();
 MyDrive.dashboard();
-//MyAppendage.dashboard();
+MyAppendage.dashboard();
 
-// ------------------------------------------
-} //end of teleop periodic
+
+  // ------------------------------------------
+} // end of teleop periodic
 
 void Robot::DisabledInit() {}
 
@@ -286,7 +440,8 @@ void Robot::TestInit() {}
 void Robot::TestPeriodic() {}
 
 #ifndef RUNNING_FRC_TESTS
-int main() {
+int main()
+{
   return frc::StartRobot<Robot>();
 }
 #endif
