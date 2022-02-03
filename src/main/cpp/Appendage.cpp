@@ -138,18 +138,20 @@ bool Appendage::Shooter_Encoder(){
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
     
     // Read in value from dashboard
-    double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 1);
+    double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 0.00025);
     double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
-    double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
+    //double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
     double kP = shooter_p_in;
     double target = shooter_target_in;
 
-    double gear_ratio = 1/1.5; // Gear ratio between shooter motor encoder and shooter wheel
+    double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
 
     current = current * gear_ratio;
 
     double err = target - current;
+
+    double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
 
     double output = (err * kP) + shooter_f_in;  
 
@@ -170,6 +172,7 @@ bool Appendage::Shooter_Encoder(){
     frc::SmartDashboard::PutNumber("Shooter Error", err);
     frc::SmartDashboard::PutNumber("Shooter P Out", shooter_p_in);
     frc::SmartDashboard::PutNumber("Shooter Output", output);
+    frc::SmartDashboard::PutNumber("F Output", shooter_f_in);
     return atspeed;
 }
 
