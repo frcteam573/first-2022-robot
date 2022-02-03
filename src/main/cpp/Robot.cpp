@@ -421,10 +421,12 @@ void Robot::TeleopPeriodic()
 
   // --------- dashboard code ---------------
 
-  // MyLog.Dashboard();
-  // MyLog.PDPTotal();
-  MyDrive.dashboard();
-  MyAppendage.dashboard();
+
+MyLog.Dashboard();
+MyLog.PDPTotal();
+MyDrive.dashboard();
+MyAppendage.dashboard();
+
 
   // ------------------------------------------
 } // end of teleop periodic
