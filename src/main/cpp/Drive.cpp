@@ -168,44 +168,44 @@ double Drive::deadband(double input, double deadband_size){
 
     /* Path Following */ 
            
-    void Drive::drive_PID(vector<double>value_in, int count) {
+            void Drive::drive_PID(vector<double>value_in, int count) {
             
-        //Breakdown input vector
-        double setpoint_left_pos = value_in[0];
-        double setpoint_right_pos = value_in[1];
-        double setpoint_left_speed = value_in[2];
-        double setpoint_right_speed = value_in[3];
-        double heading = value_in[4];
+            //Breakdown input vector
+            double setpoint_left_pos = value_in[0];
+            double setpoint_right_pos = value_in[1];
+            double setpoint_left_speed = value_in[2];
+            double setpoint_right_speed = value_in[3];
+            double heading = value_in[4];
 
-        if(count ==0){
-            //Gyro->Reset();
-            s_leftdrive_enc -> SetPosition(0);
-            s_rightdrive_enc -> SetPosition(0);
-        }
+            if(count ==0){
+                //Gyro->Reset();
+                s_leftdrive_enc -> SetPosition(0);
+                s_rightdrive_enc -> SetPosition(0);
+            }
 
-        double encoder_val_left = s_leftdrive_enc -> GetPosition();
-        double encoder_val_right = s_rightdrive_enc -> GetPosition();
-        //double encoder_speed_left = s_leftdrive_enc -> GetRate();
-        //double encoder_speed_right = s_rightdrive_enc -> GetRate();
-        double gyro_val = s_gyro->GetAngle();
+            double encoder_val_left = s_leftdrive_enc -> GetPosition();
+            double encoder_val_right = s_rightdrive_enc -> GetPosition();
+            //double encoder_speed_left = s_leftdrive_enc -> GetRate();
+            //double encoder_speed_right = s_rightdrive_enc -> GetRate();
+            double gyro_val = s_gyro->GetAngle();
 
-        double error_left_pos = setpoint_left_pos - encoder_val_left;
-        double error_right_pos = setpoint_right_pos - encoder_val_right;
-        //double error_left_speed = setpoint_left_speed - encoder_speed_left;
-        //double error_right_speed = setpoint_right_speed - encoder_speed_right;
-        double error_heading = heading - gyro_val;
-        
-        
-        double max_speed = frc::SmartDashboard::GetNumber("p input 2", 8250);//9000,8000//frc::SmartDashboard::GetNumber("p input 2", 9750);//8250
-        double kp_speed = -1/(max_speed);
-        double kp_pos = 0; //-0.002;//frc::SmartDashboard::GetNumber("p input", -0.025);//-0.074;
-        
-        double kph = frc::SmartDashboard::GetNumber("p input", -0.0072);//-0.0072;//-0.01;  //0.01;
+            double error_left_pos = setpoint_left_pos - encoder_val_left;
+            double error_right_pos = setpoint_right_pos - encoder_val_right;
+            //double error_left_speed = setpoint_left_speed - encoder_speed_left;
+            //double error_right_speed = setpoint_right_speed - encoder_speed_right;
+            double error_heading = heading - gyro_val;
+            
+            
+            double max_speed = frc::SmartDashboard::GetNumber("p input 2", 8250);//9000,8000//frc::SmartDashboard::GetNumber("p input 2", 9750);//8250
+            double kp_speed = -1/(max_speed);
+            double kp_pos = 0; //-0.002;//frc::SmartDashboard::GetNumber("p input", -0.025);//-0.074;
+            
+            double kph = frc::SmartDashboard::GetNumber("p input", -0.0072);//-0.0072;//-0.01;  //0.01;
 
-        double output_left = (error_left_pos * kp_pos) + kp_speed*setpoint_left_speed;
-        double output_right = (error_right_pos * kp_pos) + kp_speed*setpoint_right_speed;
+            double output_left = (error_left_pos * kp_pos) + kp_speed*setpoint_left_speed;
+            double output_right = (error_right_pos * kp_pos) + kp_speed*setpoint_right_speed;
 
-        double turn_val = kph * error_heading;
+            double turn_val = kph * error_heading;
 
         m_leftdrive->Set(output_left + turn_val);
         m_leftdrive2->Set(output_left + turn_val);
