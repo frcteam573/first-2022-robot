@@ -17,6 +17,7 @@
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
 #include "frc/DriverStation.h"
+#include "Log.h"
 
 
 class Robot : public frc::TimedRobot {
@@ -27,6 +28,7 @@ class Robot : public frc::TimedRobot {
   Drive MyDrive; 
   Appendage MyAppendage;
   Led MyLed;
+  Log MyLog;
 
   void RobotInit() override;
   void RobotPeriodic() override;

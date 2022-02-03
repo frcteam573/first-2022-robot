@@ -269,8 +269,8 @@ if (camera_exist == 1){
 
 // --------- dashboard code ---------------
 
-//MyLog.Dashboard();
-//MyLog.PDPTotal();
+MyLog.Dashboard();
+MyLog.PDPTotal();
 MyDrive.dashboard();
 //MyAppendage.dashboard();
 
