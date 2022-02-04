@@ -95,7 +95,6 @@ void Robot::AutonomousPeriodic()
   //Reset shooter variables
   bool align = false;
   bool atspeed = false;
-  bool rotate = false;
 
   // -------- Read in Shooter camera Stuff -----------------------------------------------
 
@@ -153,11 +152,11 @@ void Robot::AutonomousPeriodic()
     {
       double distance = MyAppendage.Get_Distance(shooter_camera_y);
       tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
-      bool rotate = MyAppendage.Articulate(distance);
+      MyAppendage.Articulate(distance);
       bool atspeed = MyAppendage.Shooter_Encoder();
       MyAppendage.Feeder_Off();
 
-      if (align && rotate && atspeed)
+      if (align && atspeed)
       {
         MyAppendage.Feeder_In();
       }
@@ -206,7 +205,6 @@ void Robot::TeleopPeriodic()
   //Reset shooter variables
   bool align = false;
   bool atspeed = false;
-  bool rotate = false;
 
   //********** Read in Joystick Values ******************************************
   //------------- Driver Controller ---------------------------------------------
@@ -378,9 +376,9 @@ void Robot::TeleopPeriodic()
     //Get shooter aligned and up to speed
     atspeed = MyAppendage.Shooter_Encoder();
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
-    rotate = MyAppendage.Articulate(distance);
+    MyAppendage.Articulate(distance);
 
-    if(align && rotate && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+    if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
       MyAppendage.Feeder_In();
     }
     else{
@@ -405,11 +403,11 @@ void Robot::TeleopPeriodic()
       MyLed.led_control("White");
     }
 
-    else if (align && rotate && !atspeed){
+    else if (align && !atspeed){
       MyLed.led_control("Yellow");
     }
 
-    else if (align && rotate && atspeed){
+    else if (align && atspeed){
       MyLed.led_control("Green");
     }
 
