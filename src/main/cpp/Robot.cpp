@@ -383,6 +383,13 @@ void Robot::TeleopPeriodic()
         atspeed = MyAppendage.Shooter_Encoder();
         MyAppendage.Articulate(12); //harcode for close shot
 
+          if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+                MyAppendage.Feeder_In();
+              }
+              else{
+                MyAppendage.Feeder_Off();
+              }
+
     }
 
     else {
