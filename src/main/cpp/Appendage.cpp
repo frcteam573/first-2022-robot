@@ -203,14 +203,25 @@ double Appendage::Get_Distance(double camera_y)
 /*
  * Moves Turret
  */
-std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction)
+std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool lowgoal)
 {
     double error,
         k = 0.3,
+        k_l = 0.2,
         output = 0,
         currEnc, maxEnc = 4000, minEnc = 1000;
 
     bool align = false;
+
+    if (lowgoal){
+        error = 0 - s_Susan_Encoder->GetPosition();
+        output = k_l * error;
+
+        if(abs(error)<2){
+            align = true;
+        }
+    } 
+        else{
 
     if (camera_exists <= 0)
     {
@@ -246,6 +257,8 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
 
     }
 
+ }
+
     if(output >= 0){
         direction = true;
     }
@@ -253,7 +266,8 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         direction = false;
     }
 
-    m_Susan->Set(output);    
+    m_Susan->Set(output);   
+
     return std::make_tuple(align,direction);
 }
 

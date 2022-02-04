@@ -151,7 +151,7 @@ void Robot::AutonomousPeriodic()
     else
     {
       double distance = MyAppendage.Get_Distance(shooter_camera_y);
-      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
+      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
       MyAppendage.Articulate(distance);
       bool atspeed = MyAppendage.Shooter_Encoder();
       MyAppendage.Feeder_Off();
@@ -224,7 +224,7 @@ void Robot::TeleopPeriodic()
   //-----------------------------------------------------------------------------
   //------------ Operator Controller --------------------------------------------
   // double c2_joy_left = controller2.GetRawAxis(1);
-  // bool c2_btn_a = controller2.GetRawButton(1);
+  bool c2_btn_a = controller2.GetRawButton(1);
   // bool c2_btn_b = controller2.GetRawButton(2);
   bool c2_btn_y = controller2.GetRawButton(4);
   // bool c2_btn_x = controller2.GetRawButton(3);
@@ -371,11 +371,29 @@ void Robot::TeleopPeriodic()
 
   //--------------------Shooter Code -----------------------------------
 
+  if (endgame_unlock){
+      MyAppendage.Rotate_Off();
+  }
+
+    else if (c2_btn_a){
+      //Low shoot
+
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true);
+
+        atspeed = MyAppendage.Shooter_Encoder();
+        MyAppendage.Articulate(12); //harcode for close shot
+
+    }
+
+    else {
+      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+    }
+
+
   if (c2_left_trigger >= 0.5)
   {
     //Get shooter aligned and up to speed
     atspeed = MyAppendage.Shooter_Encoder();
-    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
     MyAppendage.Articulate(distance);
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
@@ -388,7 +406,7 @@ void Robot::TeleopPeriodic()
   else
   {
     MyAppendage.Shooter_Off();
-    MyAppendage.Rotate_Off();
+   // MyAppendage.Rotate_Off();
     MyAppendage.Feeder_Off();
   }
 
