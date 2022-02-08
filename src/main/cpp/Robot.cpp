@@ -24,6 +24,7 @@ also: merge into main before each event, Before event create event branch and me
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <tuple>
 
 void Robot::RobotInit()
 {
@@ -91,8 +92,14 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic()
 {
 
+
   //Compressor Code
     compressor.EnableAnalog(units::pounds_per_square_inch_t(60), units::pounds_per_square_inch_t (120));
+
+  //Reset shooter variables
+  bool align = false;
+  bool atspeed = false;
+
 
   // -------- Read in Shooter camera Stuff -----------------------------------------------
 
@@ -130,12 +137,12 @@ void Robot::AutonomousPeriodic()
         table_i -> PutNumber("pipeline", 1);
       }
 
+
   //--------CAMERA VALUES-----------------//
   float intake_camera_x = table_i->GetNumber("tx", 0);
-
   float intake_camera_exist = table_i->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
-  float intake_camera_y = table_i->GetNumber("ty", 0);
+  //float intake_camera_y = table_i->GetNumber("ty", 0);
 
   // ----------------------------------------------------------
 
@@ -152,12 +159,12 @@ void Robot::AutonomousPeriodic()
     else
     {
       double distance = MyAppendage.Get_Distance(shooter_camera_y);
-      bool align = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, true);
-      bool rotate = MyAppendage.Articulate(distance);
+      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+      MyAppendage.Articulate(distance);
       bool atspeed = MyAppendage.Shooter_Encoder();
       MyAppendage.Feeder_Off();
 
-      if (align && rotate && atspeed)
+      if (align && atspeed)
       {
         MyAppendage.Feeder_In();
       }
@@ -169,7 +176,7 @@ void Robot::AutonomousPeriodic()
     // 4  Ball Autonomous
   }
 
-  else
+  else // Simple drive straight auto
   {
 
     if (counter < 100)
@@ -203,13 +210,14 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
 
+
   //Compressor Code
   compressor.EnableAnalog(units::pounds_per_square_inch_t(60), units::pounds_per_square_inch_t (120));
 
+  //Reset shooter variables
 
   bool align = false;
   bool atspeed = false;
-  bool rotate = false;
 
   //********** Read in Joystick Values ******************************************
   //------------- Driver Controller ---------------------------------------------
@@ -229,7 +237,7 @@ void Robot::TeleopPeriodic()
   //-----------------------------------------------------------------------------
   //------------ Operator Controller --------------------------------------------
   // double c2_joy_left = controller2.GetRawAxis(1);
-  // bool c2_btn_a = controller2.GetRawButton(1);
+  bool c2_btn_a = controller2.GetRawButton(1);
   // bool c2_btn_b = controller2.GetRawButton(2);
   bool c2_btn_y = controller2.GetRawButton(4);
   // bool c2_btn_x = controller2.GetRawButton(3);
@@ -258,7 +266,6 @@ void Robot::TeleopPeriodic()
 
   //--------CAMERA VALUES-----------------//
   float shooter_camera_x = table_s->GetNumber("tx", 0);
-
   float shooter_camera_exist = table_s->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
   float shooter_camera_y = table_s->GetNumber("ty", 0);
@@ -276,6 +283,7 @@ void Robot::TeleopPeriodic()
 
   // -----------PIPELINE STUFF-----------//
 
+
     if (alliance_color == "red"){
         table_i -> PutNumber("pipeline", 0);
     }
@@ -290,23 +298,24 @@ void Robot::TeleopPeriodic()
   // float image_size = table->GetNumber("ta", 0);
   float intake_camera_y = table_i -> GetNumber("ty", 0);
 
+
   // ----------------------------------------------------------
 
   /*--------------------- DRIVE CODE -------------------------- */
 
-  if (c1_btn_b)
+  if (c1_btn_b) // Drive Straight with Gyro
   {
     MyDrive.drive_straight(drive_straight_first, c1_joy_leftdrive);
 
     drive_straight_first = false;
   }
 
-  else if (c1_btn_a)
+  else if (c1_btn_a) // Auto pickup with camera
   {
     MyDrive.camera_intake(intake_camera_x, c1_joy_leftdrive);
   }
 
-  else
+  else // Joystick drive
   {
     drive_straight_first = true;
 
@@ -323,6 +332,7 @@ void Robot::TeleopPeriodic()
   if (endgame_unlock)
   {
 
+    // Extend / Retract Arms
     if (c1_righttrigger > 0.5)
     {
       MyDrive.climber_extend();
@@ -338,6 +348,7 @@ void Robot::TeleopPeriodic()
       MyDrive.climber_hold();
     }
 
+    // Tilt Climber Arms
     if (c1_leftbmp)
     {
       MyDrive.climber_tiltin();
@@ -351,6 +362,7 @@ void Robot::TeleopPeriodic()
   // -------------------------------------------------------------------
 
   //--------------------Intake Code -----------------------------------
+  // Extend / Retract Intake
   if (c2_leftbumper)
   {
     MyAppendage.Intake_Down();
@@ -360,44 +372,82 @@ void Robot::TeleopPeriodic()
     MyAppendage.Intake_Up();
   }
 
+  // Run Intake In / Out
   if (c2_rightbumper)
   {
     MyAppendage.Intake_In();
+  }
+  else if (c2_btn_y)
+  {
+    MyAppendage.Intake_Out();
   }
   else
   {
     MyAppendage.Intake_Off();
   }
 
-  if (c2_btn_y)
-  {
-    MyAppendage.Intake_Out();
-  }
-
   //--------------------Shooter Code -----------------------------------
 
-  if (c2_left_trigger >= 0.5){
-  //Low Goal Shoot
-    atspeed = MyAppendage.Shooter_Encoder();
-    rotate = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
-    align = MyAppendage.Articulate(distance);
+  if (endgame_unlock){
+      MyAppendage.Rotate_Off();
+      MyAppendage.Shooter_Off();
   }
-      else{
-        MyAppendage.Shooter_Off();
-        MyAppendage.Rotate_Off();
-        // turret_direction = MyAppendage.Rotate(camera_exist, camera_x, turret_direction);
-      }
 
-  if (c2_right_trigger <= 0.5){
-    //High Goal Shoot
-    atspeed = MyAppendage.Shooter_Encoder();
-    rotate = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
-    align = MyAppendage.Articulate(distance);
-  }
-       else {
-        MyAppendage.Shooter_Off();
-        MyAppendage.Rotate_Off(); 
-  }
+    else if (c2_btn_a){
+      //Low Fixed shoot
+
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true);
+
+        atspeed = MyAppendage.Shooter_Encoder();
+        MyAppendage.Articulate(12); //harcode for close shot
+
+          if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+                MyAppendage.Feeder_In();
+              }
+              else{
+                MyAppendage.Feeder_Off();
+              }
+
+    }
+
+    else if (c2_btn_a){
+      //High Fixed shoot
+
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true);
+
+        atspeed = MyAppendage.Shooter_Encoder();
+        MyAppendage.Articulate(144); //harcode for far shot
+
+          if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+                MyAppendage.Feeder_In();
+              }
+              else{
+                MyAppendage.Feeder_Off();
+              }
+
+    }
+
+    else {
+      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+        
+        if (c2_left_trigger >= 0.5)
+        {
+          //Get shooter aligned and up to speed
+          atspeed = MyAppendage.Shooter_Encoder();
+          MyAppendage.Articulate(distance);
+
+          if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+            MyAppendage.Feeder_In();
+          }
+          else{
+            MyAppendage.Feeder_Off();
+          }
+        }
+        else {
+          MyAppendage.Shooter_Off();
+ 
+      }
+   }
 
   // -------------------------------------------------------------------
 
@@ -410,11 +460,11 @@ void Robot::TeleopPeriodic()
       MyLed.led_control("White");
     }
 
-    else if (align && rotate && !atspeed){
+    else if (align && !atspeed){
       MyLed.led_control("Yellow");
     }
 
-    else if (align && rotate && atspeed){
+    else if (align && atspeed){
       MyLed.led_control("Green");
     }
 
@@ -426,11 +476,12 @@ void Robot::TeleopPeriodic()
 
   // --------- dashboard code ---------------
 
-  // MyLog.Dashboard();
-  // MyLog.PDPTotal();
-  MyDrive.dashboard();
 
-  MyAppendage.dashboard();
+MyLog.Dashboard();
+MyLog.PDPTotal();
+MyDrive.dashboard();
+MyAppendage.dashboard();
+
 
   // ------------------------------------------
 } // end of teleop periodic

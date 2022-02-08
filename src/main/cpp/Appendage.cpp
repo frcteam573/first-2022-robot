@@ -15,6 +15,8 @@ Appendage::Appendage()
 
     int p_IntakeId_a = 14;
     int p_IntakeId_b = 15;
+    int p_Hood_a = 4;
+    int p_Hood_b = 5;
 
     m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
@@ -25,7 +27,7 @@ Appendage::Appendage()
     m_Shooter2 -> SetInverted(true);
     m_Feeder = new rev::CANSparkMax{m_FeederId, rev::CANSparkMax::MotorType::kBrushless};
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
-    m_Hood = new rev::CANSparkMax{m_HoodId, rev::CANSparkMax::MotorType::kBrushless};
+    p_Hood = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_Hood_a, p_Hood_b};
 
     p_Intake = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_IntakeId_a, p_IntakeId_b};
 
@@ -33,8 +35,6 @@ Appendage::Appendage()
     
     s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter1->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
     s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
-    s_Hood_Encoder = new rev::SparkMaxRelativeEncoder{m_Hood->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
-
     
 }
 
@@ -138,18 +138,20 @@ bool Appendage::Shooter_Encoder(){
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
     
     // Read in value from dashboard
-    double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 1);
+    double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 0.00025);
     double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
-    double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
+    //double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
     double kP = shooter_p_in;
     double target = shooter_target_in;
 
-    double gear_ratio = 1/1.5; // Gear ratio between shooter motor encoder and shooter wheel
+    double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
 
     current = current * gear_ratio;
 
     double err = target - current;
+
+    double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
 
     double output = (err * kP) + shooter_f_in;  
 
@@ -170,6 +172,7 @@ bool Appendage::Shooter_Encoder(){
     frc::SmartDashboard::PutNumber("Shooter Error", err);
     frc::SmartDashboard::PutNumber("Shooter P Out", shooter_p_in);
     frc::SmartDashboard::PutNumber("Shooter Output", output);
+    frc::SmartDashboard::PutNumber("F Output", shooter_f_in);
     return atspeed;
 }
 
@@ -200,12 +203,25 @@ double Appendage::Get_Distance(double camera_y)
 /*
  * Moves Turret
  */
-bool Appendage::Rotate(double camera_exists, double camera_x, bool direction)
+std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool lowgoal)
 {
     double error,
         k = 0.3,
+        k_l = 0.2,
         output = 0,
         currEnc, maxEnc = 4000, minEnc = 1000;
+
+    bool align = false;
+
+    if (lowgoal){
+        error = 0 - s_Susan_Encoder->GetPosition();
+        output = k_l * error;
+
+        if(abs(error)<2){
+            align = true;
+        }
+    } 
+        else{
 
     if (camera_exists <= 0)
     {
@@ -235,7 +251,13 @@ bool Appendage::Rotate(double camera_exists, double camera_x, bool direction)
         error = 0 - camera_x;
         output = k * error;
 
+        if(abs(error)<2){
+            align = true;
+        }
+
     }
+
+ }
 
     if(output >= 0){
         direction = true;
@@ -244,8 +266,9 @@ bool Appendage::Rotate(double camera_exists, double camera_x, bool direction)
         direction = false;
     }
 
-    m_Susan->Set(output);    
-    return direction;
+    m_Susan->Set(output);   
+
+    return std::make_tuple(align,direction);
 }
 
 /*
@@ -256,24 +279,19 @@ void Appendage::Rotate_Off()
     m_Susan->Set(0);
 }
 
-double Appendage::Articulate(double distance){
-    double setpoint = distance,
-        curr,
-        error,
-        kP = 0.3,
-        output;
+void Appendage::Articulate(double distance){
 
-    curr = s_Hood_Encoder->GetPosition();
-    error = setpoint - curr;
-    output = error * kP;
-    m_Hood -> Set(output);
+    if (distance > 120){
+        p_Hood->Set(frc::DoubleSolenoid::Value::kForward);
+    }
 
-    return output;
+    else 
+        {p_Hood->Set(frc::DoubleSolenoid::Value::kReverse);}
+
 }
 
 /*Appendage Dashboard*/
     void Appendage::dashboard(){
         frc::SmartDashboard::PutNumber("Shooter Enc", s_Shooter_Encoder -> GetVelocity());
         frc::SmartDashboard::PutNumber("Susan Enc", s_Susan_Encoder -> GetPosition());
-        frc::SmartDashboard::PutNumber("Hood Enc", s_Hood_Encoder -> GetPosition()); 
     }
