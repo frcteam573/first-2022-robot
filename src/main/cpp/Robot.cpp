@@ -93,12 +93,13 @@ void Robot::AutonomousPeriodic()
 
   // -------- Read in Shooter camera Stuff -----------------------------------------------
 
-  std::shared_ptr<nt::NetworkTable> table_s = nt::NetworkTableInstance::GetDefault().GetTable("Limelight_Shooter");
-  table_s->PutNumber("ledMode", 1);
+  std::shared_ptr<nt::NetworkTable> table_s = nt::NetworkTableInstance::GetDefault().GetTable("limelight-shooter");
+  table_s->PutNumber("ledMode", 0);
   table_s->PutNumber("camMode", 0);
 
   // -----------PIPELINE STUFF-----------//
-  table_s->PutNumber("pipeline", 0);
+      
+      table_s -> PutNumber("pipeline", 0);
 
   //--------CAMERA VALUES-----------------//
   float shooter_camera_x = table_s->GetNumber("tx", 0);
@@ -113,12 +114,18 @@ void Robot::AutonomousPeriodic()
 
   // -------- Read in Intake camera Stuff -----------------------------------------------
 
-  std::shared_ptr<nt::NetworkTable> table_i = nt::NetworkTableInstance::GetDefault().GetTable("Limelight_Intake");
-  table_i->PutNumber("ledMode", 1);
+  std::shared_ptr<nt::NetworkTable> table_i = nt::NetworkTableInstance::GetDefault().GetTable("limelight-intake");
+  table_i->PutNumber("ledMode", 0);
   table_i->PutNumber("camMode", 0);
 
   // -----------PIPELINE STUFF-----------//
-  table_i->PutNumber("pipeline", 0);
+
+   if (alliance_color == "red"){
+        table_i -> PutNumber("pipeline", 0);
+    }
+      else {
+        table_i -> PutNumber("pipeline", 1);
+      }
 
   //--------CAMERA VALUES-----------------//
   float intake_camera_x = table_i->GetNumber("tx", 0);
@@ -228,14 +235,15 @@ void Robot::TeleopPeriodic()
   bool c2_rightbumper = controller2.GetRawButton(6);
   bool c2_leftbumper = controller2.GetRawButton(5);
 
-  // bool c2_right_trigger = controller2.GetRawAxis(3);
+  double c2_right_trigger = controller2.GetRawAxis(3);
   double c2_left_trigger = controller2.GetRawAxis(2);
   //----------------------------------------------------------------------------
 
   // -------- Read in Shooter camera Stuff -----------------------------------------------
 
-  std::shared_ptr<nt::NetworkTable> table_s = nt::NetworkTableInstance::GetDefault().GetTable("Limelight_Shooter");
-  table_s->PutNumber("ledMode", 1);
+  std::shared_ptr<nt::NetworkTable> table_s = nt::NetworkTableInstance::GetDefault().GetTable("limelight-shooter");
+  //IP Address: 10.5.73.11
+  table_s->PutNumber("ledMode", 0);
   table_s->PutNumber("camMode", 0);
 
   // -----------PIPELINE STUFF-----------//
@@ -254,19 +262,26 @@ void Robot::TeleopPeriodic()
 
   // -------- Read in Intake camera Stuff -----------------------------------------------
 
-  std::shared_ptr<nt::NetworkTable> table_i = nt::NetworkTableInstance::GetDefault().GetTable("Limelight_Intake");
-  table_i->PutNumber("ledMode", 1);
-  table_i->PutNumber("camMode", 0);
+  std::shared_ptr<nt::NetworkTable> table_i = nt::NetworkTableInstance::GetDefault().GetTable("limelight-intake");
+  //IP Address: 10.5.73.12
+  table_i -> PutNumber("ledMode", 0);
+  table_i -> PutNumber("camMode", 0);
 
   // -----------PIPELINE STUFF-----------//
-  table_i->PutNumber("pipeline", 0);
+
+    if (alliance_color == "red"){
+        table_i -> PutNumber("pipeline", 0);
+    }
+      else {
+        table_i -> PutNumber("pipeline", 1);
+      }
 
   //--------CAMERA VALUES-----------------//
-  float intake_camera_x = table_i->GetNumber("tx", 0);
+  float intake_camera_x = table_i -> GetNumber("tx", 0);
 
-  float intake_camera_exist = table_i->GetNumber("tv", 0);
+  float intake_camera_exist = table_i -> GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
-  float intake_camera_y = table_i->GetNumber("ty", 0);
+  float intake_camera_y = table_i -> GetNumber("ty", 0);
 
   // ----------------------------------------------------------
 
@@ -354,17 +369,27 @@ void Robot::TeleopPeriodic()
 
   //--------------------Shooter Code -----------------------------------
 
-  if (c2_left_trigger >= 0.5)
-  {
+  if (c2_left_trigger >= 0.5){
+  //Low Goal Shoot
     atspeed = MyAppendage.Shooter_Encoder();
     rotate = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
     align = MyAppendage.Articulate(distance);
   }
-  else
-  {
-    MyAppendage.Shooter_Off();
-    MyAppendage.Rotate_Off();
-    // turret_direction = MyAppendage.Rotate(camera_exist, camera_x, turret_direction);
+      else{
+        MyAppendage.Shooter_Off();
+        MyAppendage.Rotate_Off();
+        // turret_direction = MyAppendage.Rotate(camera_exist, camera_x, turret_direction);
+      }
+
+  if (c2_right_trigger <= 0.5){
+    //High Goal Shoot
+    atspeed = MyAppendage.Shooter_Encoder();
+    rotate = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
+    align = MyAppendage.Articulate(distance);
+  }
+       else {
+        MyAppendage.Shooter_Off();
+        MyAppendage.Rotate_Off(); 
   }
 
   // -------------------------------------------------------------------

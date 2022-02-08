@@ -195,7 +195,6 @@ double Drive::deadband(double input, double deadband_size){
         //double error_right_speed = setpoint_right_speed - encoder_speed_right;
         double error_heading = heading - gyro_val;
         
-        
         double max_speed = frc::SmartDashboard::GetNumber("p input 2", 8250);//9000,8000//frc::SmartDashboard::GetNumber("p input 2", 9750);//8250
         double kp_speed = -1/(max_speed);
         double kp_pos = 0; //-0.002;//frc::SmartDashboard::GetNumber("p input", -0.025);//-0.074;
