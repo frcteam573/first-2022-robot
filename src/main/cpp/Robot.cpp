@@ -238,7 +238,7 @@ void Robot::TeleopPeriodic()
   //------------ Operator Controller --------------------------------------------
   // double c2_joy_left = controller2.GetRawAxis(1);
   bool c2_btn_a = controller2.GetRawButton(1);
-  // bool c2_btn_b = controller2.GetRawButton(2);
+  bool c2_btn_b = controller2.GetRawButton(2);
   bool c2_btn_y = controller2.GetRawButton(4);
   // bool c2_btn_x = controller2.GetRawButton(3);
   // bool c2_btn_lb = controller2.GetRawButton(5);
@@ -410,7 +410,7 @@ void Robot::TeleopPeriodic()
 
     }
 
-    else if (c2_btn_a){
+    else if (c2_btn_b){
       //High Fixed shoot
 
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true);
