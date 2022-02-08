@@ -15,6 +15,7 @@ class Appendage
 private:
     // Define motor, sensors, and pnematic pointers here
     frc::DoubleSolenoid *p_Intake;
+    frc::DoubleSolenoid *p_Hood;
 
     rev::CANSparkMax *m_Intake1;
     rev::CANSparkMax *m_Intake2;
@@ -22,7 +23,7 @@ private:
     rev::CANSparkMax *m_Shooter2;
     rev::CANSparkMax *m_Feeder;
     rev::CANSparkMax *m_Susan;
-    rev::CANSparkMax *m_Hood;
+
 
     rev::SparkMaxRelativeEncoder *s_Shooter_Encoder;
     rev::SparkMaxRelativeEncoder *s_Susan_Encoder;
@@ -47,9 +48,9 @@ public:
     void Shooter_Off();
 
     double Get_Distance(double camera_y);
-    std::tuple<bool, bool> Rotate(double camera_exists, double camera_x, bool direction);
+    std::tuple<bool, bool> Rotate(double camera_exists, double camera_x, bool direction, bool lowgoal);
     void Rotate_Off();
-    double Articulate(double distance);
+    void Articulate(double distance);
 
 
     void DashboardCreate();

@@ -95,7 +95,6 @@ void Robot::AutonomousPeriodic()
   //Reset shooter variables
   bool align = false;
   bool atspeed = false;
-  bool rotate = false;
 
   // -------- Read in Shooter camera Stuff -----------------------------------------------
 
@@ -152,12 +151,12 @@ void Robot::AutonomousPeriodic()
     else
     {
       double distance = MyAppendage.Get_Distance(shooter_camera_y);
-      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
-      bool rotate = MyAppendage.Articulate(distance);
+      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+      MyAppendage.Articulate(distance);
       bool atspeed = MyAppendage.Shooter_Encoder();
       MyAppendage.Feeder_Off();
 
-      if (align && rotate && atspeed)
+      if (align && atspeed)
       {
         MyAppendage.Feeder_In();
       }
@@ -206,7 +205,6 @@ void Robot::TeleopPeriodic()
   //Reset shooter variables
   bool align = false;
   bool atspeed = false;
-  bool rotate = false;
 
   //********** Read in Joystick Values ******************************************
   //------------- Driver Controller ---------------------------------------------
@@ -226,7 +224,7 @@ void Robot::TeleopPeriodic()
   //-----------------------------------------------------------------------------
   //------------ Operator Controller --------------------------------------------
   // double c2_joy_left = controller2.GetRawAxis(1);
-  // bool c2_btn_a = controller2.GetRawButton(1);
+  bool c2_btn_a = controller2.GetRawButton(1);
   // bool c2_btn_b = controller2.GetRawButton(2);
   bool c2_btn_y = controller2.GetRawButton(4);
   // bool c2_btn_x = controller2.GetRawButton(3);
@@ -373,14 +371,39 @@ void Robot::TeleopPeriodic()
 
   //--------------------Shooter Code -----------------------------------
 
+  if (endgame_unlock){
+      MyAppendage.Rotate_Off();
+  }
+
+    else if (c2_btn_a){
+      //Low shoot
+
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true);
+
+        atspeed = MyAppendage.Shooter_Encoder();
+        MyAppendage.Articulate(12); //harcode for close shot
+
+          if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+                MyAppendage.Feeder_In();
+              }
+              else{
+                MyAppendage.Feeder_Off();
+              }
+
+    }
+
+    else {
+      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+    }
+
+
   if (c2_left_trigger >= 0.5)
   {
     //Get shooter aligned and up to speed
     atspeed = MyAppendage.Shooter_Encoder();
-    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction);
-    rotate = MyAppendage.Articulate(distance);
+    MyAppendage.Articulate(distance);
 
-    if(align && rotate && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+    if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
       MyAppendage.Feeder_In();
     }
     else{
@@ -390,7 +413,7 @@ void Robot::TeleopPeriodic()
   else
   {
     MyAppendage.Shooter_Off();
-    MyAppendage.Rotate_Off();
+   // MyAppendage.Rotate_Off();
     MyAppendage.Feeder_Off();
   }
 
@@ -405,11 +428,11 @@ void Robot::TeleopPeriodic()
       MyLed.led_control("White");
     }
 
-    else if (align && rotate && !atspeed){
+    else if (align && !atspeed){
       MyLed.led_control("Yellow");
     }
 
-    else if (align && rotate && atspeed){
+    else if (align && atspeed){
       MyLed.led_control("Green");
     }
 
