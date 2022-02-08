@@ -17,6 +17,7 @@
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
 #include "frc/DriverStation.h"
+#include "frc/Compressor.h"
 
 
 class Robot : public frc::TimedRobot {
@@ -49,7 +50,7 @@ class Robot : public frc::TimedRobot {
 
   std::string m_autoSelected;
 
-
+  frc::Compressor compressor{1, frc::PneumaticsModuleType::REVPH};
 
   frc::Joystick controller1{0}; // Driver controller
   frc::Joystick controller2{1}; // Operator controller

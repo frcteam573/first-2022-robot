@@ -91,6 +91,9 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic()
 {
 
+  //Compressor Code
+    compressor.EnableAnalog(units::pounds_per_square_inch_t(60), units::pounds_per_square_inch_t (120));
+
   // -------- Read in Shooter camera Stuff -----------------------------------------------
 
   std::shared_ptr<nt::NetworkTable> table_s = nt::NetworkTableInstance::GetDefault().GetTable("limelight-shooter");
@@ -199,6 +202,10 @@ void Robot::TeleopInit()
 }
 void Robot::TeleopPeriodic()
 {
+
+  //Compressor Code
+  compressor.EnableAnalog(units::pounds_per_square_inch_t(60), units::pounds_per_square_inch_t (120));
+
 
   bool align = false;
   bool atspeed = false;
