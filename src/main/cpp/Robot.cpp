@@ -331,7 +331,9 @@ void Robot::TeleopPeriodic()
 
   if (endgame_unlock)
   {
-
+    bool output;
+    bool output_1;
+    
     // Extend / Retract Arms
     if (c1_righttrigger > 0.5)
     {
@@ -343,28 +345,9 @@ void Robot::TeleopPeriodic()
       MyDrive.climber_retract();
     }
 
-    else
-    {
-      MyDrive.climber_hold();
-    }
+        else if (c1_btn_x){
 
-    // Tilt Climber Arms
-    if (c1_leftbmp)
-    {
-      MyDrive.climber_tiltin();
-    }
-
-    else if (c1_rightbmp)
-    {
-      MyDrive.climber_tiltout();
-    }
-
-      //AUTON CLIMBING//
-
-      bool output;
-      bool output_1;
-
-        if (c1_btn_x){
+          //Auto climb
 
             switch (climber_state){
               case 0:
@@ -406,6 +389,23 @@ void Robot::TeleopPeriodic()
                     break;
             }
       }
+
+    else
+    {
+      MyDrive.climber_hold();
+    }
+
+    // Tilt Climber Arms
+    if (c1_leftbmp)
+    {
+      MyDrive.climber_tiltin();
+    }
+
+    else if (c1_rightbmp)
+    {
+      MyDrive.climber_tiltout();
+    }
+
   }
   // -------------------------------------------------------------------
 

@@ -161,19 +161,24 @@ double Drive::deadband(double input, double deadband_size){
 
                         double K = 0.1;
 
-                        m_leftclimb -> Set(K * left_error);
-                        m_rightclimb -> Set(K * right_error);
-
                         bool output = false;
                         bool output_1 = false;
 
                             if(abs (left_error) < 10 && abs (right_error) <10){
                                 output = true;
+
+                                p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
+
                             }
+
+                            else p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
                             if (s_leftclimber_enc -> GetPosition() > 3000 && s_rightclimber_enc -> GetPosition() > 3000){
                                 output_1 = true;
                             }
+                            
+                                m_leftclimb -> Set(K * left_error);
+                                m_rightclimb -> Set(K * right_error);   
 
                                 return std::make_tuple(output,output_1);
         }
