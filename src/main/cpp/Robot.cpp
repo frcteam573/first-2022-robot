@@ -89,9 +89,7 @@ void Robot::AutonomousInit()
   }
 }
 
-void Robot::AutonomousPeriodic()
-{
-
+void Robot::AutonomousPeriodic(){
 
   //Compressor Code
     compressor.EnableAnalog(units::pounds_per_square_inch_t(60), units::pounds_per_square_inch_t (120));
@@ -197,6 +195,8 @@ void Robot::TeleopInit()
 {
 
   // Setting teleop variables
+  climber_state = 0;
+  climber_count = 0;
   drive_straight_first = true;
   endgame_unlock = false;
 
@@ -231,7 +231,7 @@ void Robot::TeleopPeriodic()
   bool c1_leftbmp = controller1.GetRawButton(5);
   bool c1_rightbmp = controller1.GetRawButton(6);
   bool c1_btn_b = controller1.GetRawButton(2);
-  // bool c1_btn_x = controller1.GetRawButton(3);
+  bool c1_btn_x = controller1.GetRawButton(3);
   bool c1_btn_a = controller1.GetRawButton(1);
 
   //-----------------------------------------------------------------------------
@@ -358,6 +358,54 @@ void Robot::TeleopPeriodic()
     {
       MyDrive.climber_tiltout();
     }
+
+      //AUTON CLIMBING//
+
+      bool output;
+      bool output_1;
+
+        if (c1_btn_x){
+
+            switch (climber_state){
+              case 0:
+                tie(output,output_1) = MyDrive.climber_setpoint("retract");
+                  
+                  climber_count = 0;
+
+                  if (output){
+                    climber_state ++;
+                  }
+                  break;
+
+                  case 1:
+                tie(output,output_1) = MyDrive.climber_setpoint("extend");
+                  
+                  if (output_1){
+                    climber_state ++;
+                  }
+                  break;
+
+                  case 2:
+                tie(output,output_1) = MyDrive.climber_setpoint("extend");
+                  
+                  MyDrive.climber_tiltout();
+
+                  if (output){
+                    climber_state ++;
+                  }
+                  break;
+
+                  case 3:
+                tie(output,output_1) = MyDrive.climber_setpoint("extend");
+                  MyDrive.climber_tiltin();
+
+                  if (output && climber_count > 5){
+                    climber_state = 0;
+                  }
+                    climber_count ++;
+                    break;
+            }
+      }
   }
   // -------------------------------------------------------------------
 

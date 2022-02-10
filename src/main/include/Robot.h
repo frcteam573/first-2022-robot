@@ -63,5 +63,7 @@ class Robot : public frc::TimedRobot {
   bool endgame_unlock;  // Lock to prevent accidental climber deployment
   bool turret_direction; // Hold current turret direction to prevent jumping when scanning
   int counter; 
+  int climber_state;
+  int climber_count;
  
 };

@@ -142,6 +142,43 @@ double Drive::deadband(double input, double deadband_size){
             p_climbertilt -> Set(frc::DoubleSolenoid::Value::kReverse);
         }
 
+
+    /* ClIMBING AUTON*/
+        tuple <bool, bool> Drive::climber_setpoint(string input){
+           
+           double setpoint;
+
+                if(input == "extend"){
+                    setpoint = 10000;
+                    }
+
+                    else{
+                        setpoint = 2000;
+                    }
+
+                        double left_error = setpoint - s_leftclimber_enc -> GetPosition();
+                        double right_error = setpoint - s_rightclimber_enc -> GetPosition();
+
+                        double K = 0.1;
+
+                        m_leftclimb -> Set(K * left_error);
+                        m_rightclimb -> Set(K * right_error);
+
+                        bool output = false;
+                        bool output_1 = false;
+
+                            if(abs (left_error) < 10 && abs (right_error) <10){
+                                output = true;
+                            }
+
+                            if (s_leftclimber_enc -> GetPosition() > 3000 && s_rightclimber_enc -> GetPosition() > 3000){
+                                output_1 = true;
+                            }
+
+                                return std::make_tuple(output,output_1);
+        }
+
+
 /* CAMERA INTAKE */
 
     void Drive::camera_intake(double camera_x, double joystick_y){
