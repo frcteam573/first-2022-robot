@@ -176,7 +176,7 @@ double Drive::deadband(double input, double deadband_size){
                             if (s_leftclimber_enc -> GetPosition() > 3000 && s_rightclimber_enc -> GetPosition() > 3000){
                                 output_1 = true;
                             }
-                            
+
                                 m_leftclimb -> Set(K * left_error);
                                 m_rightclimb -> Set(K * right_error);   
 
