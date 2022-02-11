@@ -45,7 +45,7 @@ class Drive {
         void gyro_reset();
         double deadband(double input, double deadband_size);
         void drive_PID(vector<double>value_in, int count);
-        
+        tuple <bool, bool> climber_setpoint(string input);      
 };
 
 #endif
