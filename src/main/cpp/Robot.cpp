@@ -345,51 +345,50 @@ void Robot::TeleopPeriodic()
       MyDrive.climber_retract();
     }
 
-        else if (c1_btn_x){
+    else if (c1_btn_x)
+    {
+      //Auto climb
 
-          //Auto climb
+        switch (climber_state){
+          case 0:
+            tie(output,output_1) = MyDrive.climber_setpoint("retract");
+              
+              climber_count = 0;
 
-            switch (climber_state){
-              case 0:
-                tie(output,output_1) = MyDrive.climber_setpoint("retract");
-                  
-                  climber_count = 0;
+              if (output){
+                climber_state ++;
+              }
+              break;
 
-                  if (output){
-                    climber_state ++;
-                  }
-                  break;
+              case 1:
+            tie(output,output_1) = MyDrive.climber_setpoint("extend");
+              
+              if (output_1){
+                climber_state ++;
+              }
+              break;
 
-                  case 1:
-                tie(output,output_1) = MyDrive.climber_setpoint("extend");
-                  
-                  if (output_1){
-                    climber_state ++;
-                  }
-                  break;
+              case 2:
+            tie(output,output_1) = MyDrive.climber_setpoint("extend");
+              
+              MyDrive.climber_tiltout();
 
-                  case 2:
-                tie(output,output_1) = MyDrive.climber_setpoint("extend");
-                  
-                  MyDrive.climber_tiltout();
+              if (output){
+                climber_state ++;
+              }
+              break;
 
-                  if (output){
-                    climber_state ++;
-                  }
-                  break;
+              case 3:
+            tie(output,output_1) = MyDrive.climber_setpoint("extend");
+              MyDrive.climber_tiltin();
 
-                  case 3:
-                tie(output,output_1) = MyDrive.climber_setpoint("extend");
-                  MyDrive.climber_tiltin();
-
-                  if (output && climber_count > 5){
-                    climber_state = 0;
-                  }
-                    climber_count ++;
-                    break;
-            }
-      }
-
+              if (output && climber_count > 5){
+                climber_state = 0;
+              }
+                climber_count ++;
+                break;
+        }
+    }
     else
     {
       MyDrive.climber_hold();
