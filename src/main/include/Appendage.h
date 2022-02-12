@@ -7,6 +7,7 @@
 #include <frc/DoubleSolenoid.h>
 #include "frc/smartdashboard/SmartDashboard.h"
 #include <tuple>
+#include <frc/DigitalInput.h>
 
 using namespace std;
 
@@ -28,13 +29,19 @@ private:
     rev::SparkMaxRelativeEncoder *s_Shooter_Encoder;
     rev::SparkMaxRelativeEncoder *s_Susan_Encoder;
     rev::SparkMaxRelativeEncoder *s_Hood_Encoder;
+
+    frc::DigitalInput *s_LightGate;
    
 
 public:
     Appendage();
-    void Intake_In();
+    bool Intake_In();
     void Intake_Out();
     void Intake_Off();
+
+    void Intake2_In();
+    void Intake2_Out();
+    void Intake2_Off();    
 
     void Feeder_In();
     void Feeder_Out();

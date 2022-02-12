@@ -161,10 +161,12 @@ void Robot::AutonomousPeriodic(){
       MyAppendage.Articulate(distance);
       bool atspeed = MyAppendage.Shooter_Encoder();
       MyAppendage.Feeder_Off();
+        MyAppendage.Intake2_Off();
 
       if (align && atspeed)
       {
         MyAppendage.Feeder_In();
+          MyAppendage.Intake2_In();
       }
     }
   }
@@ -233,6 +235,7 @@ void Robot::TeleopPeriodic()
   bool c1_btn_b = controller1.GetRawButton(2);
   bool c1_btn_x = controller1.GetRawButton(3);
   bool c1_btn_a = controller1.GetRawButton(1);
+  bool c1_btn_y = controller1.GetRawButton (4);
 
   //-----------------------------------------------------------------------------
   //------------ Operator Controller --------------------------------------------
@@ -329,6 +332,10 @@ void Robot::TeleopPeriodic()
     endgame_unlock = true;
   }
 
+    else if (c1_btn_y){
+      endgame_unlock = false;
+    }
+
   if (endgame_unlock)
   {
     bool output;
@@ -423,7 +430,15 @@ void Robot::TeleopPeriodic()
   // Run Intake In / Out
   if (c2_rightbumper)
   {
-    MyAppendage.Intake_In();
+    bool LightGate_val = MyAppendage.Intake_In();
+
+      if (LightGate_val){
+        MyAppendage.Intake2_In();
+      }
+
+        else{
+          MyAppendage.Intake2_Off();
+        }
   }
   else if (c2_btn_y)
   {
@@ -451,9 +466,11 @@ void Robot::TeleopPeriodic()
 
           if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
                 MyAppendage.Feeder_In();
+                  MyAppendage.Intake2_In();
               }
               else{
                 MyAppendage.Feeder_Off();
+                  MyAppendage.Intake2_Off();
               }
 
     }
@@ -486,9 +503,11 @@ void Robot::TeleopPeriodic()
 
           if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
             MyAppendage.Feeder_In();
+              MyAppendage.Intake2_In();
           }
           else{
             MyAppendage.Feeder_Off();
+              MyAppendage.Intake2_Off();
           }
         }
         else {
@@ -524,6 +543,7 @@ void Robot::TeleopPeriodic()
 
   // --------- dashboard code ---------------
 
+frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 
 MyLog.Dashboard();
 MyLog.PDPTotal();

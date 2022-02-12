@@ -17,6 +17,7 @@ Appendage::Appendage()
     int p_IntakeId_b = 15;
     int p_Hood_a = 4;
     int p_Hood_b = 5;
+    int s_LightGateId = 0;
 
     m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
@@ -35,7 +36,7 @@ Appendage::Appendage()
     
     s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter1->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
     s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
-    
+    s_LightGate = new frc::DigitalInput(s_LightGateId);
 }
 
 /*
@@ -66,9 +67,11 @@ void Appendage::DashboardCreate(){
 /*
  * Allows robot to Intake Balls
  */
-void Appendage::Intake_In()
+bool Appendage::Intake_In()
 {
     m_Intake1->Set(1);
+
+    return s_LightGate -> Get();
 }
 
 /*
@@ -86,13 +89,36 @@ void Appendage::Intake_Off()
 {
     m_Intake1->Set(0);
 }
+
+/*
+ * Allows robot to Intake Balls
+ */
+void Appendage::Intake2_In()
+{
+    m_Intake2->Set(1);
+}
+
+/*
+ * Allows robot to Intake Balls (Reverse)
+ */
+void Appendage::Intake2_Out()
+{
+    m_Intake2->SetInverted(-1);
+}
+
+/*
+ * Turns off the intake
+ */
+void Appendage::Intake2_Off()
+{
+    m_Intake2->Set(0);
+}
 /*
  * Allows robot to Intake Balls
  */
 void Appendage::Feeder_In()
 {
     m_Feeder->Set(1);
-    m_Intake2 ->Set(1);
 }
 
 /*
@@ -101,7 +127,6 @@ void Appendage::Feeder_In()
 void Appendage::Feeder_Out()
 {
     m_Feeder->SetInverted(-1);
-    m_Intake2 ->Set(-1);
 }
 
 /*
@@ -110,7 +135,6 @@ void Appendage::Feeder_Out()
 void Appendage::Feeder_Off()
 {
     m_Feeder->Set(0);
-    m_Intake2 ->Set(0);
 }
 
 /*
