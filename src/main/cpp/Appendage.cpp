@@ -211,7 +211,7 @@ bool Appendage::Shooter_Encoder_distance(double distance){
     //double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
     double kP = shooter_p_in;
-    double target = distance;
+    double target = distance; // Will need to add some math to convert distance to target speed
 
     double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
 
