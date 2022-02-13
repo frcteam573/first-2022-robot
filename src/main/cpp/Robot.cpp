@@ -152,7 +152,15 @@ void Robot::AutonomousPeriodic(){
     {
       MyDrive.camera_intake(intake_camera_x, 0.8);
       MyAppendage.Intake_Down();
-      MyAppendage.Intake_In();
+      bool LightGate_val = MyAppendage.Intake_In();
+
+      if (LightGate_val){
+        MyAppendage.Intake2_In();
+      }
+
+        else{
+          MyAppendage.Intake2_Off();
+        }
     }
     else
     {
@@ -161,18 +169,118 @@ void Robot::AutonomousPeriodic(){
       MyAppendage.Articulate(distance);
       bool atspeed = MyAppendage.Shooter_Encoder();
       MyAppendage.Feeder_Off();
+      MyAppendage.Intake2_Off();
 
       if (align && atspeed)
       {
         MyAppendage.Feeder_In();
+          MyAppendage.Intake2_In();
       }
     }
   }
 
   else if (m_autoSelected == kAutoNameCustom1)
-  {
+{
     // 4  Ball Autonomous
+
+    int FirstSectionOffset = 50;
+    int SecondSelectionOffset = 0;
+
+    if (counter < FirstSectionOffset){
+      // 50 = 1 seconds
+
+      if (intake_camera_exist)
+      {
+        MyDrive.camera_intake(intake_camera_x, 0.8);
+        MyAppendage.Intake_Down();
+        bool LightGate_val = MyAppendage.Intake_In();
+
+        if (LightGate_val){
+          MyAppendage.Intake2_In();
+        }
+
+          else{
+            MyAppendage.Intake2_Off();
+          }
+      }
+      else
+      {
+        double distance = MyAppendage.Get_Distance(shooter_camera_y);
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+        MyAppendage.Articulate(distance);
+        bool atspeed = MyAppendage.Shooter_Encoder();
+        MyAppendage.Feeder_Off();
+        MyAppendage.Intake2_Off();
+
+        if (align && atspeed)
+        {
+          MyAppendage.Feeder_In();
+            MyAppendage.Intake2_In();
+        }
+      }
+
+    }
+
+  else {
+    vector <double> Length = MyPath.ReturnTableVal(counter - FirstSectionOffset, 1, true);
+    int length = round (Length [0]);
+
+  if (counter - FirstSectionOffset < length){
+    vector <double> Table_Values = MyPath.ReturnTableVal(counter - FirstSectionOffset, 1, false);
+
+    MyDrive.drive_PID(Table_Values, counter - FirstSectionOffset);
+
   }
+
+  else {
+     if (intake_camera_exist)
+    {
+      SecondSelectionOffset = counter;
+      MyDrive.camera_intake(intake_camera_x, 0.8);
+      MyAppendage.Intake_Down();
+      bool LightGate_val = MyAppendage.Intake_In();
+
+      if (LightGate_val){
+        MyAppendage.Intake2_In();
+      }
+
+        else{
+          MyAppendage.Intake2_Off();
+        }
+    }
+
+    else {
+          vector <double> Length2 = MyPath.ReturnTableVal(counter - SecondSelectionOffset, 2, true);
+          int length2 = round (Length2 [0]);
+
+      if (counter - SecondSelectionOffset < length2){
+        vector <double> Table_Values = MyPath.ReturnTableVal(counter - SecondSelectionOffset, 2, false);
+
+        MyDrive.drive_PID(Table_Values, counter - SecondSelectionOffset);
+        }
+
+    else
+        {
+          double distance = MyAppendage.Get_Distance(shooter_camera_y);
+          tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+          MyAppendage.Articulate(distance);
+          bool atspeed = MyAppendage.Shooter_Encoder();
+          MyAppendage.Feeder_Off();
+          MyAppendage.Intake2_Off();
+
+          if (align && atspeed)
+          {
+            MyAppendage.Feeder_In();
+              MyAppendage.Intake2_In();
+          }
+        }
+
+      }
+
+    }
+}
+}
+
 
   else // Simple drive straight auto
   {
@@ -233,6 +341,7 @@ void Robot::TeleopPeriodic()
   bool c1_btn_b = controller1.GetRawButton(2);
   bool c1_btn_x = controller1.GetRawButton(3);
   bool c1_btn_a = controller1.GetRawButton(1);
+  bool c1_btn_y = controller1.GetRawButton (4);
 
   //-----------------------------------------------------------------------------
   //------------ Operator Controller --------------------------------------------
@@ -329,6 +438,10 @@ void Robot::TeleopPeriodic()
     endgame_unlock = true;
   }
 
+    else if (c1_btn_y){
+      endgame_unlock = false;
+    }
+
   if (endgame_unlock)
   {
     bool output;
@@ -422,7 +535,15 @@ void Robot::TeleopPeriodic()
   // Run Intake In / Out
   if (c2_rightbumper)
   {
-    MyAppendage.Intake_In();
+    bool LightGate_val = MyAppendage.Intake_In();
+
+      if (LightGate_val){
+        MyAppendage.Intake2_In();
+      }
+
+        else{
+          MyAppendage.Intake2_Off();
+        }
   }
   else if (c2_btn_y)
   {
@@ -450,9 +571,11 @@ void Robot::TeleopPeriodic()
 
           if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
                 MyAppendage.Feeder_In();
+                  MyAppendage.Intake2_In();
               }
               else{
                 MyAppendage.Feeder_Off();
+                  MyAppendage.Intake2_Off();
               }
 
     }
@@ -485,9 +608,11 @@ void Robot::TeleopPeriodic()
 
           if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
             MyAppendage.Feeder_In();
+              MyAppendage.Intake2_In();
           }
           else{
             MyAppendage.Feeder_Off();
+              MyAppendage.Intake2_Off();
           }
         }
         else {
@@ -523,6 +648,7 @@ void Robot::TeleopPeriodic()
 
   // --------- dashboard code ---------------
 
+frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 
 MyLog.Dashboard();
 MyLog.PDPTotal();

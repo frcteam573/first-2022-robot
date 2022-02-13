@@ -8,7 +8,7 @@ Paths::Paths() {
 
 }
 
-vector <double> Paths::ReturnTableVal(int count, int select, bool getlength){
+vector <double> Paths::ReturnTableVal(int count, int mode, bool getlength){
 
     //getlength if true returns length of path not values of path
 
@@ -30,24 +30,23 @@ vector <double> Paths::ReturnTableVal(int count, int select, bool getlength){
     double pick_two_balls_p2_length = 109;
 
     // picking data from multiple paths 
-    auto mode = frc::SmartDashboard::GetString("Autonomous","0");
     auto a_left = straight_left;
     auto a_right = straight_right;
     auto a_length = straight_length;
 
-    if (mode == "0")
+    if (mode == 0)
     {
         auto a_left = straight_left;
         auto a_right = straight_right;
         auto a_length = straight_length;
     }
-    else if (mode == "1")
+    else if (mode == 1)
     {
         a_left = pick_two_balls_p1_left;
         a_right = pick_two_balls_p1_right;
         a_length = pick_two_balls_p1_length;
     }
-    else if (mode == "2")
+    else if (mode == 2)
     {
         a_left = pick_two_balls_p2_left;
         a_right = pick_two_balls_p2_right;

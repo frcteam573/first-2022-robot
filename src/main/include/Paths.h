@@ -14,7 +14,7 @@ class Paths {
 
  public:
   Paths();
-  vector <double> ReturnTableVal(int count, int select, bool getlength);
+  vector <double> ReturnTableVal(int count, int mode, bool getlength);
  
 
 };
