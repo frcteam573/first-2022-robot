@@ -98,7 +98,7 @@ double Drive::deadband(double input, double deadband_size){
 
         void Drive::climber_extend(){
 
-            if (s_leftclimber_enc->GetPosition() > -370) {
+            if (s_leftclimber_enc->GetPosition() > -570) {
                 //unlock climbers and extend
                 p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
                 
