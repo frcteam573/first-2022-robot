@@ -145,26 +145,35 @@ double Drive::deadband(double input, double deadband_size){
 
     /* ClIMBING AUTON*/
         tuple <bool, bool> Drive::climber_setpoint(string input){
-           
-           double setpoint;
+
+           double setpoint, setpoint_output;
+           double max, min;
 
                 if(input == "extend"){
-                    setpoint = 10000;
+                    setpoint = 1000;
+                    setpoint_output =1;
                     }
 
                     else{
                         setpoint = 2000;
+                        setpoint_output=-1;
                     }
-
-                        double left_error = setpoint - s_leftclimber_enc -> GetPosition();
-                        double right_error = setpoint - s_rightclimber_enc -> GetPosition();
-
-                        double K = 0.1;
 
                         bool output = false;
                         bool output_1 = false;
+                        double left_error = setpoint - s_leftclimber_enc -> GetPosition();
+                        double right_error = setpoint - s_rightclimber_enc -> GetPosition();
+                        if (left_error > 0)
+                        m_leftclimb->Set(0);
+                        else
+                        m_leftclimb->Set(setpoint_output);
 
-                            if(abs (left_error) < 10 && abs (right_error) <10){
+                        if (right_error > 0)
+                        m_rightclimb->Set(0);
+                        else
+                        m_rightclimb->Set(setpoint_output);
+
+                            if(abs (left_error) < max && abs (right_error)< max){
                                 output = true;
 
                                 p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
@@ -176,13 +185,8 @@ double Drive::deadband(double input, double deadband_size){
                             if (s_leftclimber_enc -> GetPosition() > 3000 && s_rightclimber_enc -> GetPosition() > 3000){
                                 output_1 = true;
                             }
-
-                                m_leftclimb -> Set(K * left_error);
-                                m_rightclimb -> Set(K * right_error);   
-
                                 return std::make_tuple(output,output_1);
         }
-
 
 /* CAMERA INTAKE */
 
