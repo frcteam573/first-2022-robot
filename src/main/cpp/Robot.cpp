@@ -421,7 +421,13 @@ void Robot::TeleopPeriodic()
 
   else if (c1_btn_a) // Auto pickup with camera
   {
+    if (intake_camera_exist == 1){
     MyDrive.camera_intake(intake_camera_x, c1_joy_leftdrive);
+    }  
+
+    else {
+      MyDrive.Joystick_Drive(c1_joy_leftdrive, c1_joy_leftdrive);
+    }
   }
 
   else // Joystick drive
@@ -670,6 +676,19 @@ if (c2_btn_x && shooter_test){
 
 frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
+
+//Drive Current Compares
+
+MyLog.CurrentCompare(0, 7);
+MyLog.CurrentCompare(1, 8);
+MyLog.CurrentCompare(18, 9);
+MyLog.CurrentCompare(19, 10);
+
+//Shooter Current Compares
+
+MyLog.CurrentCompare(8, 14);
+MyLog.CurrentCompare(9, 2);
+
 
 MyLog.Dashboard();
 MyLog.PDPTotal();
