@@ -32,6 +32,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1);
 
+  frc::SmartDashboard::PutNumber("Auto delay", input);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   alliance_color = "red";  // Default evaluated in auto and teleop inits
   turret_direction = true; // Initial turrent scan direction
@@ -141,9 +142,10 @@ void Robot::AutonomousPeriodic(){
   float intake_camera_exist = table_i->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
   //float intake_camera_y = table_i->GetNumber("ty", 0);
+  frc::SmartDashboard::GetNumber("Auto delay", 0);
 
   // ----------------------------------------------------------
-
+  if (counter >= input) {
   if (m_autoSelected == kAutoNameCustom)
   {
     // 2 Ball Autonomous
@@ -295,7 +297,7 @@ void Robot::AutonomousPeriodic(){
       MyDrive.Joystick_Drive(0, 0);
     }
   }
-
+  }
   counter++;
 }
 
