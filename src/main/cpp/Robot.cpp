@@ -349,12 +349,12 @@ void Robot::TeleopPeriodic()
   bool c2_btn_a = controller2.GetRawButton(1);
   bool c2_btn_b = controller2.GetRawButton(2);
   bool c2_btn_y = controller2.GetRawButton(4);
-  // bool c2_btn_x = controller2.GetRawButton(3);
+  bool c2_btn_x = controller2.GetRawButton(3);
   // bool c2_btn_lb = controller2.GetRawButton(5);
   // bool c2_btn_rb = controller2.GetRawButton(6);
   // double c2_dpad = controller2.GetPOV(0);
-  // bool c2_btn_back = controller2.GetRawButton(7);
-  // bool c2_btn_start = controller2.GetRawButton(8);
+  bool c2_btn_back = controller2.GetRawButton(7);
+  bool c2_btn_start = controller2.GetRawButton(8);
 
   bool c2_rightbumper = controller2.GetRawButton(6);
   bool c2_leftbumper = controller2.GetRawButton(5);
@@ -421,7 +421,13 @@ void Robot::TeleopPeriodic()
 
   else if (c1_btn_a) // Auto pickup with camera
   {
+    if (intake_camera_exist == 1){
     MyDrive.camera_intake(intake_camera_x, c1_joy_leftdrive);
+    }  
+
+    else {
+      MyDrive.Joystick_Drive(c1_joy_leftdrive, c1_joy_leftdrive);
+    }
   }
 
   else // Joystick drive
@@ -556,10 +562,29 @@ void Robot::TeleopPeriodic()
 
   //--------------------Shooter Code -----------------------------------
 
+if (c2_btn_start && c2_btn_back){
+  shooter_test = true;
+}
+
+if (c2_btn_x && shooter_test){
+  shooter_test = false;
+
+}
+
   if (endgame_unlock){
       MyAppendage.Rotate_Off();
       MyAppendage.Shooter_Off();
   }
+
+    else if (shooter_test){
+      if (c2_btn_start){
+        MyAppendage.Rotate_left();
+      }
+
+      if (c2_btn_back){
+        MyAppendage.Rotate_right();
+      }
+    }
 
     else if (c2_btn_a){
       //Low Fixed shoot
@@ -649,6 +674,20 @@ void Robot::TeleopPeriodic()
   // --------- dashboard code ---------------
 
 frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
+frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
+
+//Drive Current Compares
+
+MyLog.CurrentCompare(0, 7);
+MyLog.CurrentCompare(1, 8);
+MyLog.CurrentCompare(18, 9);
+MyLog.CurrentCompare(19, 10);
+
+//Shooter Current Compares
+
+MyLog.CurrentCompare(8, 14);
+MyLog.CurrentCompare(9, 2);
+
 
 MyLog.Dashboard();
 MyLog.PDPTotal();
