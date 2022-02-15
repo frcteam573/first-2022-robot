@@ -339,6 +339,18 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
     return std::make_tuple(align,direction);
 }
 
+//Lazy Susan Testing
+
+    void Appendage::Rotate_left()
+{
+    m_Susan->Set(-1);
+}
+
+    void Appendage::Rotate_right()
+{
+    m_Susan->Set(1);
+}
+
 /*
  * Turns off the turret Rotation
  */
