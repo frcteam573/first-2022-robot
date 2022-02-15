@@ -32,6 +32,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1);
 
+  frc::SmartDashboard::PutNumber("Auto delay", auto_timer);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   alliance_color = "red";  // Default evaluated in auto and teleop inits
   turret_direction = true; // Initial turrent scan direction
@@ -141,53 +142,14 @@ void Robot::AutonomousPeriodic(){
   float intake_camera_exist = table_i->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
   //float intake_camera_y = table_i->GetNumber("ty", 0);
+  auto_timer = frc::SmartDashboard::GetNumber("Auto delay", 0)*50;
 
   // ----------------------------------------------------------
+  if (counter >= auto_timer) {
 
-  if (m_autoSelected == kAutoNameCustom)
-  {
-    // 2 Ball Autonomous
-
-    if (intake_camera_exist)
+    if (m_autoSelected == kAutoNameCustom)
     {
-      MyDrive.camera_intake(intake_camera_x, 0.8);
-      MyAppendage.Intake_Down();
-      bool LightGate_val = MyAppendage.Intake_In();
-
-      if (LightGate_val){
-        MyAppendage.Intake2_In();
-      }
-
-        else{
-          MyAppendage.Intake2_Off();
-        }
-    }
-    else
-    {
-      double distance = MyAppendage.Get_Distance(shooter_camera_y);
-      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
-      MyAppendage.Articulate(distance);
-      bool atspeed = MyAppendage.Shooter_Encoder();
-      MyAppendage.Feeder_Off();
-      MyAppendage.Intake2_Off();
-
-      if (align && atspeed)
-      {
-        MyAppendage.Feeder_In();
-          MyAppendage.Intake2_In();
-      }
-    }
-  }
-
-  else if (m_autoSelected == kAutoNameCustom1)
-{
-    // 4  Ball Autonomous
-
-    int FirstSectionOffset = 50;
-    int SecondSelectionOffset = 0;
-
-    if (counter < FirstSectionOffset){
-      // 50 = 1 seconds
+      // 2 Ball Autonomous
 
       if (intake_camera_exist)
       {
@@ -218,48 +180,32 @@ void Robot::AutonomousPeriodic(){
             MyAppendage.Intake2_In();
         }
       }
-
     }
+    else if (m_autoSelected == kAutoNameCustom1)
+  {
+      // 4  Ball Autonomous
 
-  else {
-    vector <double> Length = MyPath.ReturnTableVal(counter - FirstSectionOffset, 1, true);
-    int length = round (Length [0]);
+      int FirstSectionOffset = 50;
+      int SecondSelectionOffset = 0;
 
-  if (counter - FirstSectionOffset < length){
-    vector <double> Table_Values = MyPath.ReturnTableVal(counter - FirstSectionOffset, 1, false);
+      if (counter < FirstSectionOffset){
+        // 50 = 1 seconds
 
-    MyDrive.drive_PID(Table_Values, counter - FirstSectionOffset);
+        if (intake_camera_exist)
+        {
+          MyDrive.camera_intake(intake_camera_x, 0.8);
+          MyAppendage.Intake_Down();
+          bool LightGate_val = MyAppendage.Intake_In();
 
-  }
+          if (LightGate_val){
+            MyAppendage.Intake2_In();
+          }
 
-  else {
-     if (intake_camera_exist)
-    {
-      SecondSelectionOffset = counter;
-      MyDrive.camera_intake(intake_camera_x, 0.8);
-      MyAppendage.Intake_Down();
-      bool LightGate_val = MyAppendage.Intake_In();
-
-      if (LightGate_val){
-        MyAppendage.Intake2_In();
-      }
-
-        else{
-          MyAppendage.Intake2_Off();
+            else{
+              MyAppendage.Intake2_Off();
+            }
         }
-    }
-
-    else {
-          vector <double> Length2 = MyPath.ReturnTableVal(counter - SecondSelectionOffset, 2, true);
-          int length2 = round (Length2 [0]);
-
-      if (counter - SecondSelectionOffset < length2){
-        vector <double> Table_Values = MyPath.ReturnTableVal(counter - SecondSelectionOffset, 2, false);
-
-        MyDrive.drive_PID(Table_Values, counter - SecondSelectionOffset);
-        }
-
-    else
+        else
         {
           double distance = MyAppendage.Get_Distance(shooter_camera_y);
           tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
@@ -277,25 +223,81 @@ void Robot::AutonomousPeriodic(){
 
       }
 
-    }
-}
-}
+    else {
+      vector <double> Length = MyPath.ReturnTableVal(counter - FirstSectionOffset, 1, true);
+      int length = round (Length [0]);
 
+    if (counter - FirstSectionOffset < length){
+      vector <double> Table_Values = MyPath.ReturnTableVal(counter - FirstSectionOffset, 1, false);
 
-  else // Simple drive straight auto
-  {
+      MyDrive.drive_PID(Table_Values, counter - FirstSectionOffset);
 
-    if (counter < 100)
-    { // 100 = 2 seconds
-      MyDrive.Joystick_Drive(0.5, 0.5);
     }
 
-    else
-    {
-      MyDrive.Joystick_Drive(0, 0);
-    }
+    else {
+      if (intake_camera_exist)
+      {
+        SecondSelectionOffset = counter;
+        MyDrive.camera_intake(intake_camera_x, 0.8);
+        MyAppendage.Intake_Down();
+        bool LightGate_val = MyAppendage.Intake_In();
+
+        if (LightGate_val){
+          MyAppendage.Intake2_In();
+        }
+
+          else{
+            MyAppendage.Intake2_Off();
+          }
+      }
+
+      else {
+            vector <double> Length2 = MyPath.ReturnTableVal(counter - SecondSelectionOffset, 2, true);
+            int length2 = round (Length2 [0]);
+
+        if (counter - SecondSelectionOffset < length2){
+          vector <double> Table_Values = MyPath.ReturnTableVal(counter - SecondSelectionOffset, 2, false);
+
+          MyDrive.drive_PID(Table_Values, counter - SecondSelectionOffset);
+          }
+
+      else
+          {
+            double distance = MyAppendage.Get_Distance(shooter_camera_y);
+            tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+            MyAppendage.Articulate(distance);
+            bool atspeed = MyAppendage.Shooter_Encoder();
+            MyAppendage.Feeder_Off();
+            MyAppendage.Intake2_Off();
+
+            if (align && atspeed)
+            {
+              MyAppendage.Feeder_In();
+                MyAppendage.Intake2_In();
+            }
+          }
+
+        }
+
+      }
+  }
   }
 
+
+    else // Simple drive straight auto
+    {
+
+      if (counter < (100 + auto_timer))
+      { // 100 = 2 seconds
+        MyDrive.Joystick_Drive(0.5, 0.5);
+      }
+
+      else
+      {
+        MyDrive.Joystick_Drive(0, 0);
+      }
+    }
+  }
   counter++;
 }
 

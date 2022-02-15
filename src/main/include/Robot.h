@@ -67,6 +67,8 @@ class Robot : public frc::TimedRobot {
   int counter; 
   int climber_state;
   int climber_count;
+  double auto_timer;
   int shooter_test = false;
+
  
 };
