@@ -60,6 +60,8 @@ public:
     void Rotate_Off();
     void Articulate(double distance);
 
+    void Rotate_left();
+    void Rotate_right();
 
     void DashboardCreate();
 
