@@ -581,8 +581,11 @@ if (c2_btn_x && shooter_test){
         MyAppendage.Rotate_left();
       }
 
-      if (c2_btn_back){
+      else if (c2_btn_back){
         MyAppendage.Rotate_right();
+      }
+      else{
+        MyAppendage.Rotate_Off();
       }
     }
 
