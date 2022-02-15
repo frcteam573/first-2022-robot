@@ -159,33 +159,59 @@ double Drive::deadband(double input, double deadband_size){
                         setpoint_output=-1;
                     }
 
-                        bool output = false;
-                        bool output_1 = false;
-                        double left_error = setpoint - s_leftclimber_enc -> GetPosition();
-                        double right_error = setpoint - s_rightclimber_enc -> GetPosition();
-                        if (left_error > 0)
+                bool output = false;
+                bool output_1 = false;
+                bool left_inpos = false;
+                bool right_inpos = false;
+                double left_pos= s_leftclimber_enc -> GetPosition();
+                double right_pos = s_rightclimber_enc -> GetPosition();
+                
+                if (input == "extend"){
+                    if (left_pos > setpoint){
                         m_leftclimb->Set(0);
-                        else
+                        left_inpos = true;
+                    }
+                    else{
                         m_leftclimb->Set(setpoint_output);
-
-                        if (right_error > 0)
+                    }
+                    if (right_pos > setpoint){
                         m_rightclimb->Set(0);
-                        else
+                        right_inpos = true;
+                    }
+                    else{
                         m_rightclimb->Set(setpoint_output);
+                    }
+                }
+                else{
+                    if (left_pos < setpoint){
+                        m_leftclimb->Set(0);
+                        left_inpos = true;
+                    }
+                    else{
+                        m_leftclimb->Set(setpoint_output);
+                    }
+                    if (right_pos < setpoint){
+                        m_rightclimb->Set(0);
+                        right_inpos = true;
+                    }
+                    else{
+                        m_rightclimb->Set(setpoint_output);
+                    }
+                }
+                
+                    if(left_inpos && right_inpos){
+                        output = true;
+                        p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
+                    }
 
-                            if(abs (left_error) < max && abs (right_error)< max){
-                                output = true;
+                    else{
+                        p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
+                    }
 
-                                p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
-
-                            }
-
-                            else p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
-
-                            if (s_leftclimber_enc -> GetPosition() > 3000 && s_rightclimber_enc -> GetPosition() > 3000){
-                                output_1 = true;
-                            }
-                                return std::make_tuple(output,output_1);
+                    if (s_leftclimber_enc -> GetPosition() > 3000 && s_rightclimber_enc -> GetPosition() > 3000){
+                        output_1 = true;
+                    }
+                        return std::make_tuple(output,output_1);
         }
 
 /* CAMERA INTAKE */
