@@ -19,31 +19,31 @@ Log::Log() {
 void Log::Dashboard (){
 
     double val;
-    val=Board->GetCurrent(3);
+    val=Board->GetCurrent(16);
     frc::SmartDashboard::PutString("Intake",to_string(val));
 
-    val=Board->GetCurrent(11);
+    val=Board->GetCurrent(10);
     frc::SmartDashboard::PutString("Pre Feed",to_string(val));
 
-    val=Board->GetCurrent(6);
+    val=Board->GetCurrent(11);
     frc::SmartDashboard::PutString("Shooter Feed",to_string(val));
     
-    val=Board->GetCurrent(4);
+    val=Board->GetCurrent(2);
     frc::SmartDashboard::PutString("Left Climber",to_string(val));
 
-    val=Board->GetCurrent(5);
+    val=Board->GetCurrent(17);
     frc::SmartDashboard::PutString("Right Climber",to_string(val));
 
-    val=Board->GetCurrent(7);
+    val=Board->GetCurrent(19);
     frc::SmartDashboard::PutString("Right Front Drive",to_string(val));
 
-    val=Board->GetCurrent(8);
+    val=Board->GetCurrent(18);
     frc::SmartDashboard::PutString("Right Back Drive",to_string(val));
 
-    val=Board->GetCurrent(9);
+    val=Board->GetCurrent(0);
     frc::SmartDashboard::PutString("Left Front Drive",to_string(val));
 
-    val=Board->GetCurrent(10);
+    val=Board->GetCurrent(1);
     frc::SmartDashboard::PutString("Left Back Drive",to_string(val));
 
 }
