@@ -205,12 +205,7 @@ bool Appendage::Shooter_Encoder_distance(double distance){
     
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
     
-    // Read in value from dashboard
-    double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 0.00025);
-    double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
-    //double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
-
-    double kP = shooter_p_in;
+    double kP = 0.00025;
     double target = distance; // Will need to add some math to convert distance to target speed
 
     double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
@@ -235,12 +230,9 @@ bool Appendage::Shooter_Encoder_distance(double distance){
     m_Shooter2 -> Set(output);
 
     //Output to dash for testing
-    frc::SmartDashboard::PutNumber("Shooter Target Out", shooter_target_in);
     frc::SmartDashboard::PutNumber("Shooter Current", current);
     frc::SmartDashboard::PutNumber("Shooter Error", err);
-    frc::SmartDashboard::PutNumber("Shooter P Out", shooter_p_in);
     frc::SmartDashboard::PutNumber("Shooter Output", output);
-    frc::SmartDashboard::PutNumber("F Output", shooter_f_in);
     return atspeed;
 }
 
@@ -260,11 +252,13 @@ double Appendage::Get_Distance(double camera_y)
 {
     double distance,
         heightGoal, heightBot,
-        angleSmall, angleBig = camera_y;
+        angleMount, angleCam = camera_y;
 
-    // height are in meters, angles are in degrees
-    heightGoal = 1, heightBot = 0.5, angleSmall = 15, angleBig = 30;
-    distance = (heightGoal - heightBot) / tan(angleSmall + angleBig);
+    // height are in (inches), angles are in degrees
+    heightGoal = 102.8125, heightBot = 41.5, angleMount = 39; // From CAD not measured on robot
+    double PI = 3.14159265;
+    double rads = (angleMount + angleCam) * PI / 180.0;
+    distance = (heightGoal - heightBot) / tan(rads);
     return distance;
 }
 
@@ -286,7 +280,7 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         error = 0 - s_Susan_Encoder->GetPosition();
         output = k_fixedpos * error;
 
-        if(abs(error)<2){
+        if(abs(error)<20){
             output = 0;
             align = true;
         }
@@ -295,7 +289,7 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         error = 180 - s_Susan_Encoder->GetPosition(); // Need to update with 180 degree encoder value
         output = k_fixedpos * error;
 
-        if(abs(error)<2){
+        if(abs(error)<20){
             output = 0;
             align = true;
         }

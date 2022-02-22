@@ -444,10 +444,9 @@ void Robot::TeleopPeriodic(){
   {
     endgame_unlock = true;
   }
-
-    else if (c1_btn_y){
-      endgame_unlock = false;
-    }
+  if (endgame_unlock && c1_btn_y){
+    endgame_unlock = false;
+  }
 
   if (endgame_unlock){
     bool output;
@@ -654,7 +653,8 @@ else {
   if (c2_left_trigger >= 0.5)
   {
     //Get shooter aligned and up to speed
-    atspeed = MyAppendage.Shooter_Encoder();
+    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false); // This should be moved outside if for cst tracking
+    atspeed = MyAppendage.Shooter_Encoder_distance(distance);
     MyAppendage.Articulate(distance);
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
@@ -700,6 +700,8 @@ else{
 
 frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
+frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
+frc::SmartDashboard::PutBoolean("Shooter Aligned", align);
 
 //Drive Current Compares
 
