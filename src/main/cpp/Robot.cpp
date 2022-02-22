@@ -379,7 +379,6 @@ void Robot::TeleopPeriodic(){
   float shooter_camera_exist = table_s->GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
   float shooter_camera_y = table_s->GetNumber("ty", 0);
-
   double distance = MyAppendage.Get_Distance(shooter_camera_y);
 
   // ----------------------------------------------------------
@@ -395,7 +394,7 @@ void Robot::TeleopPeriodic(){
 
 
   if (alliance_color == "red"){
-      table_i -> PutNumber("pipeline", 0);
+    table_i -> PutNumber("pipeline", 0);
   }
   else {
     table_i -> PutNumber("pipeline", 1);
@@ -406,7 +405,7 @@ void Robot::TeleopPeriodic(){
 
   float intake_camera_exist = table_i -> GetNumber("tv", 0);
   // float image_size = table->GetNumber("ta", 0);
-  float intake_camera_y = table_i -> GetNumber("ty", 0);
+  //float intake_camera_y = table_i -> GetNumber("ty", 0);
 
 
   // ----------------------------------------------------------
@@ -722,7 +721,7 @@ MyDrive.dashboard();
 MyAppendage.dashboard();
 
 
-  // ------------------------------------------
+// ------------------------------------------
 } // end of teleop periodic
 
 void Robot::DisabledInit() {}
