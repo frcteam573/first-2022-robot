@@ -271,61 +271,68 @@ double Appendage::Get_Distance(double camera_y)
 /*
  * Moves Turret
  */
-std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool lowgoal)
+std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool fixedgoal, bool endgame)
 {
     double error,
         k = 0.3,
-        k_l = 0.2,
+        k_fixedpos = 0.2,
         output = 0,
         currEnc, maxEnc = 4000, minEnc = 1000;
 
     bool align = false;
 
-    if (lowgoal){
+// Fixed positiions
+    if (fixedgoal){
         error = 0 - s_Susan_Encoder->GetPosition();
-        output = k_l * error;
+        output = k_fixedpos * error;
 
         if(abs(error)<2){
+            output = 0;
             align = true;
         }
     } 
-        else{
-
-    if (camera_exists <= 0)
-    {
-        currEnc = s_Susan_Encoder->GetPosition();
-        if (currEnc > maxEnc)
-        {
-            output = -1;
-        }
-        else if (currEnc < minEnc)
-        {
-            output = 1;
-        }
-        else if (currEnc >= minEnc && currEnc <= maxEnc)
-        {
-            if (direction)
-            {
-                output = 1;
-            }
-            else
-            {
-                output = -1;
-            }
-        }
-    }
-    else{
-
-        error = 0 - camera_x;
-        output = k * error;
+    else if(endgame){
+        error = 180 - s_Susan_Encoder->GetPosition(); // Need to update with 180 degree encoder value
+        output = k_fixedpos * error;
 
         if(abs(error)<2){
+            output = 0;
             align = true;
+        }
+    }
+
+    // Camera Tracking
+    else{
+
+        if (camera_exists == 0){ // Camera doesn't see target
+            currEnc = s_Susan_Encoder->GetPosition();
+            if (currEnc > maxEnc){
+                output = -1;            // Need to confirm this is right direction and speed
+            }
+            else if (currEnc < minEnc){
+                output = 1;             // Need to confirm this is right direction and speed
+            }
+            else if (currEnc >= minEnc && currEnc <= maxEnc){
+                if (direction){
+                    output = 1;     // Need to confirm this is right direction and speed
+                }
+                else{
+                    output = -1;    // Need to confirm this is right direction and speed
+                }
+            }
+        }
+        else{   // Camera sees target
+
+            error = 0 - camera_x;
+            output = k * error;
+
+            if(abs(error)<2){   // Need to set range when testing.
+                align = true;
+            }
+
         }
 
     }
-
- }
 
     if(output >= 0){
         direction = true;

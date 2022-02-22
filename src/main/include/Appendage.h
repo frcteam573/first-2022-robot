@@ -56,7 +56,7 @@ public:
     void Shooter_Off();
 
     double Get_Distance(double camera_y);
-    std::tuple<bool, bool> Rotate(double camera_exists, double camera_x, bool direction, bool lowgoal);
+    std::tuple<bool, bool> Rotate(double camera_exists, double camera_x, bool direction, bool lowgoal, bool endgame);
     void Rotate_Off();
     void Articulate(double distance);
 

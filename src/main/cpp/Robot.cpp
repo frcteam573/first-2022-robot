@@ -168,7 +168,7 @@ void Robot::AutonomousPeriodic(){
       else
       {
         double distance = MyAppendage.Get_Distance(shooter_camera_y);
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
         MyAppendage.Articulate(distance);
         bool atspeed = MyAppendage.Shooter_Encoder();
         MyAppendage.Feeder_Off();
@@ -208,7 +208,7 @@ void Robot::AutonomousPeriodic(){
         else
         {
           double distance = MyAppendage.Get_Distance(shooter_camera_y);
-          tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+          tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
           MyAppendage.Articulate(distance);
           bool atspeed = MyAppendage.Shooter_Encoder();
           MyAppendage.Feeder_Off();
@@ -264,7 +264,7 @@ void Robot::AutonomousPeriodic(){
       else
           {
             double distance = MyAppendage.Get_Distance(shooter_camera_y);
-            tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
+            tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
             MyAppendage.Articulate(distance);
             bool atspeed = MyAppendage.Shooter_Encoder();
             MyAppendage.Feeder_Off();
@@ -317,8 +317,7 @@ void Robot::TeleopInit()
     alliance_color = "blue";
   }
 }
-void Robot::TeleopPeriodic()
-{
+void Robot::TeleopPeriodic(){
 
 
   //Compressor Code
@@ -395,12 +394,12 @@ void Robot::TeleopPeriodic()
   // -----------PIPELINE STUFF-----------//
 
 
-    if (alliance_color == "red"){
-        table_i -> PutNumber("pipeline", 0);
-    }
-      else {
-        table_i -> PutNumber("pipeline", 1);
-      }
+  if (alliance_color == "red"){
+      table_i -> PutNumber("pipeline", 0);
+  }
+  else {
+    table_i -> PutNumber("pipeline", 1);
+  }
 
   //--------CAMERA VALUES-----------------//
   float intake_camera_x = table_i -> GetNumber("tx", 0);
@@ -450,8 +449,7 @@ void Robot::TeleopPeriodic()
       endgame_unlock = false;
     }
 
-  if (endgame_unlock)
-  {
+  if (endgame_unlock){
     bool output;
     bool output_1;
     
@@ -466,63 +464,58 @@ void Robot::TeleopPeriodic()
       MyDrive.climber_retract();
     }
 
-    else if (c1_btn_x)
-    {
-      //Auto climb
+    else if (c1_btn_x){ //Auto climb
 
-        switch (climber_state){
-          case 0:
-            tie(output,output_1) = MyDrive.climber_setpoint("retract");
-              
-              climber_count = 0;
+      switch (climber_state){
+        case 0:
+          tie(output,output_1) = MyDrive.climber_setpoint("retract");
+            
+            climber_count = 0;
 
-              if (output){
-                climber_state ++;
-              }
+            if (output){
+              climber_state ++;
+            }
+            break;
+
+            case 1:
+          tie(output,output_1) = MyDrive.climber_setpoint("extend");
+            
+            if (output_1){
+              climber_state ++;
+            }
+            break;
+
+            case 2:
+          tie(output,output_1) = MyDrive.climber_setpoint("extend");
+            
+            MyDrive.climber_tiltout();
+
+            if (output){
+              climber_state ++;
+            }
+            break;
+
+            case 3:
+          tie(output,output_1) = MyDrive.climber_setpoint("extend");
+            MyDrive.climber_tiltin();
+
+            if (output && climber_count > 5){
+              climber_state = 0;
+            }
+              climber_count ++;
               break;
-
-              case 1:
-            tie(output,output_1) = MyDrive.climber_setpoint("extend");
-              
-              if (output_1){
-                climber_state ++;
-              }
-              break;
-
-              case 2:
-            tie(output,output_1) = MyDrive.climber_setpoint("extend");
-              
-              MyDrive.climber_tiltout();
-
-              if (output){
-                climber_state ++;
-              }
-              break;
-
-              case 3:
-            tie(output,output_1) = MyDrive.climber_setpoint("extend");
-              MyDrive.climber_tiltin();
-
-              if (output && climber_count > 5){
-                climber_state = 0;
-              }
-                climber_count ++;
-                break;
-        }
+      }
     }
-    else
-    {
+    else{
       MyDrive.climber_hold();
     }
 
     // Tilt Climber Arms
-    if (c1_leftbmp)
-    {
+    if (c1_leftbmp){
       MyDrive.climber_tiltin();
     }
 
-    else if (c1_rightbmp)
-    {
+    else if (c1_rightbmp){
       MyDrive.climber_tiltout();
     }
 
@@ -531,39 +524,35 @@ void Robot::TeleopPeriodic()
 
   //--------------------Intake Code -----------------------------------
   // Extend / Retract Intake
-  if (c2_leftbumper)
-  {
+  if (c2_leftbumper){
     MyAppendage.Intake_Down();
   }
-  else
-  {
+  else{
     MyAppendage.Intake_Up();
   }
 
   // Run Intake In / Out
-  if (c2_rightbumper)
-  {
+  if (c2_rightbumper){
     bool LightGate_val = MyAppendage.Intake_In();
 
-      if (LightGate_val){
-        MyAppendage.Intake2_In();
-      }
+    if (LightGate_val){
+      MyAppendage.Intake2_In();
+    }
 
-        else{
-          MyAppendage.Intake2_Off();
-        }
+    else{
+      MyAppendage.Intake2_Off();
+    }
   }
-  else if (c2_btn_y)
-  {
+  else if (c2_btn_y){
     MyAppendage.Intake_Out();
   }
-  else
-  {
+  else{
     MyAppendage.Intake_Off();
   }
 
   //--------------------Shooter Code -----------------------------------
 
+// Get into and out of shooter test mode
 if (c2_btn_start && c2_btn_back){
   shooter_test = true;
 }
@@ -573,125 +562,156 @@ if (c2_btn_x && shooter_test){
 
 }
 
-  if (endgame_unlock){
-      MyAppendage.Rotate_Off();
-      MyAppendage.Shooter_Off();
+// Shooter state code blocks 
+if (endgame_unlock){ // Endgame shooter
+  //MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, true);
+  MyAppendage.Rotate_Off(); // Only for testing, line above should be used for competition.
+  MyAppendage.Shooter_Off();
+  MyAppendage.Feeder_Off();
+  MyAppendage.Intake2_Off();
+}
+
+else if (shooter_test){ // Shooter Test
+
+  // Turret Test Section
+  if (c2_btn_start){
+    MyAppendage.Rotate_left();
+  }
+  else if (c2_btn_back){
+    MyAppendage.Rotate_right();
+  }
+  else{
+    MyAppendage.Rotate_Off();
   }
 
-    else if (shooter_test){
-      if (c2_btn_start){
-        MyAppendage.Rotate_left();
-      }
-
-      else if (c2_btn_back){
-        MyAppendage.Rotate_right();
-      }
-      else{
-        MyAppendage.Rotate_Off();
-      }
-    }
-
-    else if (c2_btn_a){
-      //Low Fixed shoot
-
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true);
-
-        atspeed = MyAppendage.Shooter_Encoder();
-        MyAppendage.Articulate(12); //harcode for close shot
-
-          if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
-                MyAppendage.Feeder_In();
-                  MyAppendage.Intake2_In();
-              }
-              else{
-                MyAppendage.Feeder_Off();
-                  MyAppendage.Intake2_Off();
-              }
-
-    }
-
-    else if (c2_btn_b){
-      //High Fixed shoot
-
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true);
-
-        atspeed = MyAppendage.Shooter_Encoder();
-        MyAppendage.Articulate(144); //harcode for far shot
-
-          if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
-                MyAppendage.Feeder_In();
-              }
-              else{
-                MyAppendage.Feeder_Off();
-              }
-
-    }
-
-    else {
-      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false);
-        
-        if (c2_left_trigger >= 0.5)
-        {
-          //Get shooter aligned and up to speed
-          atspeed = MyAppendage.Shooter_Encoder();
-          MyAppendage.Articulate(distance);
-
-          if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
-            MyAppendage.Feeder_In();
-              MyAppendage.Intake2_In();
-          }
-          else{
-            MyAppendage.Feeder_Off();
-              MyAppendage.Intake2_Off();
-          }
-        }
-        else {
-          MyAppendage.Shooter_Off();
- 
-      }
-   }
-
-  // -------------------------------------------------------------------
-
-  //---------------------LED CODE----------------------------------
-
-  if (endgame_unlock){
-    MyLed.led_control("Rainbow");
+// Shooter wheel test section
+  if (c2_left_trigger > 0.5){
+    MyAppendage.Shooter_Encoder();
   }
-    else if (intake_camera_exist){
-      MyLed.led_control("White");
-    }
+  else{
+    MyAppendage.Shooter_Off();
+  }
 
-    else if (align && !atspeed){
-      MyLed.led_control("Yellow");
-    }
+// Tower wheels test section
+  if (c2_right_trigger > 0.5){
+    MyAppendage.Feeder_In();
+    MyAppendage.Intake2_In();
+  }
+  else{
+    MyAppendage.Feeder_Off();
+    MyAppendage.Intake2_Off();
+  }
 
-    else if (align && atspeed){
-      MyLed.led_control("Green");
-    }
+// Hood Pnematic Test section
+  if(c2_btn_a){
+    MyAppendage.Articulate(12); // 12 is just some random number needs to get updated.
+  }
+  if(c2_btn_b){
+    MyAppendage.Articulate(150); // 150 is just some random number needs to get updated.
+  }
+}
 
+else if (c2_btn_a){
+  //Low Fixed shoot
+
+  tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+
+  atspeed = MyAppendage.Shooter_Encoder();
+  MyAppendage.Articulate(12); //harcode for close shot
+
+  if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+    MyAppendage.Feeder_In();
+    MyAppendage.Intake2_In();
+  }
+  else{
+    MyAppendage.Feeder_Off();
+    MyAppendage.Intake2_Off();
+  }
+
+}
+
+else if (c2_btn_b){
+  //High Fixed shoot
+
+  tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+
+  atspeed = MyAppendage.Shooter_Encoder();
+  MyAppendage.Articulate(144); //harcode for far shot
+
+  if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+    MyAppendage.Feeder_In();
+  }
+  else{
+      MyAppendage.Feeder_Off();
+  }
+
+}
+
+else {
+  //Comment out just allow for testing so we don't break things.
+  //tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+    
+  if (c2_left_trigger >= 0.5)
+  {
+    //Get shooter aligned and up to speed
+    atspeed = MyAppendage.Shooter_Encoder();
+    MyAppendage.Articulate(distance);
+
+    if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+      MyAppendage.Feeder_In();
+        MyAppendage.Intake2_In();
+    }
     else{
-       MyLed.led_control("Black");
+      MyAppendage.Feeder_Off();
+        MyAppendage.Intake2_Off();
     }
+  }
+  else {
+    MyAppendage.Shooter_Off();
 
-  // -------------------------------------------------------------------
+  }
+}
+// -------------------------------------------------------------------
 
-  // --------- dashboard code ---------------
+//---------------------LED CODE----------------------------------
+
+if (endgame_unlock){
+  MyLed.led_control("Rainbow");
+}
+else if (intake_camera_exist){
+  MyLed.led_control("White");
+}
+
+else if (align && !atspeed){
+  MyLed.led_control("Yellow");
+}
+
+else if (align && atspeed){
+  MyLed.led_control("Green");
+}
+
+else{
+  MyLed.led_control("Black");
+}
+
+// -------------------------------------------------------------------
+
+// --------- dashboard code ---------------
 
 frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
 
 //Drive Current Compares
 
-MyLog.CurrentCompare(0, 7);
-MyLog.CurrentCompare(1, 8);
-MyLog.CurrentCompare(18, 9);
-MyLog.CurrentCompare(19, 10);
+MyLog.CurrentCompare(19, 7);
+MyLog.CurrentCompare(18, 8);
+MyLog.CurrentCompare(0, 9);
+MyLog.CurrentCompare(1, 10);
 
 //Shooter Current Compares
 
-MyLog.CurrentCompare(8, 14);
-MyLog.CurrentCompare(9, 2);
+MyLog.CurrentCompare(13, 14);
+MyLog.CurrentCompare(14, 2);
 
 
 MyLog.Dashboard();
