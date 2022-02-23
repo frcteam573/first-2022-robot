@@ -522,31 +522,54 @@ void Robot::TeleopPeriodic(){
 
   //--------------------Intake Code -----------------------------------
   // Extend / Retract Intake
-  if (c2_leftbumper){
-    MyAppendage.Intake_Down();
+  if(shooter_test){
+      if (c2_leftbumper){
+        MyAppendage.Intake_Down();
+      }
+      else{
+        MyAppendage.Intake_Up();
+      }
+
+      // Run Intake In / Out
+      if (c2_rightbumper){
+        bool LightGate_val = MyAppendage.Intake_In();
+      }
+      else if (c2_btn_y){
+        MyAppendage.Intake_Out();
+      }
+      else{
+        MyAppendage.Intake_Off();
+      }
+
   }
   else{
-    MyAppendage.Intake_Up();
-  }
+    if (c2_leftbumper){
+        MyAppendage.Intake_Down();
+      }
+      else{
+        MyAppendage.Intake_Up();
+      }
 
-  // Run Intake In / Out
-  if (c2_rightbumper){
-    bool LightGate_val = MyAppendage.Intake_In();
+      // Run Intake In / Out
+      if (c2_rightbumper){
+        bool LightGate_val = MyAppendage.Intake_In();
 
-    if (LightGate_val){
-      MyAppendage.Intake2_In();
-    }
+        if (LightGate_val){
+          MyAppendage.Intake2_In();
+        }
 
-    else{
-      MyAppendage.Intake2_Off();
-    }
+        else{
+          MyAppendage.Intake2_Off();
+        }
+      }
+      else if (c2_btn_y){
+        MyAppendage.Intake_Out();
+      }
+      else{
+        MyAppendage.Intake_Off();
+      }
   }
-  else if (c2_btn_y){
-    MyAppendage.Intake_Out();
-  }
-  else{
-    MyAppendage.Intake_Off();
-  }
+  
 
   //--------------------Shooter Code -----------------------------------
 
@@ -645,10 +668,12 @@ else if (c2_btn_b){
 
 }
 
+
 else {
   //Comment out just allow for testing so we don't break things.
   //tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
-    
+  MyAppendage.Shooter_Off();
+  /*
   if (c2_left_trigger >= 0.5)
   {
     //Get shooter aligned and up to speed
@@ -668,7 +693,7 @@ else {
   else {
     MyAppendage.Shooter_Off();
 
-  }
+  }*/
 }
 // -------------------------------------------------------------------
 
