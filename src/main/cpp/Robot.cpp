@@ -518,58 +518,35 @@ void Robot::TeleopPeriodic(){
     }
 
   }
-  // -------------------------------------------------------------------
+// -------------------------------------------------------------------
 
-  //--------------------Intake Code -----------------------------------
-  // Extend / Retract Intake
-  if(shooter_test){
-      if (c2_leftbumper){
-        MyAppendage.Intake_Down();
-      }
-      else{
-        MyAppendage.Intake_Up();
-      }
+//--------------------Intake Code -----------------------------------
+// Extend / Retract Intake
 
-      // Run Intake In / Out
-      if (c2_rightbumper){
-        bool LightGate_val = MyAppendage.Intake_In();
-      }
-      else if (c2_btn_y){
-        MyAppendage.Intake_Out();
-      }
-      else{
-        MyAppendage.Intake_Off();
-      }
+if (c2_leftbumper){
+    MyAppendage.Intake_Down();
+}
+else{
+  MyAppendage.Intake_Up();
+}
 
+// Run Intake In / Out
+if (c2_rightbumper){
+  bool LightGate_val = MyAppendage.Intake_In();
+
+  if (LightGate_val && !shooter_test){
+    MyAppendage.Intake2_In();
   }
   else{
-    if (c2_leftbumper){
-        MyAppendage.Intake_Down();
-      }
-      else{
-        MyAppendage.Intake_Up();
-      }
-
-      // Run Intake In / Out
-      if (c2_rightbumper){
-        bool LightGate_val = MyAppendage.Intake_In();
-
-        if (LightGate_val){
-          MyAppendage.Intake2_In();
-        }
-
-        else{
-          MyAppendage.Intake2_Off();
-        }
-      }
-      else if (c2_btn_y){
-        MyAppendage.Intake_Out();
-      }
-      else{
-        MyAppendage.Intake_Off();
-      }
+    MyAppendage.Intake2_Off();
   }
-  
+}
+else if (c2_btn_y){
+  MyAppendage.Intake_Out();
+}
+else{
+  MyAppendage.Intake_Off();
+}
 
   //--------------------Shooter Code -----------------------------------
 
