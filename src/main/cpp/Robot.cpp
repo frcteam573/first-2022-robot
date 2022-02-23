@@ -724,7 +724,7 @@ else{
 
 frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
-frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
+/*frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
 frc::SmartDashboard::PutBoolean("Shooter Aligned", align);
 
 //Drive Current Compares
@@ -742,7 +742,7 @@ MyLog.CurrentCompare(14, 2);
 
 MyLog.Dashboard();
 MyLog.PDPTotal();
-MyDrive.dashboard();
+MyDrive.dashboard();*/
 MyAppendage.dashboard();
 
 
