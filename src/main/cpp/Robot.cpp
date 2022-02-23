@@ -653,7 +653,7 @@ else {
   {
     //Get shooter aligned and up to speed
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false); // This should be moved outside if for cst tracking
-    atspeed = MyAppendage.Shooter_Encoder_distance(distance);
+    //atspeed = MyAppendage.Shooter_Encoder_distance(distance);
     MyAppendage.Articulate(distance);
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball

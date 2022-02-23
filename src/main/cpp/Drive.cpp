@@ -23,11 +23,11 @@ Drive::Drive(){
 
         m_leftdrive = new rev::CANSparkMax{leftdriveID, rev::CANSparkMax::MotorType::kBrushless}; //actually 1
         m_leftdrive2 = new rev::CANSparkMax{leftdriveID2, rev::CANSparkMax::MotorType::kBrushless};
-        m_leftdrive -> SetInverted(true);
-        m_leftdrive2 -> SetInverted(true);
+
         m_rightdrive = new rev::CANSparkMax{rightdriveID, rev::CANSparkMax::MotorType::kBrushless};
         m_rightdrive2 = new rev::CANSparkMax{rightdriveID2, rev::CANSparkMax::MotorType::kBrushless};
-
+        m_rightdrive -> SetInverted(true);
+        m_rightdrive2 -> SetInverted(true);
         s_gyro = new frc::ADXRS450_Gyro(frc::SPI::Port::kOnboardCS0);
 
     // Climb motors, sensors, and pneumatics

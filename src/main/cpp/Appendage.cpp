@@ -24,8 +24,7 @@ Appendage::Appendage()
     m_Shooter1 = new rev::CANSparkMax{m_ShooterId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter2 = new rev::CANSparkMax{m_ShooterId2, rev::CANSparkMax::MotorType::kBrushless};
 
-    m_Shooter1 -> SetInverted(true);
-    m_Shooter2 -> SetInverted(true);
+    m_Intake2 -> SetInverted(true);
     m_Feeder = new rev::CANSparkMax{m_FeederId, rev::CANSparkMax::MotorType::kBrushless};
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
     p_Hood = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_Hood_a, p_Hood_b};
@@ -167,7 +166,7 @@ bool Appendage::Shooter_Encoder(){
     //double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
     double kP = shooter_p_in;
-    double target = shooter_target_in;
+    double target = 1000;
 
     double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
 
