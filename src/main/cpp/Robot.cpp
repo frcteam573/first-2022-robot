@@ -309,6 +309,7 @@ void Robot::TeleopInit()
   climber_count = 0;
   drive_straight_first = true;
   endgame_unlock = false;
+  shooter_test = false;
 
   // Get alliance station color
   static auto color = frc::DriverStation::GetAlliance();
