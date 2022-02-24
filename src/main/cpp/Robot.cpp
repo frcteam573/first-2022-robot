@@ -535,8 +535,6 @@ else{
 if (c2_rightbumper){
   bool LightGate_val = MyAppendage.Intake_In();
 
-  frc::SmartDashboard::PutString("Intake State", "In");
-
   /*
   if (LightGate_val && !shooter_test){
     MyAppendage.Intake2_In();
@@ -548,11 +546,10 @@ if (c2_rightbumper){
 }
 else if (c2_btn_y){
   MyAppendage.Intake_Out();
-  frc::SmartDashboard::PutString("Intake State", "Out");
+  
 }
 else{
   MyAppendage.Intake_Off();
-  frc::SmartDashboard::PutString("Intake State", "Off");
 }
 
   //--------------------Shooter Code -----------------------------------
@@ -716,7 +713,7 @@ else{
 frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
 frc::SmartDashboard::PutBoolean("C2 Btn Y", c2_btn_y);
-/*frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
+frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
 frc::SmartDashboard::PutBoolean("Shooter Aligned", align);
 
 //Drive Current Compares
@@ -734,7 +731,7 @@ MyLog.CurrentCompare(14, 2);
 
 MyLog.Dashboard();
 MyLog.PDPTotal();
-MyDrive.dashboard();*/
+MyDrive.dashboard();
 MyAppendage.dashboard();
 
 

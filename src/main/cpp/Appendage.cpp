@@ -87,7 +87,7 @@ bool Appendage::Intake_In()
 void Appendage::Intake_Out()
 {
     double intakespeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
-    m_Intake1->SetInverted(-intakespeed);
+    m_Intake1->Set(-intakespeed);
 }
 
 /*
@@ -113,7 +113,7 @@ void Appendage::Intake2_In()
 void Appendage::Intake2_Out()
 {
     double prefeedspeed = frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
-    m_Intake2->SetInverted(-prefeedspeed);
+    m_Intake2->Set(-prefeedspeed);
 }
 
 /*
@@ -138,7 +138,7 @@ void Appendage::Feeder_In()
 void Appendage::Feeder_Out()
 {
     double feedspeed = frc::SmartDashboard::GetNumber("Feed Speed", 0.99);
-    m_Feeder->SetInverted(-feedspeed);
+    m_Feeder->Set(-feedspeed);
 }
 
 /*
