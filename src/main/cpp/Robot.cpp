@@ -597,7 +597,7 @@ else if (shooter_test){ // Shooter Test
     MyAppendage.Intake2_In();
   }
   else{
-    MyAppendage.Feeder_Off();
+    MyAppendage.Feeder_Off(); 
     MyAppendage.Intake2_Off();
   }
 
