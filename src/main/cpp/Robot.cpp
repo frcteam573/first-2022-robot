@@ -537,13 +537,14 @@ if (c2_rightbumper){
 
   frc::SmartDashboard::PutString("Intake State", "In");
 
+  /*
   if (LightGate_val && !shooter_test){
     MyAppendage.Intake2_In();
   }
   else{
     MyAppendage.Intake2_Off();
     frc::SmartDashboard::PutString("Intake State", "Off");
-  }
+  }*/
 }
 else if (c2_btn_y){
   MyAppendage.Intake_Out();
