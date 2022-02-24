@@ -343,7 +343,7 @@ void Robot::TeleopPeriodic(){
   bool c1_btn_b = controller1.GetRawButton(2);
   bool c1_btn_x = controller1.GetRawButton(3);
   bool c1_btn_a = controller1.GetRawButton(1);
-  bool c1_btn_y = controller1.GetRawButton (4);
+  bool c1_btn_y = controller1.GetRawButton(4);
 
   //-----------------------------------------------------------------------------
   //------------ Operator Controller --------------------------------------------
@@ -377,7 +377,7 @@ void Robot::TeleopPeriodic(){
 
   //--------CAMERA VALUES-----------------//
   float shooter_camera_x = table_s->GetNumber("tx", 0);
-  float shooter_camera_exist = table_s->GetNumber("tv", 0);
+  float shooter_camera_exist = table_s->GetNumber("tv", 2); // If value 2 means no camera data following
   // float image_size = table->GetNumber("ta", 0);
   float shooter_camera_y = table_s->GetNumber("ty", 0);
   double distance = MyAppendage.Get_Distance(shooter_camera_y);
@@ -404,7 +404,7 @@ void Robot::TeleopPeriodic(){
   //--------CAMERA VALUES-----------------//
   float intake_camera_x = table_i -> GetNumber("tx", 0);
 
-  float intake_camera_exist = table_i -> GetNumber("tv", 0);
+  float intake_camera_exist = table_i -> GetNumber("tv", 2); // If value 2 means no camera data following
   // float image_size = table->GetNumber("ta", 0);
   //float intake_camera_y = table_i -> GetNumber("ty", 0);
 
@@ -535,18 +535,23 @@ else{
 if (c2_rightbumper){
   bool LightGate_val = MyAppendage.Intake_In();
 
+  frc::SmartDashboard::PutString("Intake State", "In");
+
   if (LightGate_val && !shooter_test){
     MyAppendage.Intake2_In();
   }
   else{
     MyAppendage.Intake2_Off();
+    frc::SmartDashboard::PutString("Intake State", "Off");
   }
 }
 else if (c2_btn_y){
   MyAppendage.Intake_Out();
+  frc::SmartDashboard::PutString("Intake State", "Out");
 }
 else{
   MyAppendage.Intake_Off();
+  frc::SmartDashboard::PutString("Intake State", "Off");
 }
 
   //--------------------Shooter Code -----------------------------------
@@ -649,8 +654,15 @@ else if (c2_btn_b){
 
 else {
   //Comment out just allow for testing so we don't break things.
-  //tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+ /* if (shooter_camera_exist == 2 ){
+    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+  }
+  else{
+    MyAppendage.Rotate_Off();
+  }*/
+  
   MyAppendage.Shooter_Off();
+  MyAppendage.Rotate_Off();
   /*
   if (c2_left_trigger >= 0.5)
   {
@@ -702,6 +714,7 @@ else{
 
 frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
+frc::SmartDashboard::PutBoolean("C2 Btn Y", c2_btn_y);
 /*frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
 frc::SmartDashboard::PutBoolean("Shooter Aligned", align);
 
