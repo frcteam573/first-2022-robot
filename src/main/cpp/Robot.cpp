@@ -173,7 +173,7 @@ void Robot::AutonomousPeriodic(){
         double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
         MyAppendage.Articulate(distance);
-        bool atspeed = MyAppendage.Shooter_Encoder();
+        bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
 
@@ -213,14 +213,14 @@ void Robot::AutonomousPeriodic(){
           double distance = MyAppendage.Get_Distance(shooter_camera_y);
           tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
           MyAppendage.Articulate(distance);
-          bool atspeed = MyAppendage.Shooter_Encoder();
+          bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
           MyAppendage.Feeder_Off();
           MyAppendage.Intake2_Off();
 
           if (align && atspeed)
           {
             MyAppendage.Feeder_In();
-              MyAppendage.Intake2_In();
+            MyAppendage.Intake2_In();
           }
         }
 
@@ -269,7 +269,7 @@ void Robot::AutonomousPeriodic(){
             double distance = MyAppendage.Get_Distance(shooter_camera_y);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
             MyAppendage.Articulate(distance);
-            bool atspeed = MyAppendage.Shooter_Encoder();
+            bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
             MyAppendage.Feeder_Off();
             MyAppendage.Intake2_Off();
 
