@@ -13,8 +13,8 @@ Appendage::Appendage()
     int m_SusanId = 13;
     int m_HoodId = 12;
 
-    int p_IntakeId_a = 14;
-    int p_IntakeId_b = 15;
+    int p_IntakeId_a = 6;
+    int p_IntakeId_b = 7;
     int p_Hood_a = 4;
     int p_Hood_b = 5;
     int s_LightGateId = 0;
@@ -212,12 +212,14 @@ bool Appendage::Shooter_Encoder(){
     return atspeed;
 }
 
-bool Appendage::Shooter_Encoder_distance(double distance){
+bool Appendage::Shooter_Encoder_distance(double distance, double trim){
      
     
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
     //current = abs(current);
     double kP = 0.00025;
+    distance = distance + (trim * 6); // Every trim value will be 6 inches futher / closer
+     
     double target = distance; // Will need to add some math to convert distance to target speed
 
     double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel

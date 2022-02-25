@@ -36,6 +36,8 @@ void Robot::RobotInit()
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   alliance_color = "red";  // Default evaluated in auto and teleop inits
   turret_direction = true; // Initial turrent scan direction
+  shooter_trim = 0;
+  frc::SmartDashboard::PutNumber("Shooter Trim", shooter_trim);
 
   // Dashboard input creations
   MyAppendage.DashboardCreate();
@@ -74,6 +76,7 @@ void Robot::AutonomousInit()
     alliance_color = "blue";
   }
 
+  shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
@@ -311,6 +314,8 @@ void Robot::TeleopInit()
   endgame_unlock = false;
   shooter_test = false;
 
+  shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
+
   // Get alliance station color
   static auto color = frc::DriverStation::GetAlliance();
   if (color == frc::DriverStation::Alliance::kBlue)
@@ -354,7 +359,7 @@ void Robot::TeleopPeriodic(){
   bool c2_btn_x = controller2.GetRawButton(3);
   // bool c2_btn_lb = controller2.GetRawButton(5);
   // bool c2_btn_rb = controller2.GetRawButton(6);
-  // double c2_dpad = controller2.GetPOV(0);
+  double c2_dpad = controller2.GetPOV(0);
   bool c2_btn_back = controller2.GetRawButton(7);
   bool c2_btn_start = controller2.GetRawButton(8);
 
@@ -554,6 +559,17 @@ else{
 
   //--------------------Shooter Code -----------------------------------
 
+// Shooter Trim 
+
+if (c2_dpad > 80 && c2_dpad < 100){ // Right on dpad
+  shooter_trim ++;
+}
+else if(c2_dpad > 260 && c2_dpad < 280){ // Left on dpad
+  shooter_trim --;
+}
+
+frc::SmartDashboard::PutNumber("Shooter Trim", shooter_trim);
+
 // Get into and out of shooter test mode
 if (c2_btn_start && c2_btn_back){
   shooter_test = true;
@@ -666,7 +682,7 @@ else {
   {
     //Get shooter aligned and up to speed
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false); // This should be moved outside if for cst tracking
-    //atspeed = MyAppendage.Shooter_Encoder_distance(distance);
+    //atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
     MyAppendage.Articulate(distance);
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
