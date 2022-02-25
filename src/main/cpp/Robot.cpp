@@ -39,6 +39,12 @@ void Robot::RobotInit()
   shooter_trim = 0;
   frc::SmartDashboard::PutNumber("Shooter Trim", shooter_trim);
 
+// Initial pnematic states
+  MyAppendage.Intake_Up();
+  MyDrive.climber_hold();
+  MyDrive.climber_tiltin();
+  MyAppendage.Articulate(4);
+
   // Dashboard input creations
   MyAppendage.DashboardCreate();
 }
