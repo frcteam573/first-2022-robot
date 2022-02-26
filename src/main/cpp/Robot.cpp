@@ -534,26 +534,32 @@ void Robot::TeleopPeriodic(){
 
 //--------------------Intake Code -----------------------------------
 // Extend / Retract Intake
-
+//Run intake
 if (c2_leftbumper){
     MyAppendage.Intake_Down();
+    MyAppendage.Intake_In();
+}
+else if(c2_btn_y){
+  MyAppendage.Intake_Down();
+  MyAppendage.Intake_Out();
 }
 else{
   MyAppendage.Intake_Up();
+  MyAppendage.Intake_Off();
 }
-
+/*
 // Run Intake In / Out
 if (c2_rightbumper){
   bool LightGate_val = MyAppendage.Intake_In();
 
-  /*
+  
   if (LightGate_val && !shooter_test){
     MyAppendage.Intake2_In();
   }
   else{
     MyAppendage.Intake2_Off();
     frc::SmartDashboard::PutString("Intake State", "Off");
-  }*/
+  }
 }
 else if (c2_btn_y){
   MyAppendage.Intake_Out();
@@ -561,7 +567,7 @@ else if (c2_btn_y){
 }
 else{
   MyAppendage.Intake_Off();
-}
+}*/
 
   //--------------------Shooter Code -----------------------------------
 
