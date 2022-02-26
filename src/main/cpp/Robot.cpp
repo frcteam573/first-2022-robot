@@ -712,7 +712,7 @@ else {
 if (endgame_unlock){
   MyLed.led_control("Rainbow");
 }
-else if (intake_camera_exist){
+else if (intake_camera_exist == 1){
   MyLed.led_control("White");
 }
 
@@ -739,7 +739,7 @@ frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
 frc::SmartDashboard::PutBoolean("Shooter Aligned", align);
 
 //Drive Current Compares
-
+/*
 MyLog.CurrentCompare(19, 7);
 MyLog.CurrentCompare(18, 8);
 MyLog.CurrentCompare(0, 9);
@@ -749,9 +749,9 @@ MyLog.CurrentCompare(1, 10);
 
 MyLog.CurrentCompare(13, 14);
 MyLog.CurrentCompare(14, 2);
+*/
 
-
-MyLog.Dashboard();
+//MyLog.Dashboard();
 MyLog.PDPTotal();
 MyDrive.dashboard();
 MyAppendage.dashboard();

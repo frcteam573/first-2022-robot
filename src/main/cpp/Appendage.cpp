@@ -154,7 +154,7 @@ void Appendage::Feeder_Off()
  */
 void Appendage::Intake_Up()
 {
-    p_Intake->Set(frc::DoubleSolenoid::Value::kForward);
+    p_Intake->Set(frc::DoubleSolenoid::Value::kReverse);
 }
 
 /*
@@ -162,7 +162,7 @@ void Appendage::Intake_Up()
  */
 void Appendage::Intake_Down()
 {
-    p_Intake->Set(frc::DoubleSolenoid::Value::kReverse);
+    p_Intake->Set(frc::DoubleSolenoid::Value::kForward);
 }
 
 /*
