@@ -36,6 +36,14 @@ void Robot::RobotInit()
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   alliance_color = "red";  // Default evaluated in auto and teleop inits
   turret_direction = true; // Initial turrent scan direction
+  shooter_trim = 0;
+  frc::SmartDashboard::PutNumber("Shooter Trim", shooter_trim);
+
+// Initial pnematic states
+  MyAppendage.Intake_Up();
+  MyDrive.climber_hold();
+  MyDrive.climber_tiltin();
+  MyAppendage.Articulate(4);
 
   // Dashboard input creations
   MyAppendage.DashboardCreate();
@@ -74,6 +82,7 @@ void Robot::AutonomousInit()
     alliance_color = "blue";
   }
 
+  shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
@@ -170,7 +179,7 @@ void Robot::AutonomousPeriodic(){
         double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
         MyAppendage.Articulate(distance);
-        bool atspeed = MyAppendage.Shooter_Encoder();
+        bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
 
@@ -210,14 +219,14 @@ void Robot::AutonomousPeriodic(){
           double distance = MyAppendage.Get_Distance(shooter_camera_y);
           tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
           MyAppendage.Articulate(distance);
-          bool atspeed = MyAppendage.Shooter_Encoder();
+          bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
           MyAppendage.Feeder_Off();
           MyAppendage.Intake2_Off();
 
           if (align && atspeed)
           {
             MyAppendage.Feeder_In();
-              MyAppendage.Intake2_In();
+            MyAppendage.Intake2_In();
           }
         }
 
@@ -266,7 +275,7 @@ void Robot::AutonomousPeriodic(){
             double distance = MyAppendage.Get_Distance(shooter_camera_y);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
             MyAppendage.Articulate(distance);
-            bool atspeed = MyAppendage.Shooter_Encoder();
+            bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
             MyAppendage.Feeder_Off();
             MyAppendage.Intake2_Off();
 
@@ -309,6 +318,9 @@ void Robot::TeleopInit()
   climber_count = 0;
   drive_straight_first = true;
   endgame_unlock = false;
+  shooter_test = false;
+
+  shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
 
   // Get alliance station color
   static auto color = frc::DriverStation::GetAlliance();
@@ -342,7 +354,7 @@ void Robot::TeleopPeriodic(){
   bool c1_btn_b = controller1.GetRawButton(2);
   bool c1_btn_x = controller1.GetRawButton(3);
   bool c1_btn_a = controller1.GetRawButton(1);
-  bool c1_btn_y = controller1.GetRawButton (4);
+  bool c1_btn_y = controller1.GetRawButton(4);
 
   //-----------------------------------------------------------------------------
   //------------ Operator Controller --------------------------------------------
@@ -353,7 +365,7 @@ void Robot::TeleopPeriodic(){
   bool c2_btn_x = controller2.GetRawButton(3);
   // bool c2_btn_lb = controller2.GetRawButton(5);
   // bool c2_btn_rb = controller2.GetRawButton(6);
-  // double c2_dpad = controller2.GetPOV(0);
+  double c2_dpad = controller2.GetPOV(0);
   bool c2_btn_back = controller2.GetRawButton(7);
   bool c2_btn_start = controller2.GetRawButton(8);
 
@@ -376,7 +388,7 @@ void Robot::TeleopPeriodic(){
 
   //--------CAMERA VALUES-----------------//
   float shooter_camera_x = table_s->GetNumber("tx", 0);
-  float shooter_camera_exist = table_s->GetNumber("tv", 0);
+  float shooter_camera_exist = table_s->GetNumber("tv", 2); // If value 2 means no camera data following
   // float image_size = table->GetNumber("ta", 0);
   float shooter_camera_y = table_s->GetNumber("ty", 0);
   double distance = MyAppendage.Get_Distance(shooter_camera_y);
@@ -403,7 +415,7 @@ void Robot::TeleopPeriodic(){
   //--------CAMERA VALUES-----------------//
   float intake_camera_x = table_i -> GetNumber("tx", 0);
 
-  float intake_camera_exist = table_i -> GetNumber("tv", 0);
+  float intake_camera_exist = table_i -> GetNumber("tv", 2); // If value 2 means no camera data following
   // float image_size = table->GetNumber("ta", 0);
   //float intake_camera_y = table_i -> GetNumber("ty", 0);
 
@@ -518,37 +530,57 @@ void Robot::TeleopPeriodic(){
     }
 
   }
-  // -------------------------------------------------------------------
+// -------------------------------------------------------------------
 
-  //--------------------Intake Code -----------------------------------
-  // Extend / Retract Intake
-  if (c2_leftbumper){
+//--------------------Intake Code -----------------------------------
+// Extend / Retract Intake
+//Run intake
+if (c2_leftbumper){
     MyAppendage.Intake_Down();
+    MyAppendage.Intake_In();
+}
+else if(c2_btn_y){
+  MyAppendage.Intake_Down();
+  MyAppendage.Intake_Out();
+}
+else{
+  MyAppendage.Intake_Up();
+  MyAppendage.Intake_Off();
+}
+/*
+// Run Intake In / Out
+if (c2_rightbumper){
+  bool LightGate_val = MyAppendage.Intake_In();
+
+  
+  if (LightGate_val && !shooter_test){
+    MyAppendage.Intake2_In();
   }
   else{
-    MyAppendage.Intake_Up();
+    MyAppendage.Intake2_Off();
+    frc::SmartDashboard::PutString("Intake State", "Off");
   }
-
-  // Run Intake In / Out
-  if (c2_rightbumper){
-    bool LightGate_val = MyAppendage.Intake_In();
-
-    if (LightGate_val){
-      MyAppendage.Intake2_In();
-    }
-
-    else{
-      MyAppendage.Intake2_Off();
-    }
-  }
-  else if (c2_btn_y){
-    MyAppendage.Intake_Out();
-  }
-  else{
-    MyAppendage.Intake_Off();
-  }
+}
+else if (c2_btn_y){
+  MyAppendage.Intake_Out();
+  
+}
+else{
+  MyAppendage.Intake_Off();
+}*/
 
   //--------------------Shooter Code -----------------------------------
+
+// Shooter Trim 
+
+if (c2_dpad > 80 && c2_dpad < 100){ // Right on dpad
+  shooter_trim ++;
+}
+else if(c2_dpad > 260 && c2_dpad < 280){ // Left on dpad
+  shooter_trim --;
+}
+
+frc::SmartDashboard::PutNumber("Shooter Trim", shooter_trim);
 
 // Get into and out of shooter test mode
 if (c2_btn_start && c2_btn_back){
@@ -596,7 +628,7 @@ else if (shooter_test){ // Shooter Test
     MyAppendage.Intake2_In();
   }
   else{
-    MyAppendage.Feeder_Off();
+    MyAppendage.Feeder_Off(); 
     MyAppendage.Intake2_Off();
   }
 
@@ -645,15 +677,24 @@ else if (c2_btn_b){
 
 }
 
+
 else {
   //Comment out just allow for testing so we don't break things.
-  //tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
-    
+ /* if (shooter_camera_exist == 2 ){
+    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+  }
+  else{
+    MyAppendage.Rotate_Off();
+  }*/
+  
+  MyAppendage.Shooter_Off();
+  MyAppendage.Rotate_Off();
+  /*
   if (c2_left_trigger >= 0.5)
   {
     //Get shooter aligned and up to speed
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false); // This should be moved outside if for cst tracking
-    //atspeed = MyAppendage.Shooter_Encoder_distance(distance);
+    //atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
     MyAppendage.Articulate(distance);
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
@@ -668,7 +709,7 @@ else {
   else {
     MyAppendage.Shooter_Off();
 
-  }
+  }*/
 }
 // -------------------------------------------------------------------
 
@@ -677,7 +718,7 @@ else {
 if (endgame_unlock){
   MyLed.led_control("Rainbow");
 }
-else if (intake_camera_exist){
+else if (intake_camera_exist == 1){
   MyLed.led_control("White");
 }
 
@@ -699,11 +740,12 @@ else{
 
 frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
+frc::SmartDashboard::PutBoolean("C2 Btn Y", c2_btn_y);
 frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
 frc::SmartDashboard::PutBoolean("Shooter Aligned", align);
 
 //Drive Current Compares
-
+/*
 MyLog.CurrentCompare(19, 7);
 MyLog.CurrentCompare(18, 8);
 MyLog.CurrentCompare(0, 9);
@@ -713,9 +755,9 @@ MyLog.CurrentCompare(1, 10);
 
 MyLog.CurrentCompare(13, 14);
 MyLog.CurrentCompare(14, 2);
+*/
 
-
-MyLog.Dashboard();
+//MyLog.Dashboard();
 MyLog.PDPTotal();
 MyDrive.dashboard();
 MyAppendage.dashboard();

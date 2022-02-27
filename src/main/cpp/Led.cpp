@@ -6,7 +6,7 @@ using namespace std;
 
 Led::Led() {
     // Define CAN and PWM Ids used in Led here
-    int LedID = 1;
+    int LedID = 0;
 
     // Define motors, sensors, and pneumatics here
     m_leds = new frc::Spark(LedID);

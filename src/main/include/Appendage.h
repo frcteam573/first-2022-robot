@@ -50,7 +50,7 @@ public:
     void Intake_Up();
     void Intake_Down();
     double Remap_Val(double i, double threshold);
-    bool Shooter_Encoder_distance (double distance);
+    bool Shooter_Encoder_distance (double distance, double trim);
 
     bool Shooter_Encoder();
     void Shooter_Off();

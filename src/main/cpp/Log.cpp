@@ -11,7 +11,7 @@ int counter;
 Log::Log() {
     // Define CAN and PWM Ids used in Led here
 
-    Board = new frc::PowerDistribution(3,frc::PowerDistribution::ModuleType::kRev);
+    Board = new frc::PowerDistribution(15,frc::PowerDistribution::ModuleType::kRev);
     // Define motors, sensors, and pneumatics here
 
 }

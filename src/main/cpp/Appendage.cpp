@@ -13,8 +13,8 @@ Appendage::Appendage()
     int m_SusanId = 13;
     int m_HoodId = 12;
 
-    int p_IntakeId_a = 14;
-    int p_IntakeId_b = 15;
+    int p_IntakeId_a = 6;
+    int p_IntakeId_b = 7;
     int p_Hood_a = 4;
     int p_Hood_b = 5;
     int s_LightGateId = 0;
@@ -23,7 +23,7 @@ Appendage::Appendage()
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter1 = new rev::CANSparkMax{m_ShooterId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter2 = new rev::CANSparkMax{m_ShooterId2, rev::CANSparkMax::MotorType::kBrushless};
-
+    m_Intake1 -> SetInverted(true);
     m_Intake2 -> SetInverted(true);
     m_Feeder = new rev::CANSparkMax{m_FeederId, rev::CANSparkMax::MotorType::kBrushless};
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
@@ -55,20 +55,28 @@ double Appendage::Remap_Val(double i, double threshold)
 void Appendage::DashboardCreate(){
     
 // Dashboard input inital decs.
-    static double shooter_p_in = 1;
-    static double shooter_target_in = 3000;
-    static double shooter_f_in = 0.2;
-
+    static double shooter_p_in = 0.00025;
+    static double shooter_target_in = 1000;
+    static double feed_roller_speed = 0.99;
+    static double prefeed_roller_speed = 0.99;
+    static double turret_speed = 0.99;
+    static double intake_speed = 0.99;
+   
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
   frc::SmartDashboard::PutNumber("Shooter Target In", shooter_target_in);
-  frc::SmartDashboard::PutNumber("Shooter Feed Forward In", shooter_f_in);
+  frc::SmartDashboard::PutNumber("Feed Speed", feed_roller_speed);
+  frc::SmartDashboard::PutNumber("PreFeed Speed", prefeed_roller_speed);
+  frc::SmartDashboard::PutNumber("Turret Speed", turret_speed);
+  frc::SmartDashboard::PutNumber("Intake Speed", intake_speed);
+  
 }
 /*
  * Allows robot to Intake Balls
  */
 bool Appendage::Intake_In()
 {
-    m_Intake1->Set(1);
+    double intakespeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
+    m_Intake1->Set(intakespeed);
 
     return s_LightGate -> Get();
 }
@@ -78,7 +86,8 @@ bool Appendage::Intake_In()
  */
 void Appendage::Intake_Out()
 {
-    m_Intake1->SetInverted(-1);
+    double intakespeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
+    m_Intake1->Set(-intakespeed);
 }
 
 /*
@@ -94,7 +103,8 @@ void Appendage::Intake_Off()
  */
 void Appendage::Intake2_In()
 {
-    m_Intake2->Set(1);
+    double prefeedspeed = frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
+    m_Intake2->Set(prefeedspeed);
 }
 
 /*
@@ -102,7 +112,8 @@ void Appendage::Intake2_In()
  */
 void Appendage::Intake2_Out()
 {
-    m_Intake2->SetInverted(-1);
+    double prefeedspeed = frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
+    m_Intake2->Set(-prefeedspeed);
 }
 
 /*
@@ -117,7 +128,8 @@ void Appendage::Intake2_Off()
  */
 void Appendage::Feeder_In()
 {
-    m_Feeder->Set(1);
+    double feedspeed = frc::SmartDashboard::GetNumber("Feed Speed", 0.99);
+    m_Feeder->Set(feedspeed);
 }
 
 /*
@@ -125,7 +137,8 @@ void Appendage::Feeder_In()
  */
 void Appendage::Feeder_Out()
 {
-    m_Feeder->SetInverted(-1);
+    double feedspeed = frc::SmartDashboard::GetNumber("Feed Speed", 0.99);
+    m_Feeder->Set(-feedspeed);
 }
 
 /*
@@ -141,7 +154,7 @@ void Appendage::Feeder_Off()
  */
 void Appendage::Intake_Up()
 {
-    p_Intake->Set(frc::DoubleSolenoid::Value::kForward);
+    p_Intake->Set(frc::DoubleSolenoid::Value::kReverse);
 }
 
 /*
@@ -149,7 +162,7 @@ void Appendage::Intake_Up()
  */
 void Appendage::Intake_Down()
 {
-    p_Intake->Set(frc::DoubleSolenoid::Value::kReverse);
+    p_Intake->Set(frc::DoubleSolenoid::Value::kForward);
 }
 
 /*
@@ -159,14 +172,14 @@ bool Appendage::Shooter_Encoder(){
      
     
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
-    
+    //current = abs(current);
     // Read in value from dashboard
     double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 0.00025);
     double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
     //double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
     double kP = shooter_p_in;
-    double target = 1000;
+    double target = shooter_target_in;
 
     double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
 
@@ -190,21 +203,23 @@ bool Appendage::Shooter_Encoder(){
     m_Shooter2 -> Set(output);
 
     //Output to dash for testing
-    frc::SmartDashboard::PutNumber("Shooter Target Out", shooter_target_in);
-    frc::SmartDashboard::PutNumber("Shooter Current", current);
-    frc::SmartDashboard::PutNumber("Shooter Error", err);
-    frc::SmartDashboard::PutNumber("Shooter P Out", shooter_p_in);
-    frc::SmartDashboard::PutNumber("Shooter Output", output);
-    frc::SmartDashboard::PutNumber("F Output", shooter_f_in);
+    //frc::SmartDashboard::PutNumber("Shooter Target Out", shooter_target_in);
+    //frc::SmartDashboard::PutNumber("Shooter Current", current);
+    //frc::SmartDashboard::PutNumber("Shooter Error", err);
+    //frc::SmartDashboard::PutNumber("Shooter P Out", shooter_p_in);
+    //frc::SmartDashboard::PutNumber("Shooter Output", output);
+    //frc::SmartDashboard::PutNumber("F Output", shooter_f_in);
     return atspeed;
 }
 
-bool Appendage::Shooter_Encoder_distance(double distance){
+bool Appendage::Shooter_Encoder_distance(double distance, double trim){
      
     
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
-    
+    //current = abs(current);
     double kP = 0.00025;
+    distance = distance + (trim * 6); // Every trim value will be 6 inches futher / closer
+     
     double target = distance; // Will need to add some math to convert distance to target speed
 
     double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
@@ -229,9 +244,9 @@ bool Appendage::Shooter_Encoder_distance(double distance){
     m_Shooter2 -> Set(output);
 
     //Output to dash for testing
-    frc::SmartDashboard::PutNumber("Shooter Current", current);
-    frc::SmartDashboard::PutNumber("Shooter Error", err);
-    frc::SmartDashboard::PutNumber("Shooter Output", output);
+    //frc::SmartDashboard::PutNumber("Shooter Current", current);
+    //frc::SmartDashboard::PutNumber("Shooter Error", err);
+    //frc::SmartDashboard::PutNumber("Shooter Output", output);
     return atspeed;
 }
 
@@ -343,12 +358,14 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
 
     void Appendage::Rotate_left()
 {
-    m_Susan->Set(-1);
+    double turretspeed = frc::SmartDashboard::GetNumber("Turret Speed", 0.99);
+    m_Susan->Set(-turretspeed);
 }
 
     void Appendage::Rotate_right()
 {
-    m_Susan->Set(1);
+    double turretspeed = frc::SmartDashboard::GetNumber("Turret Speed", 0.99);
+    m_Susan->Set(turretspeed);
 }
 
 /*
@@ -374,4 +391,5 @@ void Appendage::Articulate(double distance){
     void Appendage::dashboard(){
         frc::SmartDashboard::PutNumber("Shooter Enc", s_Shooter_Encoder -> GetVelocity());
         frc::SmartDashboard::PutNumber("Susan Enc", s_Susan_Encoder -> GetPosition());
+        frc::SmartDashboard::PutBoolean("LightGate",s_LightGate->Get());
     }
