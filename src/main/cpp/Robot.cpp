@@ -660,6 +660,22 @@ else if (c2_btn_a){
 
 }
 
+else if (c2_btn_x){
+  //shoot out
+
+  atspeed = MyAppendage.Shooter_Encoder_distance(36, 0);
+
+  if( (c2_right_trigger > 0.5)){ // Shoot ball
+    MyAppendage.Feeder_In();
+    MyAppendage.Intake2_In();
+  }
+  else{
+    MyAppendage.Feeder_Off();
+    MyAppendage.Intake2_Off();
+  }
+
+}
+
 else if (c2_btn_b){
   //High Fixed shoot
 
