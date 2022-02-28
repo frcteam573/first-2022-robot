@@ -102,7 +102,7 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic(){
 
   //Compressor Code
-    compressor.EnableAnalog(units::pounds_per_square_inch_t(60), units::pounds_per_square_inch_t (120));
+    compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
   //Reset shooter variables
   bool align = false;
@@ -333,7 +333,7 @@ void Robot::TeleopPeriodic(){
 
 
   //Compressor Code
-  compressor.EnableAnalog(units::pounds_per_square_inch_t(60), units::pounds_per_square_inch_t (120));
+  compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
   //Reset shooter variables
 
