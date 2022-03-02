@@ -34,8 +34,7 @@ Drive::Drive(){
     
         m_leftclimb = new rev::CANSparkMax{leftclimbID, rev::CANSparkMax::MotorType::kBrushless};
         m_rightclimb = new rev::CANSparkMax{rightclimbID, rev::CANSparkMax::MotorType::kBrushless};
-        m_leftclimb -> SetInverted(true); 
-        m_rightclimb -> SetInverted(true);  
+        m_leftclimb -> SetInverted(true);  
  
 
         p_climberlock = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climberlockIDb, climberlockIDa};  
@@ -64,8 +63,8 @@ double Drive::deadband(double input, double deadband_size){
     
     void Drive::Joystick_Drive(double LeftStick, double RightStick){
 
-    double left_out = LeftStick*LeftStick*LeftStick;
-    double right_out = RightStick*RightStick*RightStick;
+    double left_out = LeftStick*LeftStick*LeftStick/2;
+    double right_out = RightStick*RightStick*RightStick/2;
 
     m_leftdrive -> Set(left_out);
     m_leftdrive2 -> Set(left_out);
@@ -119,7 +118,7 @@ double Drive::Remap_Val(double i, double threshold)
                 p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
                 
                 m_leftclimb -> Set(-1);
-                m_rightclimb -> Set(-1);
+                m_rightclimb -> Set(1);
 
             //}
 
@@ -131,7 +130,7 @@ double Drive::Remap_Val(double i, double threshold)
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
             
             m_leftclimb -> Set(1);
-            m_rightclimb -> Set(1);
+            m_rightclimb -> Set(-1);
         }
 
         void Drive::climber_hold(){
