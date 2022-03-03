@@ -32,8 +32,12 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1);
 
+  m_alliance.SetDefaultOption(kBlue, kBlue);
+  m_alliance.AddOption(kRed, kRed);
+
   frc::SmartDashboard::PutNumber("Auto delay", auto_timer);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+  frc::SmartDashboard::PutData("Alliance Color", &m_alliance);
   alliance_color = "red";  // Default evaluated in auto and teleop inits
   turret_direction = true; // Initial turrent scan direction
   shooter_trim = 0;
@@ -76,11 +80,19 @@ void Robot::AutonomousInit()
   counter = 0;
 
   // Get alliance station color
+
   static auto color = frc::DriverStation::GetAlliance();
-  if (color == frc::DriverStation::Alliance::kBlue)
+   m_allianceselected = m_alliance.GetSelected();
+  if (m_allianceselected == "Blue")
   {
     alliance_color = "blue";
   }
+
+  else{
+    alliance_color = "red";
+  }
+
+
 
   shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
   m_autoSelected = m_chooser.GetSelected();
@@ -102,7 +114,7 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic(){
 
   //Compressor Code
-    compressor.EnableAnalog(units::pounds_per_square_inch_t(60), units::pounds_per_square_inch_t (120));
+    compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
   //Reset shooter variables
   bool align = false;
@@ -160,9 +172,14 @@ void Robot::AutonomousPeriodic(){
     {
       // 2 Ball Autonomous
 
-      if (intake_camera_exist)
+      if (counter - auto_timer < 3){
+        MyAppendage.Intake_Down();
+        MyAppendage.Intake_In();
+      }
+
+      else if (intake_camera_exist == 1)
       {
-        MyDrive.camera_intake(intake_camera_x, 0.8);
+        MyDrive.camera_intake(intake_camera_x, -0.5);
         MyAppendage.Intake_Down();
         bool LightGate_val = MyAppendage.Intake_In();
 
@@ -182,6 +199,8 @@ void Robot::AutonomousPeriodic(){
         bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
+        MyDrive.Joystick_Drive(0,0);
+
 
         if (align && atspeed)
         {
@@ -200,7 +219,11 @@ void Robot::AutonomousPeriodic(){
       if (counter < FirstSectionOffset){
         // 50 = 1 seconds
 
-        if (intake_camera_exist)
+        if (counter - auto_timer < 3){
+        MyAppendage.Intake_Down();
+        }
+
+        else if (intake_camera_exist)
         {
           MyDrive.camera_intake(intake_camera_x, 0.8);
           MyAppendage.Intake_Down();
@@ -222,6 +245,8 @@ void Robot::AutonomousPeriodic(){
           bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
           MyAppendage.Feeder_Off();
           MyAppendage.Intake2_Off();
+          MyDrive.Joystick_Drive(0,0);
+
 
           if (align && atspeed)
           {
@@ -278,6 +303,8 @@ void Robot::AutonomousPeriodic(){
             bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
             MyAppendage.Feeder_Off();
             MyAppendage.Intake2_Off();
+            MyDrive.Joystick_Drive(0,0);
+
 
             if (align && atspeed)
             {
@@ -291,8 +318,23 @@ void Robot::AutonomousPeriodic(){
       }
   }
   }
+///////////////////////////////////////////////////////////////////////////////
+else if(m_autoSelected == kAutoNameCustom2){
+   vector <double> Length = MyPath.ReturnTableVal(counter, 1, true);
+      int length = round (Length [0]);
 
+    if (counter < length){
+      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 1, false);
 
+      MyDrive.drive_PID(Table_Values, counter);
+
+    }
+
+    else{
+      MyDrive.Joystick_Drive(0,0);
+
+    }
+}
     else // Simple drive straight auto
     {
 
@@ -324,16 +366,23 @@ void Robot::TeleopInit()
 
   // Get alliance station color
   static auto color = frc::DriverStation::GetAlliance();
-  if (color == frc::DriverStation::Alliance::kBlue)
+  m_allianceselected = m_alliance.GetSelected();
+  if (m_allianceselected == "Blue")
   {
     alliance_color = "blue";
+    //sfrc::SmartDashboard::PutString("Alliance","Blue");
   }
+  else{
+    alliance_color = "red";
+    //frc::SmartDashboard::PutString("Alliance","Red");
+  }
+  frc::SmartDashboard::PutString("Alliance",alliance_color);
 }
 void Robot::TeleopPeriodic(){
 
 
   //Compressor Code
-  compressor.EnableAnalog(units::pounds_per_square_inch_t(60), units::pounds_per_square_inch_t (120));
+  compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
   //Reset shooter variables
 
@@ -650,6 +699,22 @@ else if (c2_btn_a){
   MyAppendage.Articulate(12); //harcode for close shot
 
   if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+    MyAppendage.Feeder_In();
+    MyAppendage.Intake2_In();
+  }
+  else{
+    MyAppendage.Feeder_Off();
+    MyAppendage.Intake2_Off();
+  }
+
+}
+
+else if (c2_btn_x){
+  //shoot out
+
+  atspeed = MyAppendage.Shooter_Encoder_distance(36, 0);
+
+  if( (c2_right_trigger > 0.5)){ // Shoot ball
     MyAppendage.Feeder_In();
     MyAppendage.Intake2_In();
   }

@@ -35,6 +35,7 @@ Drive::Drive(){
         m_leftclimb = new rev::CANSparkMax{leftclimbID, rev::CANSparkMax::MotorType::kBrushless};
         m_rightclimb = new rev::CANSparkMax{rightclimbID, rev::CANSparkMax::MotorType::kBrushless};
         m_leftclimb -> SetInverted(true);  
+ 
 
         p_climberlock = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climberlockIDb, climberlockIDa};  
         p_climbertilt = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, climber_tiltIDb, climber_tiltIDa};
@@ -62,8 +63,8 @@ double Drive::deadband(double input, double deadband_size){
     
     void Drive::Joystick_Drive(double LeftStick, double RightStick){
 
-    double left_out = LeftStick*LeftStick*LeftStick;
-    double right_out = RightStick*RightStick*RightStick;
+    double left_out = LeftStick*LeftStick*LeftStick/2;
+    double right_out = RightStick*RightStick*RightStick/2;
 
     m_leftdrive -> Set(left_out);
     m_leftdrive2 -> Set(left_out);
@@ -80,12 +81,13 @@ double Drive::deadband(double input, double deadband_size){
             }
             
         double error = 0-s_gyro -> GetAngle();
-        double constant = 0.3;
+        double constant = 0.01;
 
         double turn_out = constant*error; 
+        turn_out = Remap_Val (turn_out, 0.7);
 
-           double left_out = joystick_y + turn_out;
-           double right_out = joystick_y + turn_out;
+           double left_out = joystick_y*joystick_y*joystick_y + turn_out;
+           double right_out = joystick_y*joystick_y*joystick_y - turn_out;
 
         m_leftdrive -> Set(left_out);
         m_leftdrive2 -> Set(left_out);
@@ -94,26 +96,32 @@ double Drive::deadband(double input, double deadband_size){
 
         }
 
+/*
+ * Remaps a number
+ */
+double Drive::Remap_Val(double i, double threshold)
+{
+    if (abs(i) > threshold)
+    {
+        i = i/abs(i) * threshold;
+    }
+
+    return i;
+}
+
 /* CLIMBING */
 
         void Drive::climber_extend(){
 
-            if (s_leftclimber_enc->GetPosition() > -570) {
+          //  if (s_leftclimber_enc->GetPosition() > -570) {
                 //unlock climbers and extend
                 p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
                 
                 m_leftclimb -> Set(-1);
-                m_rightclimb -> Set(-1);
+                m_rightclimb -> Set(1);
 
-            }
+            //}
 
-                else{
-                    p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
-                    
-                    m_leftclimb -> Set(0);
-                    m_rightclimb -> Set(0);
-
-                }
         }
 
         void Drive::climber_retract(){
@@ -122,7 +130,7 @@ double Drive::deadband(double input, double deadband_size){
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
             
             m_leftclimb -> Set(1);
-            m_rightclimb -> Set(1);
+            m_rightclimb -> Set(-1);
         }
 
         void Drive::climber_hold(){
@@ -219,12 +227,14 @@ double Drive::deadband(double input, double deadband_size){
     void Drive::camera_intake(double camera_x, double joystick_y){
        
        double error = 0-camera_x;
-       double constant = 0.3;
+       double constant = 0.01;
+
 
         double turn_out = constant*error; 
+        turn_out = Remap_Val (turn_out, 0.7);
 
-           double left_out = joystick_y + turn_out;
-           double right_out = joystick_y + turn_out;
+           double left_out = joystick_y*joystick_y*joystick_y + turn_out;
+           double right_out = joystick_y*joystick_y*joystick_y - turn_out;
 
         m_leftdrive -> Set(left_out);
         m_leftdrive2 -> Set(left_out);
