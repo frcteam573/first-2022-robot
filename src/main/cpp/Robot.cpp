@@ -695,7 +695,7 @@ else if (c2_btn_a){
 
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
 
-  atspeed = MyAppendage.Shooter_Encoder();
+  atspeed = MyAppendage.Shooter_Encoder_distance(24, 0);
   MyAppendage.Articulate(12); //harcode for close shot
 
   if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
@@ -712,7 +712,7 @@ else if (c2_btn_a){
 else if (c2_btn_x){
   //shoot out
 
-  atspeed = MyAppendage.Shooter_Encoder_distance(36, 0);
+  atspeed = MyAppendage.Shooter_Encoder_distance(24, 0);
 
   if( (c2_right_trigger > 0.5)){ // Shoot ball
     MyAppendage.Feeder_In();
