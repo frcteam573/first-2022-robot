@@ -32,8 +32,12 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1);
 
+  m_alliance.SetDefaultOption(kBlue, kBlue);
+  m_alliance.AddOption(kRed, kRed);
+
   frc::SmartDashboard::PutNumber("Auto delay", auto_timer);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+  frc::SmartDashboard::PutData("Alliance Color", &m_alliance);
   alliance_color = "red";  // Default evaluated in auto and teleop inits
   turret_direction = true; // Initial turrent scan direction
   shooter_trim = 0;
@@ -76,11 +80,19 @@ void Robot::AutonomousInit()
   counter = 0;
 
   // Get alliance station color
+
   static auto color = frc::DriverStation::GetAlliance();
+
   if (color == frc::DriverStation::Alliance::kBlue)
   {
     alliance_color = "blue";
   }
+
+  else{
+    alliance_color = "red";
+  }
+
+
 
   shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
   m_autoSelected = m_chooser.GetSelected();
@@ -291,8 +303,23 @@ void Robot::AutonomousPeriodic(){
       }
   }
   }
+///////////////////////////////////////////////////////////////////////////////
+else if(m_autoSelected == kAutoNameCustom2){
+   vector <double> Length = MyPath.ReturnTableVal(counter, 1, true);
+      int length = round (Length [0]);
 
+    if (counter < length){
+      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 1, false);
 
+      MyDrive.drive_PID(Table_Values, counter);
+
+    }
+
+    else{
+      MyDrive.Joystick_Drive(0,0);
+
+    }
+}
     else // Simple drive straight auto
     {
 
@@ -324,10 +351,17 @@ void Robot::TeleopInit()
 
   // Get alliance station color
   static auto color = frc::DriverStation::GetAlliance();
-  if (color == frc::DriverStation::Alliance::kBlue)
+  m_allianceselected = m_alliance.GetSelected();
+  if (m_allianceselected == "Blue")
   {
     alliance_color = "blue";
+    //sfrc::SmartDashboard::PutString("Alliance","Blue");
   }
+  else{
+    alliance_color = "red";
+    //frc::SmartDashboard::PutString("Alliance","Red");
+  }
+  frc::SmartDashboard::PutString("Alliance",alliance_color);
 }
 void Robot::TeleopPeriodic(){
 

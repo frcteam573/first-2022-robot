@@ -86,8 +86,8 @@ double Drive::deadband(double input, double deadband_size){
         double turn_out = constant*error; 
         turn_out = Remap_Val (turn_out, 0.7);
 
-           double left_out = joystick_y + turn_out;
-           double right_out = joystick_y + turn_out;
+           double left_out = joystick_y*joystick_y*joystick_y + turn_out;
+           double right_out = joystick_y*joystick_y*joystick_y - turn_out;
 
         m_leftdrive -> Set(left_out);
         m_leftdrive2 -> Set(left_out);
@@ -233,8 +233,8 @@ double Drive::Remap_Val(double i, double threshold)
         double turn_out = constant*error; 
         turn_out = Remap_Val (turn_out, 0.7);
 
-           double left_out = joystick_y + turn_out;
-           double right_out = joystick_y - turn_out;
+           double left_out = joystick_y*joystick_y*joystick_y + turn_out;
+           double right_out = joystick_y*joystick_y*joystick_y - turn_out;
 
         m_leftdrive -> Set(left_out);
         m_leftdrive2 -> Set(left_out);
