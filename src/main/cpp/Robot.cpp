@@ -809,6 +809,7 @@ frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
 frc::SmartDashboard::PutBoolean("C2 Btn Y", c2_btn_y);
 frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
 frc::SmartDashboard::PutBoolean("Shooter Aligned", align);
+frc::SmartDashboard::PutNumber("Camera Distance", distance);
 
 //Drive Current Compares
 /*
@@ -824,7 +825,7 @@ MyLog.CurrentCompare(14, 2);
 */
 
 //MyLog.Dashboard();
-MyLog.PDPTotal();
+//MyLog.PDPTotal();
 MyDrive.dashboard();
 MyAppendage.dashboard();
 
