@@ -172,9 +172,14 @@ void Robot::AutonomousPeriodic(){
     {
       // 2 Ball Autonomous
 
-      if (intake_camera_exist)
+      if (counter - auto_timer < 3){
+        MyAppendage.Intake_Down();
+        MyAppendage.Intake_In();
+      }
+
+      else if (intake_camera_exist == 1)
       {
-        MyDrive.camera_intake(intake_camera_x, 0.8);
+        MyDrive.camera_intake(intake_camera_x, -0.5);
         MyAppendage.Intake_Down();
         bool LightGate_val = MyAppendage.Intake_In();
 
@@ -194,6 +199,8 @@ void Robot::AutonomousPeriodic(){
         bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
+        MyDrive.Joystick_Drive(0,0);
+
 
         if (align && atspeed)
         {
@@ -212,7 +219,11 @@ void Robot::AutonomousPeriodic(){
       if (counter < FirstSectionOffset){
         // 50 = 1 seconds
 
-        if (intake_camera_exist)
+        if (counter - auto_timer < 3){
+        MyAppendage.Intake_Down();
+        }
+
+        else if (intake_camera_exist)
         {
           MyDrive.camera_intake(intake_camera_x, 0.8);
           MyAppendage.Intake_Down();
@@ -234,6 +245,8 @@ void Robot::AutonomousPeriodic(){
           bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
           MyAppendage.Feeder_Off();
           MyAppendage.Intake2_Off();
+          MyDrive.Joystick_Drive(0,0);
+
 
           if (align && atspeed)
           {
@@ -290,6 +303,8 @@ void Robot::AutonomousPeriodic(){
             bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
             MyAppendage.Feeder_Off();
             MyAppendage.Intake2_Off();
+            MyDrive.Joystick_Drive(0,0);
+
 
             if (align && atspeed)
             {
