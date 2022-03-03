@@ -82,8 +82,8 @@ void Robot::AutonomousInit()
   // Get alliance station color
 
   static auto color = frc::DriverStation::GetAlliance();
-
-  if (color == frc::DriverStation::Alliance::kBlue)
+   m_allianceselected = m_alliance.GetSelected();
+  if (m_allianceselected == "Blue")
   {
     alliance_color = "blue";
   }
