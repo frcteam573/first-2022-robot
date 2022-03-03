@@ -61,6 +61,13 @@ void Appendage::DashboardCreate(){
     static double prefeed_roller_speed = 0.99;
     static double turret_speed = 0.99;
     static double intake_speed = 0.99;
+    static double k_turret_cam = 0.00025;
+    static double k_turret_enc = 0.00025;
+    static double turret_max_enc = 4000;
+    static double turret_min_enc = -4000;
+    static double turret_enc_deadzone = 20;
+    static double turret_cam_deadzone = 50;
+
    
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
   frc::SmartDashboard::PutNumber("Shooter Target In", shooter_target_in);
@@ -68,6 +75,13 @@ void Appendage::DashboardCreate(){
   frc::SmartDashboard::PutNumber("PreFeed Speed", prefeed_roller_speed);
   frc::SmartDashboard::PutNumber("Turret Speed", turret_speed);
   frc::SmartDashboard::PutNumber("Intake Speed", intake_speed);
+  frc::SmartDashboard::PutNumber("Turret Camera P", k_turret_cam);
+  frc::SmartDashboard::PutNumber("Turret Enconder P", k_turret_enc);
+  frc::SmartDashboard::PutNumber("Turret Max Encoder", turret_max_enc);
+  frc::SmartDashboard::PutNumber("Turret Min Encoder", turret_min_enc);
+  frc::SmartDashboard::PutNumber("Turret Enc Deadzone", turret_enc_deadzone);
+  frc::SmartDashboard::PutNumber("Turret Cam Deadzone", turret_cam_deadzone);
+  
   
 }
 /*
@@ -285,25 +299,43 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         k = 0.3,
         k_fixedpos = 0.2,
         output = 0,
-        currEnc, maxEnc = 4000, minEnc = 1000;
+        currEnc, maxEnc = 4000, minEnc = 1000, turret_enc_deadzone = 20, turret_cam_deadzone = 50;
 
     bool align = false;
 
-// Fixed positiions
+     k = frc::SmartDashboard::GetNumber("Turret Camera P", 0.00025);
+     k_fixedpos = frc::SmartDashboard::GetNumber("Turret Enconder P", 0.00025);
+     maxEnc = frc::SmartDashboard::GetNumber("Turret Max Encoder", 4000);
+     minEnc = frc::SmartDashboard::GetNumber("Turret Min Encoder", -4000);
+     turret_enc_deadzone = frc::SmartDashboard::GetNumber("Turret Enc Deadzone", 20);
+     turret_cam_deadzone = frc::SmartDashboard::GetNumber("Turret Cam Deadzone", 50);
+
+// Fixed positiion
     if (fixedgoal){
         error = 0 - s_Susan_Encoder->GetPosition();
         output = k_fixedpos * error;
 
-        if(abs(error)<20){
+        if(abs(error)<turret_enc_deadzone){
             output = 0;
             align = true;
         }
     } 
     else if(endgame){
-        error = 180 - s_Susan_Encoder->GetPosition(); // Need to update with 180 degree encoder value
+        double currpos = s_Susan_Encoder->GetPosition();
+
+        double setpoint;
+
+        if(currpos >= 0){
+            setpoint = 180;     // Need to update with 180 degree encoder value
+        }
+        else{
+            setpoint = -180;
+        }
+
+        error = setpoint - currpos; 
         output = k_fixedpos * error;
 
-        if(abs(error)<20){
+        if(abs(error)<turret_enc_deadzone){
             output = 0;
             align = true;
         }
@@ -311,6 +343,7 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
 
     // Camera Tracking
     else{
+        
 
         if (camera_exists == 0){ // Camera doesn't see target
             currEnc = s_Susan_Encoder->GetPosition();
@@ -329,13 +362,17 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
                 }
             }
         }
+        else if(camera_exists == 2){ // If camera stream is broken
+            output = 0;
+        }
         else{   // Camera sees target
 
             error = 0 - camera_x;
             output = k * error;
 
-            if(abs(error)<2){   // Need to set range when testing.
+            if(abs(error)<turret_cam_deadzone){   // Need to set range when testing.
                 align = true;
+                output = 0;
             }
 
         }
@@ -348,6 +385,10 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
     else{
         direction = false;
     }
+
+    double turretspeed = frc::SmartDashboard::GetNumber("Turret Speed", 0.99);
+    
+    output = Remap_Val(output,turretspeed);
 
     m_Susan->Set(output);   
 

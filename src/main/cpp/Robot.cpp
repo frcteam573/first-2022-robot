@@ -726,7 +726,13 @@ else if (c2_btn_x){
 }
 
 else if (c2_btn_b){
-  //High Fixed shoot
+
+// Test turret camera tracking
+
+  tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+  
+
+  /*//High Fixed shoot
 
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
 
@@ -738,14 +744,14 @@ else if (c2_btn_b){
   }
   else{
       MyAppendage.Feeder_Off();
-  }
+  }*/
 
 }
 
 
 else {
   //Comment out just allow for testing so we don't break things.
- /* if (shooter_camera_exist == 2 ){
+ /* if (shooter_camera_exist == 1 ){
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
   }
   else{
