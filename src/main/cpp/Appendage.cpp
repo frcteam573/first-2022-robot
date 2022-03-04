@@ -233,8 +233,13 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
     //current = abs(current);
     double kP = 0.00025;
     distance = distance + (trim * 6); // Every trim value will be 6 inches futher / closer
-     
-    double target = distance; // Will need to add some math to convert distance to target speed
+    double target;
+    if(distance <= 134){ // 134 in is hood up down cut off
+        target = 39.51*distance+2336.81;
+    }
+    else{
+        target = 31.7*distance+2751;
+    }
 
     double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
 
@@ -283,7 +288,7 @@ double Appendage::Get_Distance(double camera_y)
         angleMount, angleCam = camera_y;
 
     // height are in (inches), angles are in degrees
-    heightGoal = 102.8125, heightBot = 41.5, angleMount = 39; // From CAD not measured on robot
+    heightGoal = 102.8125, heightBot = 41.5, angleMount = 34; // From CAD not measured on robot
     double PI = 3.14159265;
     double rads = (angleMount + angleCam) * PI / 180.0;
     distance = (heightGoal - heightBot) / tan(rads);
@@ -419,7 +424,7 @@ void Appendage::Rotate_Off()
 
 void Appendage::Articulate(double distance){
 
-    if (distance > 120){
+    if (distance > 134){
         p_Hood->Set(frc::DoubleSolenoid::Value::kForward);
     }
 
