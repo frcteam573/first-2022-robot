@@ -671,8 +671,8 @@ if (c2_btn_x && shooter_test){
 
 // Shooter state code blocks 
 if (endgame_unlock){ // Endgame shooter
-  //MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, true);
-  MyAppendage.Rotate_Off(); // Only for testing, line above should be used for competition.
+  MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, true);
+  //MyAppendage.Rotate_Off(); // Only for testing, line above should be used for competition.
   MyAppendage.Shooter_Off();
   MyAppendage.Feeder_Off();
   MyAppendage.Intake2_Off();
@@ -758,7 +758,6 @@ else if (c2_btn_b){
 // Test turret camera tracking
 
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
-  
 
   /*//High Fixed shoot
 
@@ -785,6 +784,9 @@ else {
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
     atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
     MyAppendage.Articulate(distance);
+    frc::SmartDashboard::PutBoolean("Alligned", align);
+    frc::SmartDashboard::PutBoolean("AtSpeed", atspeed);
+
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
       MyAppendage.Feeder_In();
@@ -815,9 +817,9 @@ else if (align && !atspeed){
   MyLed.led_control("Yellow");
 }
 
-else if (!align && atspeed){
-  MyLed.led_control("Red");
-}
+//else if (!align && atspeed){
+//  MyLed.led_control("Red");
+//}
 
 else if (align && atspeed){
   MyLed.led_control("Green");
