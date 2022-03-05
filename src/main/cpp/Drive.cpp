@@ -131,8 +131,15 @@ double Drive::Remap_Val(double i, double threshold)
                 //unlock climbers and extend
                 p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
                 
+            if (climb_lock > 2){
                 m_leftclimb -> Set(-1);
                 m_rightclimb -> Set(1);
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+            }
+            climb_lock ++;
 
             //}
 
@@ -141,16 +148,28 @@ double Drive::Remap_Val(double i, double threshold)
         void Drive::climber_retract(){
            
             //unlock climbers and retract
-            p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
             
-            m_leftclimb -> Set(1);
-            m_rightclimb -> Set(-1);
+            p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
+
+            if (climb_lock > 2){
+                m_leftclimb -> Set(1);
+                m_rightclimb -> Set(-1);
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+            }
+            climb_lock ++;
+            
+            
         }
 
         void Drive::climber_hold(){
            
             //unlock climbers and hold
             p_climberlock -> Set(frc::DoubleSolenoid::Value::kForward);
+
+            climb_lock = 0;
             
                 m_leftclimb -> Set(0);
                 m_rightclimb -> Set(0);
