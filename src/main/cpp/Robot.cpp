@@ -32,7 +32,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1);
   m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); //Path test
-  m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom3); //Path test
+  m_chooser.AddOption(kAutoNameCustom3, kAutoNameCustom3); //Path test
 
   m_alliance.SetDefaultOption(kBlue, kBlue);
   m_alliance.AddOption(kRed, kRed);

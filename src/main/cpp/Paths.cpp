@@ -68,7 +68,7 @@ vector <double> Paths::ReturnTableVal(int count, int mode, bool getlength){
     double leftspeed = (a_left [count] [2]) * speed_conv;
     double rightpos = (a_right [count] [1]) * dist_conv;
     double rightspeed = (a_right [count] [2]) * speed_conv;
-    double heading = a_left [count] [3];
+    double heading = -a_left [count] [3];
 
     double length = a_length;
     output = {leftpos,leftspeed,rightpos,rightspeed,heading};
