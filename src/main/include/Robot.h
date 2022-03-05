@@ -77,6 +77,8 @@ class Robot : public frc::TimedRobot {
   double auto_timer;
   bool shooter_test;
   double shooter_trim;
+  bool auto_ball_pickedup;
+  bool firsttimethru;
 
  
 };
