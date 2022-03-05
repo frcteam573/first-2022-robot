@@ -260,7 +260,7 @@ double Drive::Remap_Val(double i, double threshold)
             double heading = value_in[4];
 
             if(count ==0){
-                //Gyro->Reset();
+                s_gyro->Reset();
                 s_leftdrive_enc -> SetPosition(0);
                 s_rightdrive_enc -> SetPosition(0);
             }
@@ -295,6 +295,7 @@ double Drive::Remap_Val(double i, double threshold)
         m_rightdrive2->Set(output_right - turn_val);
 
 }
+  
 
     void Drive::dashboard(){
         frc::SmartDashboard::PutNumber("Gryo",s_gyro -> GetAngle());

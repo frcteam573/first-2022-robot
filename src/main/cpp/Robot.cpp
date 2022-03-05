@@ -267,6 +267,8 @@ void Robot::AutonomousPeriodic(){
       // Second Half of 4 ball auto
     else {
       auto_ball_pickedup = false;
+      
+
       vector <double> Length = MyPath.ReturnTableVal(counter - FirstSectionOffset, 1, true);
       int length = round (Length [0]);
 
@@ -295,6 +297,7 @@ void Robot::AutonomousPeriodic(){
             if(firsttimethru){
               firsttimethru = false;
               SecondSelectionOffset = counter;
+             
             }
             vector <double> Length2 = MyPath.ReturnTableVal(counter - SecondSelectionOffset, 2, true);
             int length2 = round (Length2 [0]);
