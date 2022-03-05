@@ -234,11 +234,11 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
     double kP = 0.00015;
     distance = distance + (trim * 6); // Every trim value will be 6 inches futher / closer
     double target;
-    if(distance <= 134){ // 134 in is hood up down cut off
+    if(distance <= 70){ // 70 in is hood up down cut off
         target = 39.51*distance+2336.81;
     }
     else{
-        target = 31.7*distance+2751;
+        target = 22.013*distance+4363.45;
     }
 
     double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
@@ -428,12 +428,12 @@ void Appendage::Rotate_Off()
 
 void Appendage::Articulate(double distance){
 
-    if (distance > 134){
-        p_Hood->Set(frc::DoubleSolenoid::Value::kForward);
+    if (distance > 70){
+        p_Hood->Set(frc::DoubleSolenoid::Value::kReverse);
     }
 
     else 
-        {p_Hood->Set(frc::DoubleSolenoid::Value::kReverse);}
+        {p_Hood->Set(frc::DoubleSolenoid::Value::kForward);}
 
 }
 

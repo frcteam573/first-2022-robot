@@ -77,8 +77,8 @@ double Drive::deadband(double input, double deadband_size){
     
     void Drive::Joystick_Drive(double LeftStick, double RightStick){
 
-    double left_out = LeftStick*LeftStick*LeftStick/2;
-    double right_out = RightStick*RightStick*RightStick/2;
+    double left_out = LeftStick*LeftStick*LeftStick;
+    double right_out = RightStick*RightStick*RightStick;
 
     m_leftdrive -> Set(left_out);
     m_leftdrive2 -> Set(left_out);

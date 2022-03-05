@@ -176,7 +176,7 @@ void Robot::AutonomousPeriodic(){
     if (m_autoSelected == kAutoNameCustom){
       // 2 Ball Autonomous
 
-      if (counter - auto_timer < 3){
+      if (counter - auto_timer < 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
       }
@@ -225,7 +225,7 @@ void Robot::AutonomousPeriodic(){
       if (counter < FirstSectionOffset){
         // 50 = 1 second
 
-        if (counter < 3){
+        if (counter < 10){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
         }
