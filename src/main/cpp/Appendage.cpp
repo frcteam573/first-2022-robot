@@ -55,12 +55,12 @@ double Appendage::Remap_Val(double i, double threshold)
 void Appendage::DashboardCreate(){
     
 // Dashboard input inital decs.
-    static double shooter_p_in = 0.00025;
+    static double shooter_p_in = 0.00015;
     static double shooter_target_in = 1000;
     static double feed_roller_speed = 0.99;
     static double prefeed_roller_speed = 0.99;
-    static double turret_speed = 0.99;
-    static double intake_speed = 0.99;
+    static double turret_speed = 0.5;
+    static double intake_speed = 0.75;
     static double k_turret_cam = 0.00025;
     static double k_turret_enc = 0.00025;
     static double turret_max_enc = 4000;
@@ -230,8 +230,7 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
      
     
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
-    //current = abs(current);
-    double kP = 0.00025;
+    double kP = 0.00015;
     distance = distance + (trim * 6); // Every trim value will be 6 inches futher / closer
     double target;
     if(distance <= 134){ // 134 in is hood up down cut off
@@ -253,7 +252,7 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
 
     bool atspeed = false;
 
-    if (abs (err) < 250){
+    if (abs (err) < 300){
         atspeed = true;
     }
 
@@ -325,7 +324,7 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
             align = true;
         }
     } 
-    else if(endgame){
+    else if(endgame){ //Endgame
         double currpos = s_Susan_Encoder->GetPosition();
 
         double setpoint;
@@ -350,7 +349,21 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
     else{
         
 
-        if (camera_exists == 0){ // Camera doesn't see target
+        if(camera_exists == 1){ 
+            error = 0 - camera_x;
+            output = k * error;
+
+            if(abs(error)<turret_cam_deadzone){   // Need to set range when testing.
+                align = true;
+                output = 0;
+            }
+        }
+        else if(camera_exists == 2){ // Just incase camera stream is broken
+            output = 0;
+        }
+        else {   // Camera sees no target
+
+            /*// only use if we trust belt won't skip
             currEnc = s_Susan_Encoder->GetPosition();
             if (currEnc > maxEnc){
                 output = -1;            // Need to confirm this is right direction and speed
@@ -366,19 +379,8 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
                     output = -1;    // Need to confirm this is right direction and speed
                 }
             }
-        }
-        else if(camera_exists == 2){ // If camera stream is broken
+            */
             output = 0;
-        }
-        else{   // Camera sees target
-
-            error = 0 - camera_x;
-            output = k * error;
-
-            if(abs(error)<turret_cam_deadzone){   // Need to set range when testing.
-                align = true;
-                output = 0;
-            }
 
         }
 
@@ -391,7 +393,7 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         direction = false;
     }
 
-    double turretspeed = frc::SmartDashboard::GetNumber("Turret Speed", 0.99);
+    double turretspeed = frc::SmartDashboard::GetNumber("Turret Speed", 0.5);
     
     output = Remap_Val(output,turretspeed);
 

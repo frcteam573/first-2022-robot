@@ -750,17 +750,12 @@ else if (c2_btn_b){
 
 
 else {
-  //Comment out just allow for testing so we don't break things.
-
-  //tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
-
-  MyAppendage.Shooter_Off();
-  MyAppendage.Rotate_Off();
-  /*
+  
   if (c2_left_trigger >= 0.5)
   {
     //Get shooter aligned and up to speed
-    //atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+    atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
     MyAppendage.Articulate(distance);
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
@@ -774,8 +769,11 @@ else {
   }
   else {
     MyAppendage.Shooter_Off();
+    MyAppendage.Rotate_Off();
+    MyAppendage.Feeder_Off();
+    MyAppendage.Intake2_Off();
 
-  }*/
+  }
 }
 // -------------------------------------------------------------------
 
@@ -784,16 +782,21 @@ else {
 if (endgame_unlock){
   MyLed.led_control("Rainbow");
 }
-else if (intake_camera_exist == 1){
-  MyLed.led_control("White");
-}
 
 else if (align && !atspeed){
   MyLed.led_control("Yellow");
 }
 
+else if (!align && atspeed){
+  MyLed.led_control("Red");
+}
+
 else if (align && atspeed){
   MyLed.led_control("Green");
+}
+
+else if (intake_camera_exist == 1){
+  MyLed.led_control("White");
 }
 
 else{
@@ -832,7 +835,9 @@ MyAppendage.dashboard();
 // ------------------------------------------
 } // end of teleop periodic
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+  MyDrive.climber_hold();
+}
 
 void Robot::DisabledPeriodic() {}
 
