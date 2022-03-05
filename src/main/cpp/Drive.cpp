@@ -48,6 +48,20 @@ Drive::Drive(){
 
 }
 
+
+void Drive::DashboardCreate(){
+    
+// Dashboard input inital decs.
+    static double kvelo_in = 3209.6;
+    static double kpos_in = 0;
+    static double kph_in = -0.0072;
+
+  frc::SmartDashboard::PutNumber("KVelo In", kvelo_in);
+  frc::SmartDashboard::PutNumber("KPos_in", kpos_in);
+  frc::SmartDashboard::PutNumber("KPH_in", kph_in); 
+  
+}
+
 /* DEADBAND FUNCTION */
 /* use to create a deadband on the controls, passing the input and the deadband size */
 
@@ -277,12 +291,10 @@ double Drive::Remap_Val(double i, double threshold)
             //double error_right_speed = setpoint_right_speed - encoder_speed_right;
             double error_heading = heading - gyro_val;
             
-            
-            double max_speed = frc::SmartDashboard::GetNumber("p input 2", 8250);//9000,8000//frc::SmartDashboard::GetNumber("p input 2", 9750);//8250
+            double max_speed = frc::SmartDashboard::GetNumber("KVelo In", 3209.6);
+            double kp_pos = frc::SmartDashboard::GetNumber("KPos_in", 0); 
             double kp_speed = -1/(max_speed);
-            double kp_pos = 0; //-0.002;//frc::SmartDashboard::GetNumber("p input", -0.025);//-0.074;
-            
-            double kph = frc::SmartDashboard::GetNumber("p input", -0.0072);//-0.0072;//-0.01;  //0.01;
+            double kph = frc::SmartDashboard::GetNumber("KPH_in", -0.0072); 
 
             double output_left = (error_left_pos * kp_pos) + kp_speed*setpoint_left_speed;
             double output_right = (error_right_pos * kp_pos) + kp_speed*setpoint_right_speed;

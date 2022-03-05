@@ -32,6 +32,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1);
   m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); //Path test
+  m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom3); //Path test
 
   m_alliance.SetDefaultOption(kBlue, kBlue);
   m_alliance.AddOption(kRed, kRed);
@@ -52,6 +53,7 @@ void Robot::RobotInit()
 
   // Dashboard input creations
   MyAppendage.DashboardCreate();
+  MyDrive.DashboardCreate();
 }
 
 /**
@@ -332,6 +334,7 @@ void Robot::AutonomousPeriodic(){
   } // End 4 ball auto
 ///////////////////////////////////////////////////////////////////////////////
   else if(m_autoSelected == kAutoNameCustom2){
+    //Only works with no time delay
 
    vector <double> Length = MyPath.ReturnTableVal(counter, 1, true);
       int length = round (Length [0]);
@@ -345,6 +348,22 @@ void Robot::AutonomousPeriodic(){
       MyDrive.Joystick_Drive(0,0);
     }
   }
+
+  else if(m_autoSelected == kAutoNameCustom3){
+    //Only works with no time delay
+   vector <double> Length = MyPath.ReturnTableVal(counter, 2, true);
+      int length = round (Length [0]);
+
+    if (counter < length){
+      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 2, false);
+      MyDrive.drive_PID(Table_Values, counter);
+    }
+
+    else{
+      MyDrive.Joystick_Drive(0,0);
+    }
+  }
+
   else{ // Simple drive straight auto
 
       if (counter < (100 + auto_timer))
