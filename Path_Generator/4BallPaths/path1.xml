@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Path GeneratorType="PATHFINDER_V1" acceleration="30.0" driveBase="TANK" dt="0.02" fitMethod="HERMITE_CUBIC" jerk="30.0" reversed="false" unit="FEET" velocity="16.0" wheelBaseD="2.0" wheelBaseW="2.25">
+<?xml version="1.0" encoding="UTF-8"?><Path GeneratorType="PATHFINDER_V1" acceleration="15.0" driveBase="TANK" dt="0.02" fitMethod="HERMITE_CUBIC" jerk="15.0" reversed="false" unit="FEET" velocity="16.0" wheelBaseD="2.0" wheelBaseW="2.25">
     <Waypoint>
         <X>37.5</X>
         <Y>21.0</Y>

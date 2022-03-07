@@ -54,6 +54,8 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom1 = "4 Ball Shoot";
   const std::string kAutoNameCustom2 = "4 Ball Path 1 Test";
   const std::string kAutoNameCustom3 = "4 Ball Path 2 Test";
+  const std::string kAutoNameCustom4 = "Straight Test";
+  const std::string kAutoNameCustom5 = "Turn Test";
 
   frc::SendableChooser<std::string> m_alliance;
   const std::string kBlue = "Blue";

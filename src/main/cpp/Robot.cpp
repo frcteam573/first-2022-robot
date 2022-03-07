@@ -28,11 +28,13 @@ also: merge into main before each event, Before event create event branch and me
 
 void Robot::RobotInit()
 {
-  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
-  m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1);
+  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);// Straight
+  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom); // 2 ball
+  m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1); // 4 ball
   m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); //Path test
   m_chooser.AddOption(kAutoNameCustom3, kAutoNameCustom3); //Path test
+  m_chooser.AddOption(kAutoNameCustom4, kAutoNameCustom4); //Path test
+  m_chooser.AddOption(kAutoNameCustom5, kAutoNameCustom5); //Path test
 
   m_alliance.SetDefaultOption(kBlue, kBlue);
   m_alliance.AddOption(kRed, kRed);
@@ -363,6 +365,37 @@ void Robot::AutonomousPeriodic(){
       MyDrive.Joystick_Drive(0,0);
     }
   }
+
+    else if(m_autoSelected == kAutoNameCustom4){
+    //Only works with no time delay
+   vector <double> Length = MyPath.ReturnTableVal(counter, 3, true);
+      int length = round (Length [0]);
+
+    if (counter < length){
+      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 3, false);
+      MyDrive.drive_PID(Table_Values, counter);
+    }
+
+    else{
+      MyDrive.Joystick_Drive(0,0);
+    }
+  }
+
+    else if(m_autoSelected == kAutoNameCustom5){
+    //Only works with no time delay
+   vector <double> Length = MyPath.ReturnTableVal(counter, 4, true);
+      int length = round (Length [0]);
+
+    if (counter < length){
+      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 4, false);
+      MyDrive.drive_PID(Table_Values, counter);
+    }
+
+    else{
+      MyDrive.Joystick_Drive(0,0);
+    }
+  }
+
 
   else{ // Simple drive straight auto
 
