@@ -82,6 +82,10 @@ class Robot : public frc::TimedRobot {
   double shooter_trim;
   bool auto_ball_pickedup;
   bool firsttimethru;
+  bool trim_state;
+  int ct_off;
+  int FirstSectionOffset;
+  int SecondSelectionOffset;
 
  
 };

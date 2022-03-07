@@ -86,6 +86,15 @@ void Robot::AutonomousInit()
   firsttimethru = true;
   counter = 0;
 
+
+
+  // 4ball auto stuff
+  int FirstSectionOffset = 50*6; // Gives 6sec for first part of auto to take place
+  int SecondSelectionOffset = 0;
+
+  // 2 ball stuff
+  int ct_off = 0;
+
   // Get alliance station color
 
   static auto color = frc::DriverStation::GetAlliance();
@@ -173,20 +182,24 @@ void Robot::AutonomousPeriodic(){
   auto_timer = frc::SmartDashboard::GetNumber("Auto delay", 0)*50;
 
   // ----------------------------------------------------------
+  bool moved = false;
   if (counter >= auto_timer) {
 
     if (m_autoSelected == kAutoNameCustom){
       // 2 Ball Autonomous
+      
 
       if (counter - auto_timer < 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
+        moved = false;
       }
 
-      else if (intake_camera_exist == 1 && !auto_ball_pickedup){
+      else if (intake_camera_exist == 1 && !auto_ball_pickedup && counter < (300 + auto_timer) ){
         MyDrive.camera_intake(intake_camera_x, -0.7);
         MyAppendage.Intake_Down();
         bool LightGate_val = MyAppendage.Intake_In();
+        moved = true;
 
         /* Lightgate not working yet.
         if (LightGate_val){
@@ -197,6 +210,25 @@ void Robot::AutonomousPeriodic(){
             MyAppendage.Intake2_Off();
           }
         */
+      }
+      else if(!moved){
+        auto_ball_pickedup = true;
+
+        if(firsttimethru){
+              firsttimethru = false;
+              ct_off = counter;
+            }
+
+        if (counter < (ct_off + 100)){
+
+          MyDrive.Joystick_Drive(-0.5,-0.5);
+        }
+        else{
+          MyDrive.Joystick_Drive(0,0);
+          moved = true;
+        }
+
+
       }
       else{
         auto_ball_pickedup = true;
@@ -220,9 +252,6 @@ void Robot::AutonomousPeriodic(){
     }
     else if (m_autoSelected == kAutoNameCustom1){
       // 4  Ball Autonomous this cannot be put on delay we need the whole time
-
-      int FirstSectionOffset = 50*6; // Gives 6sec for first part of auto to take place
-      int SecondSelectionOffset = 0;
 
       if (counter < FirstSectionOffset){
         // 50 = 1 second
@@ -422,6 +451,7 @@ void Robot::TeleopInit()
   drive_straight_first = true;
   endgame_unlock = false;
   shooter_test = false;
+  trim_state = false;
 
   shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
 
@@ -684,10 +714,20 @@ else{
 // Shooter Trim 
 
 if (c2_dpad > 80 && c2_dpad < 100){ // Right on dpad
-  shooter_trim ++;
+  if(!trim_state){
+    shooter_trim ++;
+  }
+  
+  trim_state = true;
 }
 else if(c2_dpad > 260 && c2_dpad < 280){ // Left on dpad
-  shooter_trim --;
+  if(!trim_state){
+    shooter_trim --;
+  }
+  trim_state = true;
+}
+else{
+  trim_state = false;
 }
 
 frc::SmartDashboard::PutNumber("Shooter Trim", shooter_trim);
