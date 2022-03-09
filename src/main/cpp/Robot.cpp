@@ -751,6 +751,7 @@ if (endgame_unlock){ // Endgame shooter
   MyAppendage.Shooter_Off();
   MyAppendage.Feeder_Off();
   MyAppendage.Intake2_Off();
+  MyAppendage.Articulate(140);
 }
 
 else if (shooter_test){ // Shooter Test
@@ -799,9 +800,9 @@ else if (c2_btn_a){
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
 
   atspeed = MyAppendage.Shooter_Encoder_distance(24, 0);
-  MyAppendage.Articulate(12); //harcode for close shot
+  MyAppendage.Articulate(120); //harcode for close shot
 
-  if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+  if(c2_right_trigger > 0.5){ // Shoot ball
     MyAppendage.Feeder_In();
     MyAppendage.Intake2_In();
   }
@@ -832,21 +833,23 @@ else if (c2_btn_b){
 
 // Test turret camera tracking
 
-  tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+  //tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
 
-  /*//High Fixed shoot
+  //High Fixed shoot
 
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
 
-  atspeed = MyAppendage.Shooter_Encoder();
+  atspeed = MyAppendage.Shooter_Encoder_distance(170,shooter_trim);
   MyAppendage.Articulate(144); //harcode for far shot
 
-  if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+  if(c2_right_trigger > 0.5){ // Shoot ball
     MyAppendage.Feeder_In();
+    MyAppendage.Intake2_In();
   }
   else{
       MyAppendage.Feeder_Off();
-  }*/
+      MyAppendage.Intake2_Off();
+  }
 
 }
 
