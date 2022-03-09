@@ -36,6 +36,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom4, kAutoNameCustom4); //Path test
   m_chooser.AddOption(kAutoNameCustom5, kAutoNameCustom5); //Path test
 
+  frc::SmartDashboard::PutBoolean("St Test", false);
   m_alliance.SetDefaultOption(kBlue, kBlue);
   m_alliance.AddOption(kRed, kRed);
 
@@ -397,6 +398,7 @@ void Robot::AutonomousPeriodic(){
 
     else if(m_autoSelected == kAutoNameCustom4){
     //Only works with no time delay
+    frc::SmartDashboard::PutBoolean("St Test", true);
    vector <double> Length = MyPath.ReturnTableVal(counter, 3, true);
       int length = round (Length [0]);
 

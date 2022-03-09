@@ -288,7 +288,7 @@ double Drive::Remap_Val(double i, double threshold)
             //Breakdown input vector
             double setpoint_left_pos = value_in[0];
             double setpoint_right_pos = value_in[1];
-            double setpoint_left_speed = value_in[2];
+            double setpoint_left_speed = -1*value_in[2];
             double setpoint_right_speed = value_in[3];
             double heading = value_in[4];
 
@@ -300,26 +300,36 @@ double Drive::Remap_Val(double i, double threshold)
 
             double encoder_val_left = s_leftdrive_enc -> GetPosition();
             double encoder_val_right = s_rightdrive_enc -> GetPosition();
-            //double encoder_speed_left = s_leftdrive_enc -> GetRate();
-            //double encoder_speed_right = s_rightdrive_enc -> GetRate();
+            double encoder_speed_left = s_leftdrive_enc -> GetVelocity();
+            double encoder_speed_right = s_rightdrive_enc -> GetVelocity();
             double gyro_val = s_gyro->GetAngle();
 
             double error_left_pos = setpoint_left_pos - encoder_val_left;
             double error_right_pos = setpoint_right_pos - encoder_val_right;
-            //double error_left_speed = setpoint_left_speed - encoder_speed_left;
-            //double error_right_speed = setpoint_right_speed - encoder_speed_right;
+            double error_left_speed = setpoint_left_speed - encoder_speed_left;
+            double error_right_speed = setpoint_right_speed - encoder_speed_right;
             double error_heading = heading - gyro_val;
-            
+            frc::SmartDashboard::PutNumber("error left", error_left_pos); 
+            frc::SmartDashboard::PutNumber("error right", error_right_pos);
+            frc::SmartDashboard::PutNumber("error left speed", error_left_speed);
+            frc::SmartDashboard::PutNumber("error right speed", error_right_speed); 
+            frc::SmartDashboard::PutNumber("error heading", error_heading);
+            frc::SmartDashboard::PutNumber("left speed", encoder_speed_left);
+            frc::SmartDashboard::PutNumber("right speed", encoder_speed_right);
+
             double max_speed = frc::SmartDashboard::GetNumber("KVelo In", 3209.6);
             double kp_pos = frc::SmartDashboard::GetNumber("KPos_in", 0); 
             double kp_speed = -1/(max_speed);
-            double kph = frc::SmartDashboard::GetNumber("KPH_in", -0.0072); 
+            double kph = frc::SmartDashboard::GetNumber("KPH_in", 0); 
 
             double output_left = (error_left_pos * kp_pos) + kp_speed*setpoint_left_speed;
             double output_right = (error_right_pos * kp_pos) + kp_speed*setpoint_right_speed;
 
             double turn_val = kph * error_heading;
 
+            turn_val = Remap_Val (turn_val, 0.75);
+        frc::SmartDashboard::PutNumber("Output left", output_left + turn_val);
+        frc::SmartDashboard::PutNumber("Output right", output_right - turn_val);
         m_leftdrive->Set(output_left + turn_val);
         m_leftdrive2->Set(output_left + turn_val);
         m_rightdrive->Set(output_right - turn_val);
