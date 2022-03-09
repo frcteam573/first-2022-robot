@@ -2,8 +2,8 @@
 import csv
 import os
 
-inputfile = "Turn"
-reverse = False
+inputfile = "4BallPath2"
+reverse = True
 
 with open(inputfile+'_left.csv', 'rU') as csvfile:
 
