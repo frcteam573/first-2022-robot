@@ -56,6 +56,7 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom3 = "4 Ball Path 2 Test";
   const std::string kAutoNameCustom4 = "Straight Test";
   const std::string kAutoNameCustom5 = "Turn Test";
+  const std::string kAutoNameCustom6 = "4 Ball Shoot No Path Plan";
 
   frc::SendableChooser<std::string> m_alliance;
   const std::string kBlue = "Blue";
@@ -86,6 +87,7 @@ class Robot : public frc::TimedRobot {
   int ct_off;
   int FirstSectionOffset;
   int SecondSelectionOffset;
-
+  bool FourBallSecondTime;
+  int counter2;
  
 };

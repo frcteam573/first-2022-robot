@@ -35,6 +35,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom3, kAutoNameCustom3); //Path test
   m_chooser.AddOption(kAutoNameCustom4, kAutoNameCustom4); //Path test
   m_chooser.AddOption(kAutoNameCustom5, kAutoNameCustom5); //Path test
+   m_chooser.AddOption(kAutoNameCustom6, kAutoNameCustom6); //4 Ball 2
 
   frc::SmartDashboard::PutBoolean("St Test", false);
   m_alliance.SetDefaultOption(kBlue, kBlue);
@@ -86,6 +87,8 @@ void Robot::AutonomousInit()
   auto_ball_pickedup = false;
   firsttimethru = true;
   counter = 0;
+  FourBallSecondTime = false;
+  counter2 = 0;
 
 
 
@@ -426,7 +429,52 @@ void Robot::AutonomousPeriodic(){
       MyDrive.Joystick_Drive(0,0);
     }
   }
+    if (m_autoSelected == kAutoNameCustom6){
+      // 4 Ball Autonomous No Path Planning
+      // Delay doesn't work
 
+      if (counter < 10){
+        MyAppendage.Intake_Down();
+        MyAppendage.Intake_In();
+        moved = false;
+      }
+
+      else if (intake_camera_exist == 1 && !auto_ball_pickedup){
+        MyDrive.camera_intake(intake_camera_x, -0.7);
+        MyAppendage.Intake_Down();
+        bool LightGate_val = MyAppendage.Intake_In();
+        moved = true;
+      }
+      else if(FourBallSecondTime && counter2 < 100){
+        MyDrive.Joystick_Drive(.7,.7);
+        counter2 ++;
+        auto_ball_pickedup = true;
+      }
+      else if (counter < 320 || FourBallSecondTime){
+        auto_ball_pickedup = true;
+        MyAppendage.Intake_Off();
+        MyAppendage.Intake_In();
+        double distance = MyAppendage.Get_Distance(shooter_camera_y);
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+        MyAppendage.Articulate(distance);
+        bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+        MyDrive.Joystick_Drive(0,0);
+
+        if (align && atspeed){
+          MyAppendage.Feeder_In();
+          MyAppendage.Intake2_In();
+        }
+        else{
+          MyAppendage.Feeder_Off();
+          MyAppendage.Intake2_Off();
+        }
+      }
+      else{
+        counter = 0;
+        auto_ball_pickedup = false;
+        FourBallSecondTime = true;
+      }
+    }  
 
   else{ // Simple drive straight auto
 
