@@ -74,6 +74,7 @@ public:
     static double turret_min_enc;
     static double turret_enc_deadzone;
     static double turret_cam_deadzone;
+    static double feedfor;
 
     void dashboard();
 

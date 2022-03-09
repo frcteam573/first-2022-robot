@@ -55,7 +55,7 @@ double Appendage::Remap_Val(double i, double threshold)
 void Appendage::DashboardCreate(){
     
 // Dashboard input inital decs.
-    static double shooter_p_in = 0.00015;
+    static double shooter_p_in = 0.00007;
     static double shooter_target_in = 1000;
     static double feed_roller_speed = 0.99;
     static double prefeed_roller_speed = 0.99;
@@ -68,9 +68,10 @@ void Appendage::DashboardCreate(){
     static double turret_enc_deadzone = 1;
     static double turret_cam_deadzone = 1;
     static double turret_shooter_deadzone = 250;
-
+    static double feedfor = 0.2;
    
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
+  frc::SmartDashboard::PutNumber("Shooter Feed Forward In", feedfor);
   frc::SmartDashboard::PutNumber("Shooter Target In", shooter_target_in);
   frc::SmartDashboard::PutNumber("Feed Speed", feed_roller_speed);
   frc::SmartDashboard::PutNumber("PreFeed Speed", prefeed_roller_speed);
@@ -189,7 +190,7 @@ bool Appendage::Shooter_Encoder(){
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
     //current = abs(current);
     // Read in value from dashboard
-    double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 0.00025);
+    double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 0.00007);
     double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
     //double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
@@ -202,7 +203,8 @@ bool Appendage::Shooter_Encoder(){
 
     double err = target - current;
 
-    double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
+    //double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
+    double shooter_f_in = 0.000099 * target - 0.02;
 
     double output = (err * kP) + shooter_f_in;  
 
@@ -247,7 +249,8 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
 
     double err = target - current;
 
-    double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
+    //double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
+    double shooter_f_in = 0.000099 * target - 0.02;
 
     double output = (err * kP) + shooter_f_in;  
 
