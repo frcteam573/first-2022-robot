@@ -55,12 +55,20 @@ double Appendage::Remap_Val(double i, double threshold)
 void Appendage::DashboardCreate(){
     
 // Dashboard input inital decs.
-    static double shooter_p_in = 0.00025;
+    static double shooter_p_in = 0.00015;
     static double shooter_target_in = 1000;
     static double feed_roller_speed = 0.99;
     static double prefeed_roller_speed = 0.99;
-    static double turret_speed = 0.99;
-    static double intake_speed = 0.99;
+    static double turret_speed = 0.85;
+    static double intake_speed = 0.75;
+    static double k_turret_cam = 0.03;
+    static double k_turret_enc = 0.025;
+    static double turret_max_enc = 335;
+    static double turret_min_enc = -335;
+    static double turret_enc_deadzone = 1;
+    static double turret_cam_deadzone = 1;
+    static double turret_shooter_deadzone = 250;
+
    
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
   frc::SmartDashboard::PutNumber("Shooter Target In", shooter_target_in);
@@ -68,6 +76,13 @@ void Appendage::DashboardCreate(){
   frc::SmartDashboard::PutNumber("PreFeed Speed", prefeed_roller_speed);
   frc::SmartDashboard::PutNumber("Turret Speed", turret_speed);
   frc::SmartDashboard::PutNumber("Intake Speed", intake_speed);
+  frc::SmartDashboard::PutNumber("Turret Camera P", k_turret_cam);
+  frc::SmartDashboard::PutNumber("Turret Enconder P", k_turret_enc);
+  frc::SmartDashboard::PutNumber("Turret Max Encoder", turret_max_enc);
+  frc::SmartDashboard::PutNumber("Turret Min Encoder", turret_min_enc);
+  frc::SmartDashboard::PutNumber("Turret Enc Deadzone", turret_enc_deadzone);
+  frc::SmartDashboard::PutNumber("Turret Cam Deadzone", turret_cam_deadzone);
+  frc::SmartDashboard::PutNumber("Shooter Deadzone", turret_shooter_deadzone);
   
 }
 /*
@@ -216,11 +231,15 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
      
     
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
-    //current = abs(current);
-    double kP = 0.00025;
+    double kP = 0.00015;
     distance = distance + (trim * 6); // Every trim value will be 6 inches futher / closer
-     
-    double target = distance; // Will need to add some math to convert distance to target speed
+    double target;
+    if(distance <= 70){ // 70 in is hood up down cut off
+        target = 39.51*distance+2336.81;
+    }
+    else{
+        target = 22.013*distance+4363.45;
+    }
 
     double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
 
@@ -234,7 +253,8 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
 
     bool atspeed = false;
 
-    if (abs (err) < 250){
+    double i = frc::SmartDashboard::GetNumber("Shooter Deadzone", 300);
+    if (abs (err) < i){
         atspeed = true;
     }
 
@@ -269,7 +289,7 @@ double Appendage::Get_Distance(double camera_y)
         angleMount, angleCam = camera_y;
 
     // height are in (inches), angles are in degrees
-    heightGoal = 102.8125, heightBot = 41.5, angleMount = 39; // From CAD not measured on robot
+    heightGoal = 102.8125, heightBot = 41.5, angleMount = 34; // From CAD not measured on robot
     double PI = 3.14159265;
     double rads = (angleMount + angleCam) * PI / 180.0;
     distance = (heightGoal - heightBot) / tan(rads);
@@ -282,28 +302,46 @@ double Appendage::Get_Distance(double camera_y)
 std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool fixedgoal, bool endgame)
 {
     double error,
-        k = 0.3,
-        k_fixedpos = 0.2,
+        k = 0.025,
+        k_fixedpos = 0.03,
         output = 0,
-        currEnc, maxEnc = 4000, minEnc = 1000;
+        currEnc, maxEnc = 335, minEnc = -335, turret_enc_deadzone = 1, turret_cam_deadzone = 1;
 
     bool align = false;
 
-// Fixed positiions
+     k = frc::SmartDashboard::GetNumber("Turret Camera P", 0.025);
+     k_fixedpos = frc::SmartDashboard::GetNumber("Turret Enconder P", 0.03);
+     maxEnc = frc::SmartDashboard::GetNumber("Turret Max Encoder", 335);
+     minEnc = frc::SmartDashboard::GetNumber("Turret Min Encoder", -335);
+     turret_enc_deadzone = frc::SmartDashboard::GetNumber("Turret Enc Deadzone", 1);
+     turret_cam_deadzone = frc::SmartDashboard::GetNumber("Turret Cam Deadzone", 1);
+
+// Fixed positiion
     if (fixedgoal){
         error = 0 - s_Susan_Encoder->GetPosition();
         output = k_fixedpos * error;
 
-        if(abs(error)<20){
+        if(abs(error)<turret_enc_deadzone){
             output = 0;
             align = true;
         }
     } 
-    else if(endgame){
-        error = 180 - s_Susan_Encoder->GetPosition(); // Need to update with 180 degree encoder value
+    else if(endgame){ //Endgame
+        double currpos = s_Susan_Encoder->GetPosition();
+
+        double setpoint;
+
+        if(currpos >= 0){
+            setpoint = 335;     // Need to update with 180 degree encoder value
+        }
+        else{
+            setpoint = -335;
+        }
+
+        error = setpoint - currpos; 
         output = k_fixedpos * error;
 
-        if(abs(error)<20){
+        if(abs(error)<turret_enc_deadzone){
             output = 0;
             align = true;
         }
@@ -311,8 +349,23 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
 
     // Camera Tracking
     else{
+        
 
-        if (camera_exists == 0){ // Camera doesn't see target
+        if(camera_exists == 1){ 
+            error = 0 - camera_x;
+            output = k * error;
+
+            if(abs(error)<turret_cam_deadzone){   // Need to set range when testing.
+                align = true;
+                output = 0;
+            }
+        }
+        else if(camera_exists == 2){ // Just incase camera stream is broken
+            output = 0;
+        }
+        else {   // Camera sees no target
+
+            /*// only use if we trust belt won't skip
             currEnc = s_Susan_Encoder->GetPosition();
             if (currEnc > maxEnc){
                 output = -1;            // Need to confirm this is right direction and speed
@@ -328,15 +381,8 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
                     output = -1;    // Need to confirm this is right direction and speed
                 }
             }
-        }
-        else{   // Camera sees target
-
-            error = 0 - camera_x;
-            output = k * error;
-
-            if(abs(error)<2){   // Need to set range when testing.
-                align = true;
-            }
+            */
+            output = 0;
 
         }
 
@@ -348,6 +394,10 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
     else{
         direction = false;
     }
+
+    double turretspeed = frc::SmartDashboard::GetNumber("Turret Speed", 0.5);
+    
+    output = Remap_Val(output,turretspeed);
 
     m_Susan->Set(output);   
 
@@ -378,12 +428,12 @@ void Appendage::Rotate_Off()
 
 void Appendage::Articulate(double distance){
 
-    if (distance > 120){
-        p_Hood->Set(frc::DoubleSolenoid::Value::kForward);
+    if (distance > 70){
+        p_Hood->Set(frc::DoubleSolenoid::Value::kReverse);
     }
 
     else 
-        {p_Hood->Set(frc::DoubleSolenoid::Value::kReverse);}
+        {p_Hood->Set(frc::DoubleSolenoid::Value::kForward);}
 
 }
 

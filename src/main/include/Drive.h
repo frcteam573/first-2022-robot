@@ -47,6 +47,13 @@ class Drive {
         void drive_PID(vector<double>value_in, int count);
         tuple <bool, bool> climber_setpoint(string input);      
         double Remap_Val(double i, double threshold);
+        void DashboardCreate();
+        static double kvelo_in;
+        static double kpos_in;
+        static double kph_in;
+
+        int climb_lock;
+       
 };
 
 #endif

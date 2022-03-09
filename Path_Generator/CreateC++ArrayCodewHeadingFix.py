@@ -2,12 +2,19 @@
 import csv
 import os
 
-inputfile = "pick_two_balls_p2"
+inputfile = "Turn"
+reverse = False
+
 with open(inputfile+'_left.csv', 'rU') as csvfile:
 
     csvstr = str(csvfile.name)
-    
-    f= open(csvstr[:-4]+".txt","w+")
+
+    if reverse:
+        f = open(csvstr[:-8]+"right.txt","w+")
+        vari = csvstr[:-8]+"right"
+    else:
+        f= open(csvstr[:-4]+".txt","w+")
+        vari = csvstr[:-4]
     
     readCSV = csv.reader(csvfile, delimiter=',')
     row_count = sum(1 for row in readCSV)
@@ -15,7 +22,7 @@ with open(inputfile+'_left.csv', 'rU') as csvfile:
     csvfile.seek(0)
     next(readCSV)
 
-    f.write("double "+ csvstr[:-4]+" ["+str(row_count-1)+"] [4] = {")
+    f.write("double "+ vari+" ["+str(row_count-1)+"] [4] = {")
     h_old = 0
     h_init = 0
     for ct, row in enumerate(readCSV):
@@ -40,8 +47,13 @@ with open(inputfile+'_left.csv', 'rU') as csvfile:
         
         ######
 
-        pos = float(row[1])*6767/5
-        velo = float(row[2])*6767/5
+        # 
+
+        pos = float(row[1])*200.6 # ratio from ft to ticks
+        velo = float(row[2])*200.6 # ratio from ft to ticks
+        if reverse:
+            pos = -1*pos
+            velo = -1*velo
         if row_count-2 == ct:
             f.write("{"+row[0]+","+str(pos)+","+str(velo)+","+str(-H)+"}};")
         else:
@@ -53,7 +65,12 @@ with open(inputfile+'_right.csv', 'rU') as csvfile:
 
     csvstr = str(csvfile.name)
     
-    f= open(csvstr[:-4]+".txt","w+")
+    if reverse:
+        f = open(csvstr[:-9]+"left.txt","w+")
+        vari = csvstr[:-9]+"left"
+    else:
+        f= open(csvstr[:-4]+".txt","w+")
+        vari = csvstr[:-4]
     
     readCSV = csv.reader(csvfile, delimiter=',')
     row_count = sum(1 for row in readCSV)
@@ -61,7 +78,7 @@ with open(inputfile+'_right.csv', 'rU') as csvfile:
     csvfile.seek(0)
     next(readCSV)
 
-    f.write("double "+ csvstr[:-4]+" ["+str(row_count)+"] [4] = {")
+    f.write("double "+ vari+" ["+str(row_count)+"] [4] = {")
     
     h_old = 0
     for ct, row in enumerate(readCSV):
@@ -86,13 +103,18 @@ with open(inputfile+'_right.csv', 'rU') as csvfile:
         
         ######
 
-        pos = float(row[1])*6767/5
-        velo = float(row[2])*6767/5
+        pos = float(row[1])*200.6
+        velo = float(row[2])*200.6
+        
+        if reverse:
+            pos = -1*pos
+            velo = -1*velo
+            
         if row_count-2 == ct:
             f.write("{"+row[0]+","+str(pos)+","+str(velo)+","+str(-H)+"}};")
         else:
             f.write("{"+row[0]+","+str(pos)+","+str(velo)+","+str(-H)+"},")
         #print(row[0],row[1],row[2],)
-        print(str(-H))
+        #print(str(-H))
 
 f.close() 

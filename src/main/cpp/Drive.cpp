@@ -48,6 +48,20 @@ Drive::Drive(){
 
 }
 
+
+void Drive::DashboardCreate(){
+    
+// Dashboard input inital decs.
+    static double kvelo_in = 3209.6;
+    static double kpos_in = 0;
+    static double kph_in = -0.0072;
+
+  frc::SmartDashboard::PutNumber("KVelo In", kvelo_in);
+  frc::SmartDashboard::PutNumber("KPos_in", kpos_in);
+  frc::SmartDashboard::PutNumber("KPH_in", kph_in); 
+  
+}
+
 /* DEADBAND FUNCTION */
 /* use to create a deadband on the controls, passing the input and the deadband size */
 
@@ -63,8 +77,8 @@ double Drive::deadband(double input, double deadband_size){
     
     void Drive::Joystick_Drive(double LeftStick, double RightStick){
 
-    double left_out = LeftStick*LeftStick*LeftStick/2;
-    double right_out = RightStick*RightStick*RightStick/2;
+    double left_out = LeftStick*LeftStick*LeftStick;
+    double right_out = RightStick*RightStick*RightStick;
 
     m_leftdrive -> Set(left_out);
     m_leftdrive2 -> Set(left_out);
@@ -117,8 +131,15 @@ double Drive::Remap_Val(double i, double threshold)
                 //unlock climbers and extend
                 p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
                 
+            if (climb_lock > 2){
                 m_leftclimb -> Set(-1);
                 m_rightclimb -> Set(1);
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+            }
+            climb_lock ++;
 
             //}
 
@@ -127,16 +148,28 @@ double Drive::Remap_Val(double i, double threshold)
         void Drive::climber_retract(){
            
             //unlock climbers and retract
-            p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
             
-            m_leftclimb -> Set(1);
-            m_rightclimb -> Set(-1);
+            p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
+
+            if (climb_lock > 2){
+                m_leftclimb -> Set(1);
+                m_rightclimb -> Set(-1);
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+            }
+            climb_lock ++;
+            
+            
         }
 
         void Drive::climber_hold(){
            
             //unlock climbers and hold
             p_climberlock -> Set(frc::DoubleSolenoid::Value::kForward);
+
+            climb_lock = 0;
             
                 m_leftclimb -> Set(0);
                 m_rightclimb -> Set(0);
@@ -255,46 +288,55 @@ double Drive::Remap_Val(double i, double threshold)
             //Breakdown input vector
             double setpoint_left_pos = value_in[0];
             double setpoint_right_pos = value_in[1];
-            double setpoint_left_speed = value_in[2];
+            double setpoint_left_speed = -1*value_in[2];
             double setpoint_right_speed = value_in[3];
             double heading = value_in[4];
 
             if(count ==0){
-                //Gyro->Reset();
+                s_gyro->Reset();
                 s_leftdrive_enc -> SetPosition(0);
                 s_rightdrive_enc -> SetPosition(0);
             }
 
             double encoder_val_left = s_leftdrive_enc -> GetPosition();
             double encoder_val_right = s_rightdrive_enc -> GetPosition();
-            //double encoder_speed_left = s_leftdrive_enc -> GetRate();
-            //double encoder_speed_right = s_rightdrive_enc -> GetRate();
+            double encoder_speed_left = s_leftdrive_enc -> GetVelocity();
+            double encoder_speed_right = s_rightdrive_enc -> GetVelocity();
             double gyro_val = s_gyro->GetAngle();
 
             double error_left_pos = setpoint_left_pos - encoder_val_left;
             double error_right_pos = setpoint_right_pos - encoder_val_right;
-            //double error_left_speed = setpoint_left_speed - encoder_speed_left;
-            //double error_right_speed = setpoint_right_speed - encoder_speed_right;
+            double error_left_speed = setpoint_left_speed - encoder_speed_left;
+            double error_right_speed = setpoint_right_speed - encoder_speed_right;
             double error_heading = heading - gyro_val;
-            
-            
-            double max_speed = frc::SmartDashboard::GetNumber("p input 2", 8250);//9000,8000//frc::SmartDashboard::GetNumber("p input 2", 9750);//8250
+            frc::SmartDashboard::PutNumber("error left", error_left_pos); 
+            frc::SmartDashboard::PutNumber("error right", error_right_pos);
+            frc::SmartDashboard::PutNumber("error left speed", error_left_speed);
+            frc::SmartDashboard::PutNumber("error right speed", error_right_speed); 
+            frc::SmartDashboard::PutNumber("error heading", error_heading);
+            frc::SmartDashboard::PutNumber("left speed", encoder_speed_left);
+            frc::SmartDashboard::PutNumber("right speed", encoder_speed_right);
+
+            double max_speed = frc::SmartDashboard::GetNumber("KVelo In", 3209.6);
+            double kp_pos = frc::SmartDashboard::GetNumber("KPos_in", 0); 
             double kp_speed = -1/(max_speed);
-            double kp_pos = 0; //-0.002;//frc::SmartDashboard::GetNumber("p input", -0.025);//-0.074;
-            
-            double kph = frc::SmartDashboard::GetNumber("p input", -0.0072);//-0.0072;//-0.01;  //0.01;
+            double kph = frc::SmartDashboard::GetNumber("KPH_in", 0); 
 
             double output_left = (error_left_pos * kp_pos) + kp_speed*setpoint_left_speed;
             double output_right = (error_right_pos * kp_pos) + kp_speed*setpoint_right_speed;
 
             double turn_val = kph * error_heading;
 
+            turn_val = Remap_Val (turn_val, 0.75);
+        frc::SmartDashboard::PutNumber("Output left", output_left + turn_val);
+        frc::SmartDashboard::PutNumber("Output right", output_right - turn_val);
         m_leftdrive->Set(output_left + turn_val);
         m_leftdrive2->Set(output_left + turn_val);
         m_rightdrive->Set(output_right - turn_val);
         m_rightdrive2->Set(output_right - turn_val);
 
 }
+  
 
     void Drive::dashboard(){
         frc::SmartDashboard::PutNumber("Gryo",s_gyro -> GetAngle());

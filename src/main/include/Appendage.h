@@ -68,6 +68,12 @@ public:
     static double shooter_p_in;
     static double shooter_target_in;
     static double shooter_f_in;
+    static double k_turret_cam;
+    static double k_turret_enc;
+    static double turret_max_enc;
+    static double turret_min_enc;
+    static double turret_enc_deadzone;
+    static double turret_cam_deadzone;
 
     void dashboard();
 
