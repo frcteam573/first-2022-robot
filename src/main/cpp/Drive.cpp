@@ -127,27 +127,7 @@ double Drive::Remap_Val(double i, double threshold)
 
         void Drive::climber_extend(){
 
-          //  if (s_leftclimber_enc->GetPosition() > -570) {
-                //unlock climbers and extend
-                p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
-                
-            if (climb_lock > 2){
-                m_leftclimb -> Set(-1);
-                m_rightclimb -> Set(1);
-            }
-            else{
-                m_leftclimb -> Set(0);
-                m_rightclimb -> Set(0);
-            }
-            climb_lock ++;
-
-            //}
-
-        }
-
-        void Drive::climber_retract(){
-           
-            //unlock climbers and retract
+            if(s_leftclimber_enc->GetPosition() < 155 ){
             
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
@@ -160,7 +140,40 @@ double Drive::Remap_Val(double i, double threshold)
                 m_rightclimb -> Set(0);
             }
             climb_lock ++;
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+                p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
+            }
+
+            }
+
+        
+
+        void Drive::climber_retract(){
+           
+            //unlock climbers and retract
+
+            if(s_leftclimber_enc->GetPosition() > 0 ){
             
+            p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
+
+            if (climb_lock > 2){
+                m_leftclimb -> Set(-1);
+                m_rightclimb -> Set(1);
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+            }
+            climb_lock ++;
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+                p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
+            }
             
         }
 
@@ -186,17 +199,17 @@ double Drive::Remap_Val(double i, double threshold)
 
     /* ClIMBING AUTON*/
         tuple <bool, bool> Drive::climber_setpoint(string input){
-
+                // Need to update left climb up is pos right climb up is negative 155 is the limit.
            double setpoint, setpoint_output;
            double max, min;
 
                 if(input == "extend"){
-                    setpoint = 1000;
+                    setpoint = 155;
                     setpoint_output =1;
                     }
 
                     else{
-                        setpoint = 2000;
+                        setpoint = 0;
                         setpoint_output=-1;
                     }
 
@@ -288,7 +301,7 @@ double Drive::Remap_Val(double i, double threshold)
             //Breakdown input vector
             double setpoint_left_pos = value_in[0];
             double setpoint_right_pos = value_in[1];
-            double setpoint_left_speed = -1*value_in[2];
+            double setpoint_left_speed = value_in[2];
             double setpoint_right_speed = value_in[3];
             double heading = value_in[4];
 
@@ -324,6 +337,8 @@ double Drive::Remap_Val(double i, double threshold)
 
             double output_left = (error_left_pos * kp_pos) + kp_speed*setpoint_left_speed;
             double output_right = (error_right_pos * kp_pos) + kp_speed*setpoint_right_speed;
+            output_left = Remap_Val( output_left,.9);
+            output_right = Remap_Val( output_right,.9);
 
             double turn_val = kph * error_heading;
 

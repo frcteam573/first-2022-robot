@@ -133,6 +133,7 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic(){
 
+  m_autoSelected = m_chooser.GetSelected();
   //Compressor Code
   compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
@@ -370,9 +371,10 @@ void Robot::AutonomousPeriodic(){
 ///////////////////////////////////////////////////////////////////////////////
   else if(m_autoSelected == kAutoNameCustom2){
     //Only works with no time delay
-
-   vector <double> Length = MyPath.ReturnTableVal(counter, 1, true);
-      int length = round (Length [0]);
+    MyLed.led_control("Rainbow");
+    vector <double> Length = MyPath.ReturnTableVal(counter, 1, true);
+    int length = round (Length [0]);
+    frc::SmartDashboard::PutNumber("Len",length);
 
     if (counter < length){
       vector <double> Table_Values = MyPath.ReturnTableVal(counter, 1, false);
@@ -388,6 +390,7 @@ void Robot::AutonomousPeriodic(){
     //Only works with no time delay
    vector <double> Length = MyPath.ReturnTableVal(counter, 2, true);
       int length = round (Length [0]);
+      frc::SmartDashboard::PutNumber("Len",length);
 
     if (counter < length){
       vector <double> Table_Values = MyPath.ReturnTableVal(counter, 2, false);
@@ -404,6 +407,7 @@ void Robot::AutonomousPeriodic(){
     frc::SmartDashboard::PutBoolean("St Test", true);
    vector <double> Length = MyPath.ReturnTableVal(counter, 3, true);
       int length = round (Length [0]);
+      frc::SmartDashboard::PutNumber("Len",length);
 
     if (counter < length){
       vector <double> Table_Values = MyPath.ReturnTableVal(counter, 3, false);
@@ -419,6 +423,7 @@ void Robot::AutonomousPeriodic(){
     //Only works with no time delay
    vector <double> Length = MyPath.ReturnTableVal(counter, 4, true);
       int length = round (Length [0]);
+      frc::SmartDashboard::PutNumber("Len",length);
 
     if (counter < length){
       vector <double> Table_Values = MyPath.ReturnTableVal(counter, 4, false);
@@ -446,7 +451,7 @@ void Robot::AutonomousPeriodic(){
         moved = true;
       }
       else if(FourBallSecondTime && counter2 < 100){
-        MyDrive.Joystick_Drive(.7,.7);
+        MyDrive.Joystick_Drive(.8,.7);
         counter2 ++;
         auto_ball_pickedup = true;
       }
@@ -656,12 +661,13 @@ void Robot::TeleopPeriodic(){
     // Extend / Retract Arms
     if (c1_righttrigger > 0.5)
     {
-      MyDrive.climber_extend();
+      MyDrive.climber_retract();
     }
 
     else if (c1_lefttrigger > 0.5)
     {
-      MyDrive.climber_retract();
+      MyDrive.climber_extend();
+      
     }
 
     else if (c1_btn_x){ //Auto climb
@@ -727,7 +733,15 @@ void Robot::TeleopPeriodic(){
 //Run intake
 if (c2_leftbumper){
     MyAppendage.Intake_Down();
-    MyAppendage.Intake_In();
+    bool LightGate_val = MyAppendage.Intake_In();
+
+  if (LightGate_val && !shooter_test){
+    MyAppendage.Intake2_In();
+  }
+  else{
+    MyAppendage.Intake2_Off();
+    frc::SmartDashboard::PutString("Intake State", "Off");
+  }
 }
 else if(c2_btn_y){
   MyAppendage.Intake_Down();
@@ -970,7 +984,7 @@ frc::SmartDashboard::PutBoolean("Shooter Aligned", align);
 frc::SmartDashboard::PutNumber("Camera Distance", distance);
 
 //Drive Current Compares
-/*
+
 MyLog.CurrentCompare(19, 7);
 MyLog.CurrentCompare(18, 8);
 MyLog.CurrentCompare(0, 9);
@@ -980,10 +994,10 @@ MyLog.CurrentCompare(1, 10);
 
 MyLog.CurrentCompare(13, 14);
 MyLog.CurrentCompare(14, 2);
-*/
 
-//MyLog.Dashboard();
-//MyLog.PDPTotal();
+
+MyLog.Dashboard();
+MyLog.PDPTotal();
 MyDrive.dashboard();
 MyAppendage.dashboard();
 

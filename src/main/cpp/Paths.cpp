@@ -55,32 +55,33 @@ vector <double> Paths::ReturnTableVal(int count, int mode, bool getlength){
 
     if (mode == 1)
     {
-        auto a_left = FourBallPath1_left;
-        auto a_right = FourBallPath1_right;
-        auto a_length = FourBallPath1_length;
+        a_left = FourBallPath1_left;
+        a_right = FourBallPath1_right;
+        a_length = FourBallPath1_length;
+        frc::SmartDashboard::PutBoolean("Mode 1",true);
 
     }
     else if (mode == 2)
     {
-        auto a_left = FourBallPath2_left;
-        auto a_right = FourBallPath2_right;
-        auto a_length = FourBallPath2_length;
+        a_left = FourBallPath2_left;
+        a_right = FourBallPath2_right;
+        a_length = FourBallPath2_length;
 
     }
 
     else if (mode == 3)
     {
-        auto a_left = St_left;
-        auto a_right = St_right;
-        auto a_length = St_length;
+        a_left = St_left;
+        a_right = St_right;
+        a_length = St_length;
 
     }
 
-    else if (mode == 4)
+    else
     {
-        auto a_left = Turn_left;
-        auto a_right = Turn_right;
-        auto a_length = Turn_length;
+        a_left = Turn_left;
+        a_right = Turn_right;
+        a_length = Turn_length;
 
     }
 

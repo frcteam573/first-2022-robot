@@ -17,7 +17,7 @@ Appendage::Appendage()
     int p_IntakeId_b = 7;
     int p_Hood_a = 4;
     int p_Hood_b = 5;
-    int s_LightGateId = 0;
+    int s_LightGateId = 1;
 
     m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
