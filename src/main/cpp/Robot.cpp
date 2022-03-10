@@ -358,7 +358,8 @@ void Robot::AutonomousPeriodic(){
       }
 
       else if (counter <= 75 || (FourBallSecondTime && counter2 < 100)){
-        MyDrive.camera_intake(intake_camera_x, -0.7);
+
+        
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
         MyAppendage.Shooter_Off();
@@ -367,9 +368,20 @@ void Robot::AutonomousPeriodic(){
         MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
         intakedelay = 0;
         moved = true;
+
         if (FourBallSecondTime){
+          if (intake_camera_exist == 1){
+            MyDrive.camera_intake(intake_camera_x, -0.7);
+          }
+          else{
+            MyDrive.Joystick_Drive(-.8,-.7);
+          }
           counter2 ++;
         }
+        else{
+          MyDrive.camera_intake(intake_camera_x, -0.7);
+        }
+
       }
       else if(FourBallSecondTime && counter2 < 200){
         MyDrive.Joystick_Drive(.8,.7);
