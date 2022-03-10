@@ -58,6 +58,7 @@ void Robot::RobotInit()
   // Dashboard input creations
   MyAppendage.DashboardCreate();
   MyDrive.DashboardCreate();
+  intakedelay = 0;
 }
 
 /**
@@ -733,6 +734,7 @@ void Robot::TeleopPeriodic(){
 //Run intake
 if (c2_leftbumper){
     MyAppendage.Intake_Down();
+    intakedelay = 0;
     bool LightGate_val = MyAppendage.Intake_In();
 
   if (LightGate_val && !shooter_test){
@@ -748,8 +750,18 @@ else if(c2_btn_y){
   MyAppendage.Intake_Out();
 }
 else{
+  if (intakedelay < 10){
+    MyAppendage.Intake_In();
+  }
+  else{
+    MyAppendage.Intake_Off();
+  }
+  intakedelay ++;
+  if (intakedelay > 500){
+    intakedelay = 30;
+  }
   MyAppendage.Intake_Up();
-  MyAppendage.Intake_Off();
+  
 }
 /*
 // Run Intake In / Out
