@@ -118,14 +118,6 @@ void Robot::AutonomousInit()
 
   fmt::print("Auto selected: {}\n", m_autoSelected);
 
-  if (m_autoSelected == kAutoNameCustom)
-  {
-    // Custom Auto goes here
-  }
-  else
-  {
-    // Default Auto goes here
-  }
 }
 
 void Robot::AutonomousPeriodic(){
@@ -191,58 +183,39 @@ void Robot::AutonomousPeriodic(){
       // 2 Ball Autonomous
       
 
-      if (counter - auto_timer < 20){
+      if ((counter - auto_timer) <= 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
+        MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
-
-      else if (intake_camera_exist == 1 && !auto_ball_pickedup && counter < (300 + auto_timer) ){
-        MyDrive.camera_intake(intake_camera_x, -0.7);
+      else if (counter <= (120 + auto_timer) ){
+        MyDrive.camera_intake(intake_camera_x, -0.5);
         MyAppendage.Intake_Down();
         bool LightGate_val = MyAppendage.Intake_In();
         moved = true;
-
-        /* Lightgate not working yet.
-        if (LightGate_val){
-          MyAppendage.Intake2_In();
-        }
-
-          else{
-            MyAppendage.Intake2_Off();
+      }
+      else if (counter <= (450 + auto_timer)){
+        auto_ball_pickedup = true;
+        if (intakedelay < 10){
+            MyAppendage.Intake_In();
           }
-        */
-      }
-      else if(!moved){
-        auto_ball_pickedup = true;
+          else{
+            MyAppendage.Intake_Off();
+          }
+          intakedelay ++;
+          if (intakedelay > 500){
+            intakedelay = 30;
+          }
+        MyAppendage.Intake_Up();
 
-        if(firsttimethru){
-              firsttimethru = false;
-              ct_off = counter;
-            }
-
-        if (counter < (ct_off + 100)){
-
-          MyDrive.Joystick_Drive(-0.5,-0.5);
-        }
-        else{
-          MyDrive.Joystick_Drive(0,0);
-          moved = true;
-        }
-
-
-      }
-      else{
-        auto_ball_pickedup = true;
-        MyAppendage.Intake_Off();
-        MyAppendage.Intake_In();
         double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
         MyAppendage.Articulate(distance);
         bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
 
-        if (align && atspeed){
+        if (align && atspeed && counter > (100 + auto_timer)){
           MyAppendage.Feeder_In();
           MyAppendage.Intake2_In();
         }
@@ -250,6 +223,14 @@ void Robot::AutonomousPeriodic(){
           MyAppendage.Feeder_Off();
           MyAppendage.Intake2_Off();
         }
+      }
+      else{
+        MyAppendage.Shooter_Off();
+        MyAppendage.Feeder_Off();
+        MyAppendage.Intake2_Off();
+        MyAppendage.Rotate_Off();
+        MyDrive.Joystick_Drive(0,0);
+
       }
     }
     else if (m_autoSelected == kAutoName4BallPath){
