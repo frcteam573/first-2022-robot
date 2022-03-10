@@ -89,5 +89,7 @@ class Robot : public frc::TimedRobot {
   int SecondSelectionOffset;
   bool FourBallSecondTime;
   int counter2;
+  bool align;
+  bool atspeed;
  
 };
