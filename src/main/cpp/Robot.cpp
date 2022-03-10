@@ -361,6 +361,7 @@ void Robot::AutonomousPeriodic(){
         MyDrive.camera_intake(intake_camera_x, -0.7);
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
+        intakedelay = 0;
         moved = true;
         if (FourBallSecondTime){
           counter2 ++;
@@ -373,8 +374,17 @@ void Robot::AutonomousPeriodic(){
       }
       else if (counter < 200 || FourBallSecondTime){
         auto_ball_pickedup = true;
-        MyAppendage.Intake_Off();
-        MyAppendage.Intake_In();
+        if (intakedelay < 10){
+            MyAppendage.Intake_In();
+          }
+          else{
+            MyAppendage.Intake_Off();
+          }
+          intakedelay ++;
+          if (intakedelay > 500){
+            intakedelay = 30;
+          }
+        MyAppendage.Intake_Up();
         double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
         MyAppendage.Articulate(distance);
