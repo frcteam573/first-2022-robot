@@ -361,6 +361,10 @@ void Robot::AutonomousPeriodic(){
         MyDrive.camera_intake(intake_camera_x, -0.7);
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
+        MyAppendage.Shooter_Off();
+        MyAppendage.Feeder_Off();
+        MyAppendage.Intake2_Off();
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
         intakedelay = 0;
         moved = true;
         if (FourBallSecondTime){
@@ -369,6 +373,10 @@ void Robot::AutonomousPeriodic(){
       }
       else if(FourBallSecondTime && counter2 < 200){
         MyDrive.Joystick_Drive(.8,.7);
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+        MyAppendage.Shooter_Off();
+        MyAppendage.Feeder_Off();
+        MyAppendage.Intake2_Off();
         counter2 ++;
         auto_ball_pickedup = true;
       }
