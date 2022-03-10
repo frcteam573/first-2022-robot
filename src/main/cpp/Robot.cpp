@@ -37,7 +37,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom5, kAutoNameCustom5); //Path test
    m_chooser.AddOption(kAutoNameCustom6, kAutoNameCustom6); //4 Ball 2
 
-  frc::SmartDashboard::PutBoolean("St Test", false);
+  //frc::SmartDashboard::PutBoolean("St Test", false);
   m_alliance.SetDefaultOption(kBlue, kBlue);
   m_alliance.AddOption(kRed, kRed);
 
@@ -375,7 +375,7 @@ void Robot::AutonomousPeriodic(){
     MyLed.led_control("Rainbow");
     vector <double> Length = MyPath.ReturnTableVal(counter, 1, true);
     int length = round (Length [0]);
-    frc::SmartDashboard::PutNumber("Len",length);
+    //frc::SmartDashboard::PutNumber("Len",length);
 
     if (counter < length){
       vector <double> Table_Values = MyPath.ReturnTableVal(counter, 1, false);
@@ -391,7 +391,7 @@ void Robot::AutonomousPeriodic(){
     //Only works with no time delay
    vector <double> Length = MyPath.ReturnTableVal(counter, 2, true);
       int length = round (Length [0]);
-      frc::SmartDashboard::PutNumber("Len",length);
+      //frc::SmartDashboard::PutNumber("Len",length);
 
     if (counter < length){
       vector <double> Table_Values = MyPath.ReturnTableVal(counter, 2, false);
@@ -408,7 +408,7 @@ void Robot::AutonomousPeriodic(){
     frc::SmartDashboard::PutBoolean("St Test", true);
    vector <double> Length = MyPath.ReturnTableVal(counter, 3, true);
       int length = round (Length [0]);
-      frc::SmartDashboard::PutNumber("Len",length);
+      //frc::SmartDashboard::PutNumber("Len",length);
 
     if (counter < length){
       vector <double> Table_Values = MyPath.ReturnTableVal(counter, 3, false);
@@ -424,7 +424,7 @@ void Robot::AutonomousPeriodic(){
     //Only works with no time delay
    vector <double> Length = MyPath.ReturnTableVal(counter, 4, true);
       int length = round (Length [0]);
-      frc::SmartDashboard::PutNumber("Len",length);
+      //frc::SmartDashboard::PutNumber("Len",length);
 
     if (counter < length){
       vector <double> Table_Values = MyPath.ReturnTableVal(counter, 4, false);
@@ -523,7 +523,7 @@ void Robot::TeleopInit()
     alliance_color = "red";
     //frc::SmartDashboard::PutString("Alliance","Red");
   }
-  frc::SmartDashboard::PutString("Alliance",alliance_color);
+  //frc::SmartDashboard::PutString("Alliance",alliance_color);
 }
 void Robot::TeleopPeriodic(){
 
@@ -742,7 +742,7 @@ if (c2_leftbumper){
   }
   else{
     MyAppendage.Intake2_Off();
-    frc::SmartDashboard::PutString("Intake State", "Off");
+    //frc::SmartDashboard::PutString("Intake State", "Off");
   }
 }
 else if(c2_btn_y){

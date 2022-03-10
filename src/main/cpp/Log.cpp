@@ -20,31 +20,31 @@ void Log::Dashboard (){
 
     double val;
     val=Board->GetCurrent(16);
-    frc::SmartDashboard::PutString("Intake",to_string(val));
+    frc::SmartDashboard::PutString("Intake Current",to_string(val));
 
     val=Board->GetCurrent(10);
-    frc::SmartDashboard::PutString("Pre Feed",to_string(val));
+    frc::SmartDashboard::PutString("Pre Feed  Current",to_string(val));
 
     val=Board->GetCurrent(11);
-    frc::SmartDashboard::PutString("Shooter Feed",to_string(val));
+    frc::SmartDashboard::PutString("Shooter Feed Current",to_string(val));
     
     val=Board->GetCurrent(2);
-    frc::SmartDashboard::PutString("Left Climber",to_string(val));
+    frc::SmartDashboard::PutString("Left Climber Current",to_string(val));
 
     val=Board->GetCurrent(17);
-    frc::SmartDashboard::PutString("Right Climber",to_string(val));
+    frc::SmartDashboard::PutString("Right Climber Current",to_string(val));
 
     val=Board->GetCurrent(19);
-    frc::SmartDashboard::PutString("Right Front Drive",to_string(val));
+    frc::SmartDashboard::PutString("Right Front Drive Current",to_string(val));
 
     val=Board->GetCurrent(18);
-    frc::SmartDashboard::PutString("Right Back Drive",to_string(val));
+    frc::SmartDashboard::PutString("Right Back Drive Current",to_string(val));
 
     val=Board->GetCurrent(0);
-    frc::SmartDashboard::PutString("Left Front Drive",to_string(val));
+    frc::SmartDashboard::PutString("Left Front Drive Current",to_string(val));
 
     val=Board->GetCurrent(1);
-    frc::SmartDashboard::PutString("Left Back Drive",to_string(val));
+    frc::SmartDashboard::PutString("Left Back Drive Current",to_string(val));
 
 }
 

@@ -67,21 +67,21 @@ void Appendage::DashboardCreate(){
     static double turret_min_enc = -335;
     static double turret_enc_deadzone = 1;
     static double turret_cam_deadzone = 1;
-    static double turret_shooter_deadzone = 250;
+    static double turret_shooter_deadzone = 150;
     static double feedfor = 0.2;
    
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
-  frc::SmartDashboard::PutNumber("Shooter Feed Forward In", feedfor);
+  //frc::SmartDashboard::PutNumber("Shooter Feed Forward In", feedfor);
   frc::SmartDashboard::PutNumber("Shooter Target In", shooter_target_in);
-  frc::SmartDashboard::PutNumber("Feed Speed", feed_roller_speed);
-  frc::SmartDashboard::PutNumber("PreFeed Speed", prefeed_roller_speed);
-  frc::SmartDashboard::PutNumber("Turret Speed", turret_speed);
-  frc::SmartDashboard::PutNumber("Intake Speed", intake_speed);
-  frc::SmartDashboard::PutNumber("Turret Camera P", k_turret_cam);
-  frc::SmartDashboard::PutNumber("Turret Enconder P", k_turret_enc);
-  frc::SmartDashboard::PutNumber("Turret Max Encoder", turret_max_enc);
-  frc::SmartDashboard::PutNumber("Turret Min Encoder", turret_min_enc);
-  frc::SmartDashboard::PutNumber("Turret Enc Deadzone", turret_enc_deadzone);
+  //frc::SmartDashboard::PutNumber("Feed Speed", feed_roller_speed);
+  //frc::SmartDashboard::PutNumber("PreFeed Speed", prefeed_roller_speed);
+  //frc::SmartDashboard::PutNumber("Turret Speed", turret_speed);
+  //frc::SmartDashboard::PutNumber("Intake Speed", intake_speed);
+  //frc::SmartDashboard::PutNumber("Turret Camera P", k_turret_cam);
+  //frc::SmartDashboard::PutNumber("Turret Enconder P", k_turret_enc);
+  //frc::SmartDashboard::PutNumber("Turret Max Encoder", turret_max_enc);
+  //frc::SmartDashboard::PutNumber("Turret Min Encoder", turret_min_enc);
+  //frc::SmartDashboard::PutNumber("Turret Enc Deadzone", turret_enc_deadzone);
   frc::SmartDashboard::PutNumber("Turret Cam Deadzone", turret_cam_deadzone);
   frc::SmartDashboard::PutNumber("Shooter Deadzone", turret_shooter_deadzone);
   
@@ -91,7 +91,7 @@ void Appendage::DashboardCreate(){
  */
 bool Appendage::Intake_In()
 {
-    double intakespeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
+    double intakespeed = .75;//frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
     m_Intake1->Set(intakespeed);
 
     return s_LightGate -> Get();
@@ -102,7 +102,7 @@ bool Appendage::Intake_In()
  */
 void Appendage::Intake_Out()
 {
-    double intakespeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
+    double intakespeed = 0.75;//frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
     m_Intake1->Set(-intakespeed);
 }
 
@@ -119,7 +119,7 @@ void Appendage::Intake_Off()
  */
 void Appendage::Intake2_In()
 {
-    double prefeedspeed = frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
+    double prefeedspeed = 0.99;//frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
     m_Intake2->Set(prefeedspeed);
 }
 
@@ -128,7 +128,7 @@ void Appendage::Intake2_In()
  */
 void Appendage::Intake2_Out()
 {
-    double prefeedspeed = frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
+    double prefeedspeed = 0.99; //frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
     m_Intake2->Set(-prefeedspeed);
 }
 
@@ -144,7 +144,7 @@ void Appendage::Intake2_Off()
  */
 void Appendage::Feeder_In()
 {
-    double feedspeed = frc::SmartDashboard::GetNumber("Feed Speed", 0.99);
+    double feedspeed = 0.99; //frc::SmartDashboard::GetNumber("Feed Speed", 0.99);
     m_Feeder->Set(feedspeed);
 }
 
@@ -153,7 +153,7 @@ void Appendage::Feeder_In()
  */
 void Appendage::Feeder_Out()
 {
-    double feedspeed = frc::SmartDashboard::GetNumber("Feed Speed", 0.99);
+    double feedspeed = 0.99; //frc::SmartDashboard::GetNumber("Feed Speed", 0.99);
     m_Feeder->Set(-feedspeed);
 }
 
@@ -233,7 +233,7 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
      
     
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
-    double kP = 0.00015;
+    double kP = 0.00007;
     distance = distance + (trim * 6); // Every trim value will be 6 inches futher / closer
     double target;
     if(distance <= 70){ // 70 in is hood up down cut off
@@ -256,7 +256,7 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
 
     bool atspeed = false;
 
-    double i = frc::SmartDashboard::GetNumber("Shooter Deadzone", 300);
+    double i = frc::SmartDashboard::GetNumber("Shooter Deadzone", 150);
     if (abs (err) < i){
         atspeed = true;
     }
@@ -304,21 +304,22 @@ double Appendage::Get_Distance(double camera_y)
  */
 std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool fixedgoal, bool endgame)
 {
+
     double error,
-        k = 0.025,
-        k_fixedpos = 0.03,
+        k = 0.03,
+        k_fixedpos = 0.025,
         output = 0,
         currEnc, maxEnc = 335, minEnc = -335, turret_enc_deadzone = 1, turret_cam_deadzone = 1;
 
     bool align = false;
 
-     k = frc::SmartDashboard::GetNumber("Turret Camera P", 0.025);
-     k_fixedpos = frc::SmartDashboard::GetNumber("Turret Enconder P", 0.03);
+     /*k = frc::SmartDashboard::GetNumber("Turret Camera P", 0.03);
+     k_fixedpos = frc::SmartDashboard::GetNumber("Turret Enconder P", 0.025);
      maxEnc = frc::SmartDashboard::GetNumber("Turret Max Encoder", 335);
      minEnc = frc::SmartDashboard::GetNumber("Turret Min Encoder", -335);
      turret_enc_deadzone = frc::SmartDashboard::GetNumber("Turret Enc Deadzone", 1);
      turret_cam_deadzone = frc::SmartDashboard::GetNumber("Turret Cam Deadzone", 1);
-
+    */
 // Fixed positiion
     if (fixedgoal){
         error = 0 - s_Susan_Encoder->GetPosition();
@@ -398,7 +399,7 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         direction = false;
     }
 
-    double turretspeed = frc::SmartDashboard::GetNumber("Turret Speed", 0.5);
+    double turretspeed = 0.85; // frc::SmartDashboard::GetNumber("Turret Speed", 0.5);
     
     output = Remap_Val(output,turretspeed);
 
@@ -411,13 +412,13 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
 
     void Appendage::Rotate_left()
 {
-    double turretspeed = frc::SmartDashboard::GetNumber("Turret Speed", 0.99);
+    double turretspeed =  0.85; //frc::SmartDashboard::GetNumber("Turret Speed", 0.99);
     m_Susan->Set(-turretspeed);
 }
 
     void Appendage::Rotate_right()
 {
-    double turretspeed = frc::SmartDashboard::GetNumber("Turret Speed", 0.99);
+    double turretspeed = 0.85; //frc::SmartDashboard::GetNumber("Turret Speed", 0.99);
     m_Susan->Set(turretspeed);
 }
 
