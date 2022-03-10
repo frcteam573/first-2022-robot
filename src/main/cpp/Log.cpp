@@ -6,8 +6,6 @@ using namespace std;
 
 int counter;
 
-
-
 Log::Log() {
     // Define CAN and PWM Ids used in Led here
 
