@@ -181,7 +181,6 @@ void Robot::AutonomousPeriodic(){
 
     if (m_autoSelected == kAutoName2Ball){
       // 2 Ball Autonomous
-      
 
       if ((counter - auto_timer) <= 20){
         MyAppendage.Intake_Down();
@@ -351,24 +350,28 @@ void Robot::AutonomousPeriodic(){
       // 4 Ball Autonomous No Path Planning
       // Delay doesn't work
 
-      if (counter < 10){
+      if (counter < 15){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
+        MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
 
-      else if (intake_camera_exist == 1 && !auto_ball_pickedup){
+      else if (counter <= 75 || (FourBallSecondTime && counter2 < 100)){
         MyDrive.camera_intake(intake_camera_x, -0.7);
         MyAppendage.Intake_Down();
-        bool LightGate_val = MyAppendage.Intake_In();
+        MyAppendage.Intake_In();
         moved = true;
+        if (FourBallSecondTime){
+          counter2 ++;
+        }
       }
-      else if(FourBallSecondTime && counter2 < 100){
+      else if(FourBallSecondTime && counter2 < 200){
         MyDrive.Joystick_Drive(.8,.7);
         counter2 ++;
         auto_ball_pickedup = true;
       }
-      else if (counter < 320 || FourBallSecondTime){
+      else if (counter < 200 || FourBallSecondTime){
         auto_ball_pickedup = true;
         MyAppendage.Intake_Off();
         MyAppendage.Intake_In();
@@ -388,7 +391,7 @@ void Robot::AutonomousPeriodic(){
         }
       }
       else{
-        counter = 0;
+        counter2 = 0;
         auto_ball_pickedup = false;
         FourBallSecondTime = true;
       }
