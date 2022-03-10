@@ -333,13 +333,13 @@ double Drive::Remap_Val(double i, double threshold)
             double error_left_speed = setpoint_left_speed - encoder_speed_left;
             double error_right_speed = setpoint_right_speed - encoder_speed_right;
             double error_heading = heading - gyro_val;
-            frc::SmartDashboard::PutNumber("error left", error_left_pos); 
-            frc::SmartDashboard::PutNumber("error right", error_right_pos);
-            frc::SmartDashboard::PutNumber("error left speed", error_left_speed);
-            frc::SmartDashboard::PutNumber("error right speed", error_right_speed); 
-            frc::SmartDashboard::PutNumber("error heading", error_heading);
-            frc::SmartDashboard::PutNumber("left speed", encoder_speed_left);
-            frc::SmartDashboard::PutNumber("right speed", encoder_speed_right);
+            //frc::SmartDashboard::PutNumber("error left", error_left_pos); 
+            //frc::SmartDashboard::PutNumber("error right", error_right_pos);
+            //frc::SmartDashboard::PutNumber("error left speed", error_left_speed);
+            //frc::SmartDashboard::PutNumber("error right speed", error_right_speed); 
+            //frc::SmartDashboard::PutNumber("error heading", error_heading);
+            //frc::SmartDashboard::PutNumber("left speed", encoder_speed_left);
+            //frc::SmartDashboard::PutNumber("right speed", encoder_speed_right);
 
             double max_speed = frc::SmartDashboard::GetNumber("KVelo In", 3209.6);
             double kp_pos = frc::SmartDashboard::GetNumber("KPos_in", 0); 
@@ -354,8 +354,8 @@ double Drive::Remap_Val(double i, double threshold)
             double turn_val = kph * error_heading;
 
             turn_val = Remap_Val (turn_val, 0.75);
-        frc::SmartDashboard::PutNumber("Output left", output_left + turn_val);
-        frc::SmartDashboard::PutNumber("Output right", output_right - turn_val);
+        //frc::SmartDashboard::PutNumber("Output left", output_left + turn_val);
+        //frc::SmartDashboard::PutNumber("Output right", output_right - turn_val);
         m_leftdrive->Set(output_left + turn_val);
         m_leftdrive2->Set(output_left + turn_val);
         m_rightdrive->Set(output_right - turn_val);

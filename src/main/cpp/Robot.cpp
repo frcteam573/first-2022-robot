@@ -29,15 +29,11 @@ also: merge into main before each event, Before event create event branch and me
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);// Straight
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom); // 2 ball
-  m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1); // 4 ball
-  m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); //Path test
-  m_chooser.AddOption(kAutoNameCustom3, kAutoNameCustom3); //Path test
-  m_chooser.AddOption(kAutoNameCustom4, kAutoNameCustom4); //Path test
-  m_chooser.AddOption(kAutoNameCustom5, kAutoNameCustom5); //Path test
-   m_chooser.AddOption(kAutoNameCustom6, kAutoNameCustom6); //4 Ball 2
+  m_chooser.AddOption(kAutoName2Ball, kAutoName2Ball); // 2 ball
+  m_chooser.AddOption(kAutoName4BallPath, kAutoName4BallPath); // 4 ball
+  m_chooser.AddOption(kAutoName4BallNoPath, kAutoName4BallNoPath); //4 Ball 2
 
-  frc::SmartDashboard::PutBoolean("St Test", false);
+  //frc::SmartDashboard::PutBoolean("St Test", false);
   m_alliance.SetDefaultOption(kBlue, kBlue);
   m_alliance.AddOption(kRed, kRed);
 
@@ -122,14 +118,6 @@ void Robot::AutonomousInit()
 
   fmt::print("Auto selected: {}\n", m_autoSelected);
 
-  if (m_autoSelected == kAutoNameCustom)
-  {
-    // Custom Auto goes here
-  }
-  else
-  {
-    // Default Auto goes here
-  }
 }
 
 void Robot::AutonomousPeriodic(){
@@ -191,62 +179,42 @@ void Robot::AutonomousPeriodic(){
   bool moved = false;
   if (counter >= auto_timer) {
 
-    if (m_autoSelected == kAutoNameCustom){
+    if (m_autoSelected == kAutoName2Ball){
       // 2 Ball Autonomous
-      
 
-      if (counter - auto_timer < 20){
+      if ((counter - auto_timer) <= 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
+        MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
-
-      else if (intake_camera_exist == 1 && !auto_ball_pickedup && counter < (300 + auto_timer) ){
-        MyDrive.camera_intake(intake_camera_x, -0.7);
+      else if (counter <= (120 + auto_timer) ){
+        MyDrive.camera_intake(intake_camera_x, -0.5);
         MyAppendage.Intake_Down();
         bool LightGate_val = MyAppendage.Intake_In();
         moved = true;
-
-        /* Lightgate not working yet.
-        if (LightGate_val){
-          MyAppendage.Intake2_In();
-        }
-
-          else{
-            MyAppendage.Intake2_Off();
+      }
+      else if (counter <= (450 + auto_timer)){
+        auto_ball_pickedup = true;
+        if (intakedelay < 10){
+            MyAppendage.Intake_In();
           }
-        */
-      }
-      else if(!moved){
-        auto_ball_pickedup = true;
+          else{
+            MyAppendage.Intake_Off();
+          }
+          intakedelay ++;
+          if (intakedelay > 500){
+            intakedelay = 30;
+          }
+        MyAppendage.Intake_Up();
 
-        if(firsttimethru){
-              firsttimethru = false;
-              ct_off = counter;
-            }
-
-        if (counter < (ct_off + 100)){
-
-          MyDrive.Joystick_Drive(-0.5,-0.5);
-        }
-        else{
-          MyDrive.Joystick_Drive(0,0);
-          moved = true;
-        }
-
-
-      }
-      else{
-        auto_ball_pickedup = true;
-        MyAppendage.Intake_Off();
-        MyAppendage.Intake_In();
         double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
         MyAppendage.Articulate(distance);
         bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
 
-        if (align && atspeed){
+        if (align && atspeed && counter > (100 + auto_timer)){
           MyAppendage.Feeder_In();
           MyAppendage.Intake2_In();
         }
@@ -255,8 +223,16 @@ void Robot::AutonomousPeriodic(){
           MyAppendage.Intake2_Off();
         }
       }
+      else{
+        MyAppendage.Shooter_Off();
+        MyAppendage.Feeder_Off();
+        MyAppendage.Intake2_Off();
+        MyAppendage.Rotate_Off();
+        MyDrive.Joystick_Drive(0,0);
+
+      }
     }
-    else if (m_autoSelected == kAutoNameCustom1){
+    else if (m_autoSelected == kAutoName4BallPath){
       // 4  Ball Autonomous this cannot be put on delay we need the whole time
 
       if (counter < FirstSectionOffset){
@@ -370,96 +346,65 @@ void Robot::AutonomousPeriodic(){
     } // End 2nd half of 4ball auto
   } // End 4 ball auto
 ///////////////////////////////////////////////////////////////////////////////
-  else if(m_autoSelected == kAutoNameCustom2){
-    //Only works with no time delay
-    MyLed.led_control("Rainbow");
-    vector <double> Length = MyPath.ReturnTableVal(counter, 1, true);
-    int length = round (Length [0]);
-    frc::SmartDashboard::PutNumber("Len",length);
-
-    if (counter < length){
-      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 1, false);
-      MyDrive.drive_PID(Table_Values, counter);
-    }
-
-    else{
-      MyDrive.Joystick_Drive(0,0);
-    }
-  }
-
-  else if(m_autoSelected == kAutoNameCustom3){
-    //Only works with no time delay
-   vector <double> Length = MyPath.ReturnTableVal(counter, 2, true);
-      int length = round (Length [0]);
-      frc::SmartDashboard::PutNumber("Len",length);
-
-    if (counter < length){
-      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 2, false);
-      MyDrive.drive_PID(Table_Values, counter);
-    }
-
-    else{
-      MyDrive.Joystick_Drive(0,0);
-    }
-  }
-
-    else if(m_autoSelected == kAutoNameCustom4){
-    //Only works with no time delay
-    frc::SmartDashboard::PutBoolean("St Test", true);
-   vector <double> Length = MyPath.ReturnTableVal(counter, 3, true);
-      int length = round (Length [0]);
-      frc::SmartDashboard::PutNumber("Len",length);
-
-    if (counter < length){
-      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 3, false);
-      MyDrive.drive_PID(Table_Values, counter);
-    }
-
-    else{
-      MyDrive.Joystick_Drive(0,0);
-    }
-  }
-
-    else if(m_autoSelected == kAutoNameCustom5){
-    //Only works with no time delay
-   vector <double> Length = MyPath.ReturnTableVal(counter, 4, true);
-      int length = round (Length [0]);
-      frc::SmartDashboard::PutNumber("Len",length);
-
-    if (counter < length){
-      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 4, false);
-      MyDrive.drive_PID(Table_Values, counter);
-    }
-
-    else{
-      MyDrive.Joystick_Drive(0,0);
-    }
-  }
-    if (m_autoSelected == kAutoNameCustom6){
+   else if (m_autoSelected == kAutoName4BallNoPath){
       // 4 Ball Autonomous No Path Planning
       // Delay doesn't work
 
-      if (counter < 10){
+      if (counter < 15){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
+        MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
 
-      else if (intake_camera_exist == 1 && !auto_ball_pickedup){
-        MyDrive.camera_intake(intake_camera_x, -0.7);
+      else if (counter <= 75 || (FourBallSecondTime && counter2 < 100)){
+
+        
         MyAppendage.Intake_Down();
-        bool LightGate_val = MyAppendage.Intake_In();
+        MyAppendage.Intake_In();
+        MyAppendage.Shooter_Off();
+        MyAppendage.Feeder_Off();
+        MyAppendage.Intake2_Off();
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+        intakedelay = 0;
         moved = true;
+
+        if (FourBallSecondTime){
+          if (intake_camera_exist == 1){
+            MyDrive.camera_intake(intake_camera_x, -0.7);
+          }
+          else{
+            MyDrive.Joystick_Drive(-.8,-.7);
+          }
+          counter2 ++;
+        }
+        else{
+          MyDrive.camera_intake(intake_camera_x, -0.7);
+        }
+
       }
-      else if(FourBallSecondTime && counter2 < 100){
+      else if(FourBallSecondTime && counter2 < 200){
         MyDrive.Joystick_Drive(.8,.7);
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+        MyAppendage.Shooter_Off();
+        MyAppendage.Feeder_Off();
+        MyAppendage.Intake2_Off();
         counter2 ++;
         auto_ball_pickedup = true;
       }
-      else if (counter < 320 || FourBallSecondTime){
+      else if (counter < 200 || FourBallSecondTime){
         auto_ball_pickedup = true;
-        MyAppendage.Intake_Off();
-        MyAppendage.Intake_In();
+        if (intakedelay < 10){
+            MyAppendage.Intake_In();
+          }
+          else{
+            MyAppendage.Intake_Off();
+          }
+          intakedelay ++;
+          if (intakedelay > 500){
+            intakedelay = 30;
+          }
+        MyAppendage.Intake_Up();
         double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
         MyAppendage.Articulate(distance);
@@ -476,7 +421,7 @@ void Robot::AutonomousPeriodic(){
         }
       }
       else{
-        counter = 0;
+        counter2 = 0;
         auto_ball_pickedup = false;
         FourBallSecondTime = true;
       }
@@ -523,7 +468,7 @@ void Robot::TeleopInit()
     alliance_color = "red";
     //frc::SmartDashboard::PutString("Alliance","Red");
   }
-  frc::SmartDashboard::PutString("Alliance",alliance_color);
+  //frc::SmartDashboard::PutString("Alliance",alliance_color);
 }
 void Robot::TeleopPeriodic(){
 
@@ -742,7 +687,7 @@ if (c2_leftbumper){
   }
   else{
     MyAppendage.Intake2_Off();
-    frc::SmartDashboard::PutString("Intake State", "Off");
+    //frc::SmartDashboard::PutString("Intake State", "Off");
   }
 }
 else if(c2_btn_y){
