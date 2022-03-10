@@ -29,13 +29,9 @@ also: merge into main before each event, Before event create event branch and me
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);// Straight
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom); // 2 ball
-  m_chooser.AddOption(kAutoNameCustom1, kAutoNameCustom1); // 4 ball
-  m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); //Path test
-  m_chooser.AddOption(kAutoNameCustom3, kAutoNameCustom3); //Path test
-  m_chooser.AddOption(kAutoNameCustom4, kAutoNameCustom4); //Path test
-  m_chooser.AddOption(kAutoNameCustom5, kAutoNameCustom5); //Path test
-   m_chooser.AddOption(kAutoNameCustom6, kAutoNameCustom6); //4 Ball 2
+  m_chooser.AddOption(kAutoName2Ball, kAutoName2Ball); // 2 ball
+  m_chooser.AddOption(kAutoName4BallPath, kAutoName4BallPath); // 4 ball
+  m_chooser.AddOption(kAutoName4BallNoPath, kAutoName4BallNoPath); //4 Ball 2
 
   //frc::SmartDashboard::PutBoolean("St Test", false);
   m_alliance.SetDefaultOption(kBlue, kBlue);
@@ -191,7 +187,7 @@ void Robot::AutonomousPeriodic(){
   bool moved = false;
   if (counter >= auto_timer) {
 
-    if (m_autoSelected == kAutoNameCustom){
+    if (m_autoSelected == kAutoName2Ball){
       // 2 Ball Autonomous
       
 
@@ -256,7 +252,7 @@ void Robot::AutonomousPeriodic(){
         }
       }
     }
-    else if (m_autoSelected == kAutoNameCustom1){
+    else if (m_autoSelected == kAutoName4BallPath){
       // 4  Ball Autonomous this cannot be put on delay we need the whole time
 
       if (counter < FirstSectionOffset){
@@ -370,72 +366,7 @@ void Robot::AutonomousPeriodic(){
     } // End 2nd half of 4ball auto
   } // End 4 ball auto
 ///////////////////////////////////////////////////////////////////////////////
-  else if(m_autoSelected == kAutoNameCustom2){
-    //Only works with no time delay
-    MyLed.led_control("Rainbow");
-    vector <double> Length = MyPath.ReturnTableVal(counter, 1, true);
-    int length = round (Length [0]);
-    //frc::SmartDashboard::PutNumber("Len",length);
-
-    if (counter < length){
-      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 1, false);
-      MyDrive.drive_PID(Table_Values, counter);
-    }
-
-    else{
-      MyDrive.Joystick_Drive(0,0);
-    }
-  }
-
-  else if(m_autoSelected == kAutoNameCustom3){
-    //Only works with no time delay
-   vector <double> Length = MyPath.ReturnTableVal(counter, 2, true);
-      int length = round (Length [0]);
-      //frc::SmartDashboard::PutNumber("Len",length);
-
-    if (counter < length){
-      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 2, false);
-      MyDrive.drive_PID(Table_Values, counter);
-    }
-
-    else{
-      MyDrive.Joystick_Drive(0,0);
-    }
-  }
-
-    else if(m_autoSelected == kAutoNameCustom4){
-    //Only works with no time delay
-    frc::SmartDashboard::PutBoolean("St Test", true);
-   vector <double> Length = MyPath.ReturnTableVal(counter, 3, true);
-      int length = round (Length [0]);
-      //frc::SmartDashboard::PutNumber("Len",length);
-
-    if (counter < length){
-      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 3, false);
-      MyDrive.drive_PID(Table_Values, counter);
-    }
-
-    else{
-      MyDrive.Joystick_Drive(0,0);
-    }
-  }
-
-    else if(m_autoSelected == kAutoNameCustom5){
-    //Only works with no time delay
-   vector <double> Length = MyPath.ReturnTableVal(counter, 4, true);
-      int length = round (Length [0]);
-      //frc::SmartDashboard::PutNumber("Len",length);
-
-    if (counter < length){
-      vector <double> Table_Values = MyPath.ReturnTableVal(counter, 4, false);
-      MyDrive.drive_PID(Table_Values, counter);
-    }
-
-    else{
-      MyDrive.Joystick_Drive(0,0);
-    }
-  }
-    if (m_autoSelected == kAutoNameCustom6){
+   else if (m_autoSelected == kAutoName4BallNoPath){
       // 4 Ball Autonomous No Path Planning
       // Delay doesn't work
 
