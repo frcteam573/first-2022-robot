@@ -693,18 +693,14 @@ if (c2_leftbumper){
 
     bool LightGate_val = MyAppendage.Intake_In();
     
-    if (c2_rightbumper){
-    MyAppendage.Intake2_In();
-    MyAppendage.Feeder_Out();
-    }
 
-  /*if (LightGate_val && !shooter_test){
+  if (LightGate_val && !shooter_test){
     MyAppendage.Intake2_In();
   }
   else{
     MyAppendage.Intake2_Off();
     //frc::SmartDashboard::PutString("Intake State", "Off");
-  }*/
+  }
 }
 else if(c2_btn_y){
   MyAppendage.Intake_Down();
@@ -913,9 +909,11 @@ else {
   }
   else {
     MyAppendage.Shooter_Off();
-    MyAppendage.Rotate_Off();
+   // MyAppendage.Rotate_Off();
+       tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+
     
-    if(!c2_rightbumper){
+    if(!c2_leftbumper){
       MyAppendage.Intake2_Off();
       MyAppendage.Feeder_Off();
     }

@@ -119,7 +119,7 @@ void Appendage::Intake_Off()
  */
 void Appendage::Intake2_In()
 {
-    double prefeedspeed = 0.99;//frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
+    double prefeedspeed = 0.75;//frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
     m_Intake2->Set(prefeedspeed);
 }
 
@@ -128,7 +128,7 @@ void Appendage::Intake2_In()
  */
 void Appendage::Intake2_Out()
 {
-    double prefeedspeed = 0.99; //frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
+    double prefeedspeed = 0.75; //frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
     m_Intake2->Set(-prefeedspeed);
 }
 
