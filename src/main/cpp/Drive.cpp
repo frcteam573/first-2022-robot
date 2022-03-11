@@ -371,3 +371,51 @@ double Drive::Remap_Val(double i, double threshold)
         frc::SmartDashboard::PutNumber("Right Drive Enc", s_rightdrive_enc -> GetPosition()); 
         frc::SmartDashboard::PutNumber("Left Drive Enc", s_leftdrive_enc -> GetPosition());       
     }
+
+    int Drive::climber_extend_nolimit(){
+
+            int output;
+            
+            p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
+          
+    
+            if (climb_lock > 2){
+                m_leftclimb -> Set(1);
+                m_rightclimb -> Set(-1);
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+            }
+            
+            climb_lock ++;
+        
+
+            return output;
+
+            }
+
+        
+
+        int Drive::climber_retract_nolimit(){
+           
+            //unlock climbers and retract
+            int output;
+        
+            output = 0;
+            p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
+
+            if (climb_lock > 2){
+                m_leftclimb -> Set(-1);
+                m_rightclimb -> Set(1);
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+            }
+            climb_lock ++;
+            
+           
+            return output;
+            
+        }

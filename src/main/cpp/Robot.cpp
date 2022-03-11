@@ -605,14 +605,24 @@ void Robot::TeleopPeriodic(){
     bool output_1;
     
     // Extend / Retract Arms
-    if (c1_righttrigger > 0.5)
+    if (c1_righttrigger > 0.5 && !c1_btn_back)
     {
       MyDrive.climber_retract();
     }
 
-    else if (c1_lefttrigger > 0.5)
+    else if (c1_lefttrigger > 0.5 && !c1_btn_back)
     {
       MyDrive.climber_extend();
+      
+    }
+    else if (c1_righttrigger > 0.5 && c1_btn_back)
+    {
+      MyDrive.climber_retract_nolimit();
+    }
+
+    else if (c1_lefttrigger > 0.5 && c1_btn_back)
+    {
+      MyDrive.climber_extend_nolimit();
       
     }
 
@@ -680,15 +690,21 @@ void Robot::TeleopPeriodic(){
 if (c2_leftbumper){
     MyAppendage.Intake_Down();
     intakedelay = 0;
-    bool LightGate_val = MyAppendage.Intake_In();
 
-  if (LightGate_val && !shooter_test){
+    bool LightGate_val = MyAppendage.Intake_In();
+    
+    if (c2_rightbumper){
+    MyAppendage.Intake2_In();
+    MyAppendage.Feeder_Out();
+    }
+
+  /*if (LightGate_val && !shooter_test){
     MyAppendage.Intake2_In();
   }
   else{
     MyAppendage.Intake2_Off();
     //frc::SmartDashboard::PutString("Intake State", "Off");
-  }
+  }*/
 }
 else if(c2_btn_y){
   MyAppendage.Intake_Down();
@@ -700,6 +716,7 @@ else{
   }
   else{
     MyAppendage.Intake_Off();
+    //MyAppendage.Intake2_Off();
   }
   intakedelay ++;
   if (intakedelay > 500){
@@ -897,8 +914,12 @@ else {
   else {
     MyAppendage.Shooter_Off();
     MyAppendage.Rotate_Off();
-    MyAppendage.Feeder_Off();
-    MyAppendage.Intake2_Off();
+    
+    if(!c2_rightbumper){
+      MyAppendage.Intake2_Off();
+      MyAppendage.Feeder_Off();
+    }
+    
 
   }
 }

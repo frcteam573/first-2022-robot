@@ -51,6 +51,10 @@ class Drive {
         static double kvelo_in;
         static double kpos_in;
         static double kph_in;
+        int climber_retract_nolimit();
+        int climber_extend_nolimit();
+
+
 
         int climb_lock;
        
