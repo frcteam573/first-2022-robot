@@ -374,7 +374,7 @@ void Robot::AutonomousPeriodic(){
             MyDrive.camera_intake(intake_camera_x, -0.7);
           }
           else{
-            MyDrive.Joystick_Drive(-.8,-.7);
+            MyDrive.Joystick_Drive(-.7,-.7);
           }
           counter2 ++;
         }
@@ -386,8 +386,14 @@ void Robot::AutonomousPeriodic(){
 
       }
 
-        else if (counter <= 75 || (FourBallSecondTime && counter2 < 100)){
+        else if (counter <= 100 || (FourBallSecondTime && counter2 < 100)|| (FourBallSecondTime && counter2 > 200 && counter2 < 275)){
             MyDrive.Joystick_Drive(0,0);
+
+            double distance = MyAppendage.Get_Distance(shooter_camera_y);
+            tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+            MyAppendage.Articulate(distance);
+            bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+            counter2 ++;
         }
       else if(FourBallSecondTime && counter2 < 200){
         MyDrive.Joystick_Drive(.8,.7);
