@@ -188,13 +188,13 @@ void Robot::AutonomousPeriodic(){
         MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
-      else if (counter <= (75 + auto_timer) ){
+      else if (counter <= (150 + auto_timer) ){
         MyDrive.camera_intake(intake_camera_x, -0.5);
         MyAppendage.Intake_Down();
         bool LightGate_val = MyAppendage.Intake_In();
         moved = true;
       }
-            else if (counter <= (200 + auto_timer) ){
+            else if (counter <= (270 + auto_timer) ){
         MyDrive.Joystick_Drive(0,0);
         MyAppendage.Intake_Down();
         bool LightGate_val = MyAppendage.Intake_In();
@@ -205,7 +205,7 @@ void Robot::AutonomousPeriodic(){
         moved = true;
             }
 
-      else if (counter <= (500 + auto_timer)){
+      else if (counter <= (570 + auto_timer)){
         auto_ball_pickedup = true;
         if (intakedelay < 10){
             MyAppendage.Intake_In();
@@ -225,7 +225,7 @@ void Robot::AutonomousPeriodic(){
         bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
 
-        if (align && atspeed && counter > (100 + auto_timer)){
+        if (align && atspeed){
           MyAppendage.Feeder_In();
           MyAppendage.Intake2_In();
         }
