@@ -194,7 +194,18 @@ void Robot::AutonomousPeriodic(){
         bool LightGate_val = MyAppendage.Intake_In();
         moved = true;
       }
-      else if (counter <= (450 + auto_timer)){
+            else if (counter <= (200 + auto_timer) ){
+        MyDrive.Joystick_Drive(0,0);
+        MyAppendage.Intake_Down();
+        bool LightGate_val = MyAppendage.Intake_In();
+        double distance = MyAppendage.Get_Distance(shooter_camera_y);
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+        MyAppendage.Articulate(distance);
+        bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+        moved = true;
+            }
+
+      else if (counter <= (500 + auto_timer)){
         auto_ball_pickedup = true;
         if (intakedelay < 10){
             MyAppendage.Intake_In();
