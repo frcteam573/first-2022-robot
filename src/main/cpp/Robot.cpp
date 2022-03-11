@@ -188,7 +188,7 @@ void Robot::AutonomousPeriodic(){
         MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
-      else if (counter <= (120 + auto_timer) ){
+      else if (counter <= (75 + auto_timer) ){
         MyDrive.camera_intake(intake_camera_x, -0.5);
         MyAppendage.Intake_Down();
         bool LightGate_val = MyAppendage.Intake_In();
@@ -357,7 +357,7 @@ void Robot::AutonomousPeriodic(){
         moved = false;
       }
 
-      else if (counter <= 75 || (FourBallSecondTime && counter2 < 100)){
+      else if (counter <= 45 || (FourBallSecondTime && counter2 < 50)){
 
         
         MyAppendage.Intake_Down();
@@ -382,7 +382,13 @@ void Robot::AutonomousPeriodic(){
           MyDrive.camera_intake(intake_camera_x, -0.7);
         }
 
+
+
       }
+
+        else if (counter <= 75 || (FourBallSecondTime && counter2 < 100)){
+            MyDrive.Joystick_Drive(0,0);
+        }
       else if(FourBallSecondTime && counter2 < 200){
         MyDrive.Joystick_Drive(.8,.7);
         MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
@@ -392,7 +398,7 @@ void Robot::AutonomousPeriodic(){
         counter2 ++;
         auto_ball_pickedup = true;
       }
-      else if (counter < 200 || FourBallSecondTime){
+      else if (counter < 275 || FourBallSecondTime){
         auto_ball_pickedup = true;
         if (intakedelay < 10){
             MyAppendage.Intake_In();
