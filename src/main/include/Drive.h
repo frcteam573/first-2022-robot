@@ -53,6 +53,7 @@ class Drive {
         static double kph_in;
         int climber_retract_nolimit();
         int climber_extend_nolimit();
+        int climber_extend_first();
 
 
 

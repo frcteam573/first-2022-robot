@@ -158,6 +158,45 @@ double Drive::Remap_Val(double i, double threshold)
 
             }
 
+            int Drive::climber_extend_first(){
+
+            int output;
+            if(s_leftclimber_enc->GetPosition() < 150 ){
+
+                double k_c = 0.01;
+                double err = 151 - s_leftclimber_enc->GetPosition();
+
+                double climbout = Remap_Val(err*k_c,0.99);
+            
+            p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
+            if (s_leftdrive_enc->GetPosition() > 25){
+                output = 2;
+            }
+            else{
+            output = 0;
+            }
+            if (climb_lock > 2){
+                m_leftclimb -> Set(climbout);
+                m_rightclimb -> Set(-climbout);
+            }
+            else{
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+            }
+            
+            climb_lock ++;
+            }
+            else{
+                output = 1;
+                m_leftclimb -> Set(0);
+                m_rightclimb -> Set(0);
+                p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
+            }
+            return output;
+
+            }
+
+
         
 
         int Drive::climber_retract(){
