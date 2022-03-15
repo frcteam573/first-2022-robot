@@ -232,7 +232,7 @@ double Drive::Remap_Val(double i, double threshold)
            
             //unlock climbers and retract
             int output;
-            if(s_leftclimber_enc->GetPosition() > 0 ){
+            if(s_leftclimber_enc->GetPosition() > 5 ){
             output = 0;
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
