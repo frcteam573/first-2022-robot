@@ -293,7 +293,7 @@ void Robot::AutonomousPeriodic(){
       }
 
       else {
-        if (intake_camera_exist == 1 & !auto_ball_pickedup){
+        if (intake_camera_exist == 1 && !auto_ball_pickedup){
           
           MyDrive.camera_intake(intake_camera_x, -0.7);
           MyAppendage.Intake_Down();
