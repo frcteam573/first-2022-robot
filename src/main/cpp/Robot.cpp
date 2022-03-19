@@ -188,13 +188,25 @@ void Robot::AutonomousPeriodic(){
         MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
-      else if (counter <= (120 + auto_timer) ){
+      else if (counter <= (150 + auto_timer) ){
         MyDrive.camera_intake(intake_camera_x, -0.5);
         MyAppendage.Intake_Down();
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
         bool LightGate_val = MyAppendage.Intake_In();
         moved = true;
       }
-      else if (counter <= (450 + auto_timer)){
+            else if (counter <= (270 + auto_timer) ){
+        MyDrive.Joystick_Drive(0,0);
+        MyAppendage.Intake_Down();
+        bool LightGate_val = MyAppendage.Intake_In();
+        //double distance = MyAppendage.Get_Distance(shooter_camera_y);
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
+        MyAppendage.Articulate(distance);
+        atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+        moved = true;
+            }
+
+      else if (counter <= (570 + auto_timer)){
         auto_ball_pickedup = true;
         if (intakedelay < 10){
             MyAppendage.Intake_In();
@@ -208,13 +220,13 @@ void Robot::AutonomousPeriodic(){
           }
         MyAppendage.Intake_Up();
 
-        double distance = MyAppendage.Get_Distance(shooter_camera_y);
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+        //double distance = MyAppendage.Get_Distance(shooter_camera_y);
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
         MyAppendage.Articulate(distance);
-        bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+        atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
 
-        if (align && atspeed && counter > (100 + auto_timer)){
+        if (align && atspeed){
           MyAppendage.Feeder_In();
           MyAppendage.Intake2_In();
         }
@@ -263,7 +275,7 @@ void Robot::AutonomousPeriodic(){
           MyAppendage.Intake_Off();
           MyAppendage.Intake_In();
           double distance = MyAppendage.Get_Distance(shooter_camera_y);
-          tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+          tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
           MyAppendage.Articulate(distance);
           bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
           MyDrive.Joystick_Drive(0,0);
@@ -326,7 +338,7 @@ void Robot::AutonomousPeriodic(){
               MyAppendage.Intake_Off();
               MyAppendage.Intake_In();
               double distance = MyAppendage.Get_Distance(shooter_camera_y);
-              tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+              tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
               MyAppendage.Articulate(distance);
               bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
               MyDrive.Joystick_Drive(0,0);
@@ -353,11 +365,12 @@ void Robot::AutonomousPeriodic(){
       if (counter < 15){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
         MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
 
-      else if (counter <= 75 || (FourBallSecondTime && counter2 < 100)){
+      else if (counter <= 45 || (FourBallSecondTime && counter2 < 50)){
 
         
         MyAppendage.Intake_Down();
@@ -365,13 +378,14 @@ void Robot::AutonomousPeriodic(){
         MyAppendage.Shooter_Off();
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
-        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
         intakedelay = 0;
         moved = true;
 
         if (FourBallSecondTime){
-          if (intake_camera_exist == 1){
-            MyDrive.camera_intake(intake_camera_x, -0.7);
+          if (intake_camera_exist == 1&&counter2>=35){
+           MyDrive.camera_intake(intake_camera_x, -0.7);
+            //MyDrive.Joystick_Drive(-.75,-.7);
           }
           else{
             MyDrive.Joystick_Drive(-.8,-.7);
@@ -382,17 +396,29 @@ void Robot::AutonomousPeriodic(){
           MyDrive.camera_intake(intake_camera_x, -0.7);
         }
 
+
+
       }
+
+        else if (counter <= 100 || (FourBallSecondTime && counter2 < 100)|| (FourBallSecondTime && counter2 > 200 && counter2 < 275)){
+            MyDrive.Joystick_Drive(0,0);
+
+            //double distance = MyAppendage.Get_Distance(shooter_camera_y);
+            tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
+            MyAppendage.Articulate(distance);
+            atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+            counter2 ++;
+        }
       else if(FourBallSecondTime && counter2 < 200){
-        MyDrive.Joystick_Drive(.8,.7);
-        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+        MyDrive.Joystick_Drive(.77,.7);
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
         MyAppendage.Shooter_Off();
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
         counter2 ++;
         auto_ball_pickedup = true;
       }
-      else if (counter < 200 || FourBallSecondTime){
+      else if (counter < 275 || FourBallSecondTime){
         auto_ball_pickedup = true;
         if (intakedelay < 10){
             MyAppendage.Intake_In();
@@ -405,10 +431,10 @@ void Robot::AutonomousPeriodic(){
             intakedelay = 30;
           }
         MyAppendage.Intake_Up();
-        double distance = MyAppendage.Get_Distance(shooter_camera_y);
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+        //double distance = MyAppendage.Get_Distance(shooter_camera_y);
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
         MyAppendage.Articulate(distance);
-        bool atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+        atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
 
         if (align && atspeed){
@@ -605,14 +631,30 @@ void Robot::TeleopPeriodic(){
     bool output_1;
     
     // Extend / Retract Arms
-    if (c1_righttrigger > 0.5)
+    if (c1_righttrigger > 0.5 && !c1_btn_back)
     {
       MyDrive.climber_retract();
     }
+    
+    else if ( c1_btn_start && c1_lefttrigger >0.5){
+      MyDrive.climber_extend_first();
+    }
 
-    else if (c1_lefttrigger > 0.5)
+    else if (c1_lefttrigger > 0.5 && !c1_btn_back)
     {
       MyDrive.climber_extend();
+      
+    }
+
+    
+    else if (c1_righttrigger > 0.5 && c1_btn_back)
+    {
+      MyDrive.climber_retract_nolimit();
+    }
+
+    else if (c1_lefttrigger > 0.5 && c1_btn_back)
+    {
+      MyDrive.climber_extend_nolimit();
       
     }
 
@@ -680,7 +722,9 @@ void Robot::TeleopPeriodic(){
 if (c2_leftbumper){
     MyAppendage.Intake_Down();
     intakedelay = 0;
+
     bool LightGate_val = MyAppendage.Intake_In();
+    
 
   if (LightGate_val && !shooter_test){
     MyAppendage.Intake2_In();
@@ -700,6 +744,7 @@ else{
   }
   else{
     MyAppendage.Intake_Off();
+    //MyAppendage.Intake2_Off();
   }
   intakedelay ++;
   if (intakedelay > 500){
@@ -765,7 +810,7 @@ if (c2_btn_x && shooter_test){
 
 // Shooter state code blocks 
 if (endgame_unlock){ // Endgame shooter
-  MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, true);
+  MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, true, false);
   //MyAppendage.Rotate_Off(); // Only for testing, line above should be used for competition.
   MyAppendage.Shooter_Off();
   MyAppendage.Feeder_Off();
@@ -816,9 +861,9 @@ else if (shooter_test){ // Shooter Test
 else if (c2_btn_a){
   //Low Fixed shoot
 
-  tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+  tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
-  atspeed = MyAppendage.Shooter_Encoder_distance(24, 0);
+  atspeed = MyAppendage.Shooter_Encoder_distance(1, 0);
   MyAppendage.Articulate(120); //harcode for close shot
 
   if(c2_right_trigger > 0.5){ // Shoot ball
@@ -856,7 +901,7 @@ else if (c2_btn_b){
 
   //High Fixed shoot
 
-  tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false);
+  tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
   atspeed = MyAppendage.Shooter_Encoder_distance(170,shooter_trim);
   MyAppendage.Articulate(144); //harcode for far shot
@@ -878,7 +923,7 @@ else {
   if (c2_left_trigger >= 0.5)
   {
     //Get shooter aligned and up to speed
-    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false);
+    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
     atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
     MyAppendage.Articulate(distance);
     frc::SmartDashboard::PutBoolean("Alligned", align);
@@ -896,9 +941,15 @@ else {
   }
   else {
     MyAppendage.Shooter_Off();
-    MyAppendage.Rotate_Off();
-    MyAppendage.Feeder_Off();
-    MyAppendage.Intake2_Off();
+   // MyAppendage.Rotate_Off();
+       tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
+
+    
+    if(!c2_leftbumper){
+      MyAppendage.Intake2_Off();
+      MyAppendage.Feeder_Off();
+    }
+    
 
   }
 }

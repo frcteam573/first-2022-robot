@@ -119,7 +119,7 @@ void Appendage::Intake_Off()
  */
 void Appendage::Intake2_In()
 {
-    double prefeedspeed = 0.99;//frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
+    double prefeedspeed = 0.75;//frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
     m_Intake2->Set(prefeedspeed);
 }
 
@@ -128,7 +128,7 @@ void Appendage::Intake2_In()
  */
 void Appendage::Intake2_Out()
 {
-    double prefeedspeed = 0.99; //frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
+    double prefeedspeed = 0.75; //frc::SmartDashboard::GetNumber("PreFeed Speed", 0.99);
     m_Intake2->Set(-prefeedspeed);
 }
 
@@ -302,7 +302,7 @@ double Appendage::Get_Distance(double camera_y)
 /*
  * Moves Turret
  */
-std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool fixedgoal, bool endgame)
+std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool fixedgoal, bool endgame, bool kAuto)
 {
 
     double error,
@@ -330,6 +330,16 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
             align = true;
         }
     } 
+    else if (kAuto){
+        error = 15 - s_Susan_Encoder->GetPosition();
+        output = k_fixedpos * error;
+
+        if(abs(error)<turret_enc_deadzone){
+            output = 0;
+            align = true;
+        }
+    } 
+
     else if(endgame){ //Endgame
         double currpos = s_Susan_Encoder->GetPosition();
 
