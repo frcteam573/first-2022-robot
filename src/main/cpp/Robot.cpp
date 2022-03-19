@@ -535,7 +535,7 @@ void Robot::TeleopInit()
 }
 void Robot::TeleopPeriodic(){
   char ball_color = MyAppendage.controlpanel_colorsense_periodic();
-  MyAppendage.BallCounter(ball_color);
+  int ballCnt = MyAppendage.BallCounter(ball_color);
 
   //Compressor Code
   compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
@@ -772,7 +772,7 @@ if (c2_leftbumper){
     //frc::SmartDashboard::PutString("Intake State", "Off");
   }
 }
-else if(c2_btn_y){
+else if(c2_btn_y || ballCnt == 3){
   MyAppendage.Intake_Down();
   MyAppendage.Intake_Out();
 }
