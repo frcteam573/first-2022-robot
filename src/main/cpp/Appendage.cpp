@@ -29,6 +29,9 @@ Appendage::Appendage()
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
     p_Hood = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_Hood_a, p_Hood_b};
 
+    m_colorSensor = new rev::ColorSensorV3(frc::I2C::Port::kOnboard);
+    m_colorMatcher = new rev::ColorMatch;
+
     p_Intake = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_IntakeId_a, p_IntakeId_b};
 
     // CANEncoder was deprecated as of 2022
@@ -449,6 +452,66 @@ void Appendage::Articulate(double distance){
     else 
         {p_Hood->Set(frc::DoubleSolenoid::Value::kForward);}
 
+}
+
+// color sensor
+void Appendage::controlpanel_colorsense_init(){
+
+ct=0;
+  //Any updates here also have to be done in Appendage.h
+  static constexpr frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);
+  static constexpr frc::Color kRedTarget = frc::Color(0.561, 0.232, 0.114);
+  static constexpr frc::Color kWhiteTarget = frc::Color(0.365, 0.464, 0.169);
+
+  m_colorMatcher->AddColorMatch(kBlueTarget);
+  m_colorMatcher->AddColorMatch(kRedTarget);
+  m_colorMatcher->AddColorMatch(kWhiteTarget);
+
+}
+
+void Appendage::controlpanel_colorsense_periodic(){
+    // Fucntion spins contorl panel to specified color recieved from driver station
+
+    frc::Color detectedColor = m_colorSensor->GetColor();
+    //frc::SmartDashboard::PutNumber("OutColor",m_colorSensor->GetRawColor());
+    rev::ColorSensorV3::RawColor colorraw = m_colorSensor -> GetRawColor();
+    frc::SmartDashboard::PutNumber("OutColorRed",detectedColor.red);
+    frc::SmartDashboard::PutNumber("OutColorBlue",detectedColor.blue);
+    frc::SmartDashboard::PutNumber("OutColorGreen",detectedColor.green);
+    ct ++;
+    frc::SmartDashboard::PutNumber("Count",ct);
+
+    // Get raw RGB values from color sensor and display on DS
+    /*frc::SmartDashboard::PutNumber("Red", detectedColor.red);
+    auto encoder_valstr = std::to_string(detectedColor.red);
+    frc::SmartDashboard::PutString("DB/String 0",encoder_valstr);
+    frc::SmartDashboard::PutNumber("Green", detectedColor.green);
+    frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
+    auto encoder_valstr1 = std::to_string(detectedColor.blue);
+    frc::SmartDashboard::PutString("DB/String 1",encoder_valstr1);
+    auto encoder_valstr2 = std::to_string(detectedColor.green);
+    frc::SmartDashboard::PutString("DB/String 2",encoder_valstr2); */
+      
+    //Run the color match algorithm on our detected color
+
+      std::string colorString;
+      double confidence = 0.99;
+
+      frc::Color matchedColor = m_colorMatcher->MatchClosestColor(detectedColor, confidence); // Determine color
+
+      if (matchedColor == kBlueTarget) {
+        colorString = "B";
+      } else if (matchedColor == kRedTarget) {
+        colorString = "R";
+      } else if (matchedColor == kWhiteTarget) {
+        colorString = "W";
+      } else {
+        colorString = "Unknown";
+      }
+
+
+      //Display what color is seen on DS
+      frc::SmartDashboard::PutString("Current Color", colorString);
 }
 
 /*Appendage Dashboard*/

@@ -8,6 +8,9 @@
 #include "frc/smartdashboard/SmartDashboard.h"
 #include <tuple>
 #include <frc/DigitalInput.h>
+#include <frc/util/color.h>
+#include "rev/ColorSensorV3.h"
+#include "rev/ColorMatch.h"
 
 using namespace std;
 
@@ -24,6 +27,9 @@ private:
     rev::CANSparkMax *m_Shooter2;
     rev::CANSparkMax *m_Feeder;
     rev::CANSparkMax *m_Susan;
+
+    rev::ColorSensorV3 *m_colorSensor;
+    rev::ColorMatch *m_colorMatcher;
 
 
     rev::SparkMaxRelativeEncoder *s_Shooter_Encoder;
@@ -55,6 +61,9 @@ public:
     bool Shooter_Encoder();
     void Shooter_Off();
 
+    void controlpanel_colorsense_init();
+    void controlpanel_colorsense_periodic();
+
     double Get_Distance(double camera_y);
     std::tuple<bool, bool> Rotate(double camera_exists, double camera_x, bool direction, bool lowgoal, bool endgame, bool kAuto);
     void Rotate_Off();
@@ -75,8 +84,14 @@ public:
     static double turret_enc_deadzone;
     static double turret_cam_deadzone;
     static double feedfor;
+    int ct;
 
     void dashboard();
+
+    //Any updates here also have to be done in controlpanel_colorsense_init
+    static constexpr frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);
+    static constexpr frc::Color kRedTarget = frc::Color(0.561, 0.232, 0.114);
+    static constexpr frc::Color kWhiteTarget = frc::Color(0.365, 0.464, 0.169);
 
 
 

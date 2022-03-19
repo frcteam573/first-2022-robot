@@ -509,3 +509,29 @@ double Drive::Remap_Val(double i, double threshold)
 
         return atangle;
     }
+
+      bool Drive::driveto_distance (double distance){
+        double distance_in = s_leftdrive_enc -> GetPosition();
+        bool atdistance = false;
+
+        distance = 42*5/(4*3.14)*distance;
+        double error = distance - distance_in;
+        double kp = 0.001;
+
+        double out = kp * error;
+
+            if (abs(out)<0.1){
+                out = 0;
+                atdistance = true;
+            }
+
+        out = Remap_Val(out,0.99);
+        drive_straight(false,out);
+
+        return atdistance;
+    }
+void Drive::reset_drive_s(){
+    s_gyro->Reset();
+    s_leftdrive_enc -> SetPosition(0);
+    s_rightdrive_enc -> SetPosition(0);
+}

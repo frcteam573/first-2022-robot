@@ -32,6 +32,8 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoName2Ball, kAutoName2Ball); // 2 ball
   m_chooser.AddOption(kAutoName4BallPath, kAutoName4BallPath); // 4 ball
   m_chooser.AddOption(kAutoName4BallNoPath, kAutoName4BallNoPath); //4 Ball 2
+  m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); 
+
 
   //frc::SmartDashboard::PutBoolean("St Test", false);
   m_alliance.SetDefaultOption(kBlue, kBlue);
@@ -86,7 +88,7 @@ void Robot::AutonomousInit()
   counter = 0;
   FourBallSecondTime = false;
   counter2 = 0;
-
+  state_drive = 0;
 
 
   // 4ball auto stuff
@@ -244,6 +246,39 @@ void Robot::AutonomousPeriodic(){
 
       }
     }
+//TEST
+
+    else if (m_autoSelected == kAutoNameCustom2){
+      bool reached_distance;
+      bool reached_angle;
+
+      if (state_drive == 0){
+        reached_angle = MyDrive.turnto_gyro(17.5);
+        if (reached_angle){
+          state_drive++;
+        
+        MyDrive.reset_drive_s();
+      
+      }
+      }
+      else if (state_drive == 1){
+        reached_distance = MyDrive.driveto_distance(60);
+        if (reached_distance){
+              state_drive++;
+            
+            MyDrive.reset_drive_s();
+
+          }
+
+      }
+      
+          else{
+            MyDrive.Joystick_Drive(0,0);
+          }
+
+      }
+
+
     else if (m_autoSelected == kAutoName4BallPath){
       // 4  Ball Autonomous this cannot be put on delay we need the whole time
 
@@ -480,6 +515,8 @@ void Robot::TeleopInit()
   shooter_test = false;
   trim_state = false;
 
+  MyAppendage.controlpanel_colorsense_init();
+
   shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
 
   // Get alliance station color
@@ -497,7 +534,7 @@ void Robot::TeleopInit()
   //frc::SmartDashboard::PutString("Alliance",alliance_color);
 }
 void Robot::TeleopPeriodic(){
-
+  MyAppendage.controlpanel_colorsense_periodic();
 
   //Compressor Code
   compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
