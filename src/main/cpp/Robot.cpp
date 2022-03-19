@@ -542,6 +542,32 @@ void Robot::AutonomousPeriodic(){
           MyAppendage.Feeder_Off();
           MyAppendage.Intake2_Off();
         }
+      } else if (counter <= (870 + auto_timer)) {
+        auto_ball_pickedup = true;
+        if (intakedelay < 10){
+            MyAppendage.Intake_In();
+          }
+          else{
+            MyAppendage.Intake_Off();
+          }
+          intakedelay ++;
+          if (intakedelay > 500){
+            intakedelay = 30;
+          }
+        MyAppendage.Intake_Up();
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
+        MyAppendage.Articulate(distance);
+        atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+        MyDrive.Joystick_Drive(0,0);
+
+        if (align && atspeed){
+          MyAppendage.Feeder_In();
+          MyAppendage.Intake2_In();
+        }
+        else{
+          MyAppendage.Feeder_Off();
+          MyAppendage.Intake2_Off();
+        }
       }
       else{
         MyAppendage.Shooter_Off();
