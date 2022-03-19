@@ -535,6 +535,7 @@ void Robot::TeleopInit()
 }
 void Robot::TeleopPeriodic(){
   char ball_color = MyAppendage.controlpanel_colorsense_periodic();
+  MyAppendage.BallCounter(ball_color);
 
   //Compressor Code
   compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
