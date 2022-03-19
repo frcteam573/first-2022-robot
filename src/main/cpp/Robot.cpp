@@ -917,7 +917,7 @@ else if (c2_btn_a){
 else if (c2_btn_x){
   //shoot out
 
-  atspeed = MyAppendage.Shooter_Encoder_distance(24, 0);
+  atspeed = MyAppendage.Shooter_Encoder_distance(1, 0);
 
   if( (c2_right_trigger > 0.5)){ // Shoot ball
     MyAppendage.Feeder_In();
@@ -975,7 +975,25 @@ else {
       MyAppendage.Feeder_Off();
       MyAppendage.Intake2_Off();
     }
+
   }
+
+
+  else if(alliance_color == "blue" && ball_color == 'R' || alliance_color == "red" && ball_color == 'B'){
+  
+  atspeed = MyAppendage.Shooter_Encoder_distance(1, 0);
+
+  if( atspeed ){ // Shoot ball
+    MyAppendage.Feeder_In();
+    MyAppendage.Intake2_In();
+  }
+  else{
+    MyAppendage.Feeder_Off();
+    MyAppendage.Intake2_Off();
+  }
+
+  }
+
   else {
     MyAppendage.Shooter_Off();
    // MyAppendage.Rotate_Off();
