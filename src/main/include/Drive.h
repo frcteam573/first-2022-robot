@@ -54,6 +54,10 @@ class Drive {
         int climber_retract_nolimit();
         int climber_extend_nolimit();
         int climber_extend_first();
+        bool turnto_gyro (double angle);
+        bool driveto_distance (double distance);
+        void reset_drive_s();
+
 
 
 
