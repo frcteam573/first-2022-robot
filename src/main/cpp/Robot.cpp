@@ -534,7 +534,7 @@ void Robot::TeleopInit()
   //frc::SmartDashboard::PutString("Alliance",alliance_color);
 }
 void Robot::TeleopPeriodic(){
-  MyAppendage.controlpanel_colorsense_periodic();
+  char ball_color = MyAppendage.controlpanel_colorsense_periodic();
 
   //Compressor Code
   compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
@@ -760,7 +760,7 @@ if (c2_leftbumper){
     MyAppendage.Intake_Down();
     intakedelay = 0;
 
-    bool LightGate_val = MyAppendage.Intake_In();
+    bool LightGate_val = MyAppendage.Intake_In(ball_color);
     
 
   if (LightGate_val && !shooter_test){
@@ -777,7 +777,7 @@ else if(c2_btn_y){
 }
 else{
   if (intakedelay < 10){
-    MyAppendage.Intake_In();
+    MyAppendage.Intake_In(ball_color);
   }
   else{
     MyAppendage.Intake_Off();

@@ -92,12 +92,18 @@ void Appendage::DashboardCreate(){
 /*
  * Allows robot to Intake Balls
  */
-bool Appendage::Intake_In()
-{
+bool Appendage::Intake_In(char color_in){
     double intakespeed = .75;//frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
     m_Intake1->Set(intakespeed);
 
-    return s_LightGate -> Get();
+    bool output = false;
+
+
+if (color_in = !'W'){
+    output = true;
+}
+
+    return output;
 }
 
 /*
@@ -469,16 +475,16 @@ ct=0;
 
 }
 
-void Appendage::controlpanel_colorsense_periodic(){
+  char Appendage::controlpanel_colorsense_periodic(){
     // Fucntion spins contorl panel to specified color recieved from driver station
-
-    frc::Color detectedColor = m_colorSensor->GetColor();
+ 
+     frc::Color detectedColor = m_colorSensor->GetColor();
     //frc::SmartDashboard::PutNumber("OutColor",m_colorSensor->GetRawColor());
     rev::ColorSensorV3::RawColor colorraw = m_colorSensor -> GetRawColor();
     frc::SmartDashboard::PutNumber("OutColorRed",detectedColor.red);
     frc::SmartDashboard::PutNumber("OutColorBlue",detectedColor.blue);
     frc::SmartDashboard::PutNumber("OutColorGreen",detectedColor.green);
-    ct ++;
+    ct ++; 
     frc::SmartDashboard::PutNumber("Count",ct);
 
     // Get raw RGB values from color sensor and display on DS
@@ -495,23 +501,34 @@ void Appendage::controlpanel_colorsense_periodic(){
     //Run the color match algorithm on our detected color
 
       std::string colorString;
+      char colorchar;
       double confidence = 0.99;
 
       frc::Color matchedColor = m_colorMatcher->MatchClosestColor(detectedColor, confidence); // Determine color
 
       if (matchedColor == kBlueTarget) {
         colorString = "B";
+         colorchar =  'B';
       } else if (matchedColor == kRedTarget) {
         colorString = "R";
+        colorchar =  'R';
+
       } else if (matchedColor == kWhiteTarget) {
         colorString = "W";
+        colorchar =  'W';
+     
       } else {
         colorString = "Unknown";
+        colorchar =  'W';
+
       }
+
 
 
       //Display what color is seen on DS
       frc::SmartDashboard::PutString("Current Color", colorString);
+
+      return colorchar;
 }
 
 /*Appendage Dashboard*/
