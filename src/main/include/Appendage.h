@@ -41,7 +41,7 @@ private:
 
 public:
     Appendage();
-    bool Intake_In();
+    bool Intake_In(char color_in = 'W');
     void Intake_Out();
     void Intake_Off();
 
@@ -60,9 +60,10 @@ public:
 
     bool Shooter_Encoder();
     void Shooter_Off();
+    bool color_in();
 
     void controlpanel_colorsense_init();
-    void controlpanel_colorsense_periodic();
+    char controlpanel_colorsense_periodic();
 
     double Get_Distance(double camera_y);
     std::tuple<bool, bool> Rotate(double camera_exists, double camera_x, bool direction, bool lowgoal, bool endgame, bool kAuto);
@@ -97,3 +98,5 @@ public:
 
 };
 #endif
+
+
