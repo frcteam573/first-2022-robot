@@ -1008,7 +1008,7 @@ else if (c2_btn_a){
 else if (c2_btn_x){
   //shoot out
 
-  atspeed = MyAppendage.Shooter_Encoder_distance(24, 0);
+  atspeed = MyAppendage.Shooter_Encoder_distance(1, 0);
 
   if( (c2_right_trigger > 0.5)){ // Shoot ball
     MyAppendage.Feeder_In();
@@ -1051,12 +1051,19 @@ else {
   if (c2_left_trigger >= 0.5)
   {
     //Get shooter aligned and up to speed
-    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
     atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
     MyAppendage.Articulate(distance);
     frc::SmartDashboard::PutBoolean("Alligned", align);
     frc::SmartDashboard::PutBoolean("AtSpeed", atspeed);
 
+  if(alliance_color == "blue" && ball_color == 'R' || alliance_color == "red" && ball_color == 'B'){
+      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x + 5, turret_direction, false, false, false);
+
+  }
+  else{
+    tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
+
+  }
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
       MyAppendage.Feeder_In();
@@ -1066,7 +1073,25 @@ else {
       MyAppendage.Feeder_Off();
       MyAppendage.Intake2_Off();
     }
+
   }
+
+
+  else if(alliance_color == "blue" && ball_color == 'R' || alliance_color == "red" && ball_color == 'B'){
+  
+  atspeed = MyAppendage.Shooter_Encoder_distance(1, 0);
+
+  if( atspeed ){ // Shoot ball
+    MyAppendage.Feeder_In();
+    MyAppendage.Intake2_In();
+  }
+  else{
+    MyAppendage.Feeder_Off();
+    MyAppendage.Intake2_Off();
+  }
+
+  }
+
   else {
     MyAppendage.Shooter_Off();
    // MyAppendage.Rotate_Off();
