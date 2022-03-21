@@ -248,7 +248,7 @@ void Robot::AutonomousPeriodic(){
     }
 //TEST
 
-    else if (m_autoSelected == kAutoNameCustom2){
+  else if (m_autoSelected == kAutoNameCustom2){
       bool reached_distance;
       bool reached_angle;
 
@@ -256,27 +256,21 @@ void Robot::AutonomousPeriodic(){
         reached_angle = MyDrive.turnto_gyro(17.5);
         if (reached_angle){
           state_drive++;
-        
-        MyDrive.reset_drive_s();
-      
-      }
+          MyDrive.reset_drive_s();
+        }
       }
       else if (state_drive == 1){
         reached_distance = MyDrive.driveto_distance(60);
         if (reached_distance){
-              state_drive++;
-            
+            state_drive++;
             MyDrive.reset_drive_s();
-
           }
-
       }
-      
-          else{
-            MyDrive.Joystick_Drive(0,0);
-          }
-
+      else{
+        MyDrive.Joystick_Drive(0,0);
       }
+
+    }
 
 
     else if (m_autoSelected == kAutoName4BallPath){
@@ -965,7 +959,7 @@ else {
     frc::SmartDashboard::PutBoolean("Alligned", align);
     frc::SmartDashboard::PutBoolean("AtSpeed", atspeed);
 
-  if(alliance_color == "blue" && ball_color == 'R' || alliance_color == "red" && ball_color == 'B'){
+  if((alliance_color == "blue" && ball_color == 'R') || (alliance_color == "red" && ball_color == 'B')){
       tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x + 5, turret_direction, false, false, false);
 
   }
@@ -986,7 +980,7 @@ else {
   }
 
 
-  else if(alliance_color == "blue" && ball_color == 'R' || alliance_color == "red" && ball_color == 'B'){
+  else if((alliance_color == "blue" && ball_color == 'R') || (alliance_color == "red" && ball_color == 'B')){
   
   atspeed = MyAppendage.Shooter_Encoder_distance(1, 0);
 
