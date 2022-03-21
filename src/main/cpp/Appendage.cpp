@@ -99,10 +99,9 @@ bool Appendage::Intake_In(char color_in){
     bool output = false;
 
 
-if (color_in = !'W'){
-    output = true;
-}
-
+    if (color_in = !'W'){
+        output = true;
+    }
     return output;
 }
 
