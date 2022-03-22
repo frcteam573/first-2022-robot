@@ -96,12 +96,13 @@ bool Appendage::Intake_In(char color_in){
     double intakespeed = .75;//frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
     m_Intake1->Set(intakespeed);
 
-    bool output = false;
+    //bool output = false;
 
-
-    if (color_in = !'W'){
-        output = true;
-    }
+    bool output = s_LightGate->Get();
+    
+    //if (color_in = !'W'){
+   //     output = true;
+    //}
     return output;
 }
 
