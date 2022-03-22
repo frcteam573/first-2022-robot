@@ -89,6 +89,7 @@ void Robot::AutonomousInit()
   FourBallSecondTime = false;
   counter2 = 0;
   state_drive = 0;
+  MyDrive.reset_drive_s();
 
 
   // 4ball auto stuff
