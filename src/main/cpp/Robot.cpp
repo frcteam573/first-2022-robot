@@ -30,7 +30,6 @@ void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);// Straight
   m_chooser.AddOption(kAutoName2Ball, kAutoName2Ball); // 2 ball
-  m_chooser.AddOption(kAutoName3BallPath, kAutoName3BallPath); // 3 ball
   m_chooser.AddOption(kAutoName4BallPath, kAutoName4BallPath); // 4 ball
   m_chooser.AddOption(kAutoName4BallNoPath, kAutoName4BallNoPath); //4 Ball 2
   m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); 
@@ -482,97 +481,8 @@ void Robot::AutonomousPeriodic(){
         FourBallSecondTime = true;
       }
     }  
-    else if (m_autoSelected == kAutoName3BallPath){
-     // 3 Ball Autonomous
-      if ((counter - auto_timer) <= 20){
-        MyAppendage.Intake_Down();
-        MyAppendage.Intake_In();
-        MyDrive.camera_intake(intake_camera_x, 0);
-        moved = false;
-      }
-      else if (counter <= (150 + auto_timer) ){
-        MyDrive.camera_intake(intake_camera_x, -0.5);
-        MyAppendage.Intake_Down();
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
-        bool LightGate_val = MyAppendage.Intake_In();
-        moved = true;
-      }
-            else if (counter <= (270 + auto_timer) ){
-        MyDrive.Joystick_Drive(0,0);
-        MyAppendage.Intake_Down();
-        bool LightGate_val = MyAppendage.Intake_In();
-        //double distance = MyAppendage.Get_Distance(shooter_camera_y);
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
-        atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
-        moved = true;
-            }
 
-      else if (counter <= (570 + auto_timer)){
-        auto_ball_pickedup = true;
-        if (intakedelay < 10){
-            MyAppendage.Intake_In();
-          }
-          else{
-            MyAppendage.Intake_Off();
-          }
-          intakedelay ++;
-          if (intakedelay > 500){
-            intakedelay = 30;
-          }
-        MyAppendage.Intake_Up();
-
-        //double distance = MyAppendage.Get_Distance(shooter_camera_y);
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
-        atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
-        MyDrive.Joystick_Drive(0,0);
-
-        if (align && atspeed){
-          MyAppendage.Feeder_In();
-          MyAppendage.Intake2_In();
-        }
-        else{
-          MyAppendage.Feeder_Off();
-          MyAppendage.Intake2_Off();
-        }
-      } else if (counter <= (870 + auto_timer)) {
-        auto_ball_pickedup = true;
-        if (intakedelay < 10){
-            MyAppendage.Intake_In();
-          }
-          else{
-            MyAppendage.Intake_Off();
-          }
-          intakedelay ++;
-          if (intakedelay > 500){
-            intakedelay = 30;
-          }
-        MyAppendage.Intake_Up();
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
-        atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
-        MyDrive.Joystick_Drive(0,0);
-
-        if (align && atspeed){
-          MyAppendage.Feeder_In();
-          MyAppendage.Intake2_In();
-        }
-        else{
-          MyAppendage.Feeder_Off();
-          MyAppendage.Intake2_Off();
-        }
-      }
-      else{
-        MyAppendage.Shooter_Off();
-        MyAppendage.Feeder_Off();
-        MyAppendage.Intake2_Off();
-        MyAppendage.Rotate_Off();
-        MyDrive.Joystick_Drive(0,0);
-
-      }
-
-    } else{ // Simple drive straight auto
+  else{ // Simple drive straight auto
 
       if (counter < (100 + auto_timer))
       { // 100 = 2 seconds
@@ -619,7 +529,6 @@ void Robot::TeleopInit()
 }
 void Robot::TeleopPeriodic(){
   char ball_color = MyAppendage.controlpanel_colorsense_periodic();
-  int ballCnt = MyAppendage.BallCounter(ball_color);
 
   //Compressor Code
   compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
@@ -856,7 +765,7 @@ if (c2_leftbumper){
     //frc::SmartDashboard::PutString("Intake State", "Off");
   }
 }
-else if(c2_btn_y || ballCnt == 3){
+else if(c2_btn_y){
   MyAppendage.Intake_Down();
   MyAppendage.Intake_Out();
 }

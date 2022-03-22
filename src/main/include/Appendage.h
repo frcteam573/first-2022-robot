@@ -37,12 +37,11 @@ private:
     rev::SparkMaxRelativeEncoder *s_Hood_Encoder;
 
     frc::DigitalInput *s_LightGate;
-    frc::DigitalInput *s_LightGate2;
+   
 
 public:
     Appendage();
     bool Intake_In(char color_in = 'W');
-    int BallCounter(char);
     void Intake_Out();
     void Intake_Off();
 

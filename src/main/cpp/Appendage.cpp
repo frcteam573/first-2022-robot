@@ -11,15 +11,13 @@ Appendage::Appendage()
     int m_ShooterId2 = 2;
     int m_FeederId = 6;
     int m_SusanId = 13;
-    //int m_HoodId = 12;
+    int m_HoodId = 12;
 
     int p_IntakeId_a = 6;
     int p_IntakeId_b = 7;
     int p_Hood_a = 4;
     int p_Hood_b = 5;
-
     int s_LightGateId = 1;
-    int s_LightGate2Id = 2;
 
     m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
@@ -41,7 +39,6 @@ Appendage::Appendage()
     s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter1->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
     s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
     s_LightGate = new frc::DigitalInput(s_LightGateId);
-    s_LightGate2 = new frc::DigitalInput(s_LightGate2Id);
 }
 
 /*
@@ -531,22 +528,6 @@ ct=0;
       frc::SmartDashboard::PutString("Current Color", colorString);
 
       return colorchar;
-}
-
-int Appendage::BallCounter(char colorIn){
-    int BallCnt = 0;
-    
-    if (s_LightGate->Get()){
-        BallCnt+=1;
-    }
-    if (s_LightGate2->Get()){
-        BallCnt+=1;
-    }
-    if (colorIn != 'W'){
-        BallCnt+=1;
-    }
-    
-    return BallCnt;
 }
 
 /*Appendage Dashboard*/
