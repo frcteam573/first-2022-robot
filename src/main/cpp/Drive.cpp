@@ -59,6 +59,12 @@ void Drive::DashboardCreate(){
   frc::SmartDashboard::PutNumber("KVelo In", kvelo_in);
   frc::SmartDashboard::PutNumber("KPos_in", kpos_in);
   frc::SmartDashboard::PutNumber("KPH_in", kph_in); 
+
+  frc::SmartDashboard::PutNumber("KP_Gyro", 0.001); 
+  frc::SmartDashboard::PutNumber("KP_DriveDist", 0.001); 
+
+  left_drive_old = 0;
+  right_drive_old = 0;
   
 }
 
@@ -79,11 +85,24 @@ double Drive::deadband(double input, double deadband_size){
 
     double left_out = LeftStick*LeftStick*LeftStick;
     double right_out = RightStick*RightStick*RightStick;
+    left_out = deadband(left_out,0.05);
+    right_out = deadband(right_out,0.05);
+
+    if(abs(left_out - left_drive_old)>0.5){
+       left_out =  0.5*(left_out - left_drive_old)/abs(left_out - left_drive_old) + left_drive_old;
+    }
+
+    if(abs(right_out - right_drive_old)>0.5){
+       right_out =  0.5*(right_out - right_drive_old)/abs(right_out - right_drive_old) + right_drive_old;
+    }
 
     m_leftdrive -> Set(left_out);
     m_leftdrive2 -> Set(left_out);
     m_rightdrive -> Set(right_out);
     m_rightdrive2 -> Set(right_out);
+
+    left_drive_old = left_out;
+    right_drive_old = right_out;
 }
 
 //DRIVE STRAIGHT//
@@ -494,6 +513,8 @@ double Drive::Remap_Val(double i, double threshold)
 
         double error = angle - angle_in;
         double kp = 0.001;
+        kp = frc::SmartDashboard::GetNumber("KP_Gyro", 0.001); 
+  
 
         double out = kp * error;
 
@@ -517,6 +538,7 @@ double Drive::Remap_Val(double i, double threshold)
         distance = 42*5/(4*3.14)*distance;
         double error = distance - distance_in;
         double kp = 0.001;
+        kp = frc::SmartDashboard::GetNumber("KP_DriveDist", 0.001); 
 
         double out = kp * error;
 

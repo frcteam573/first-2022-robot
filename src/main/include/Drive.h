@@ -59,6 +59,8 @@ class Drive {
         void reset_drive_s();
 
 
+        double left_drive_old;
+        double right_drive_old;
 
 
         int climb_lock;
