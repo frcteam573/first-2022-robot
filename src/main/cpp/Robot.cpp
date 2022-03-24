@@ -857,7 +857,7 @@ if (c2_leftbumper){
     //frc::SmartDashboard::PutString("Intake State", "Off");
   }
 }
-else if(c2_btn_y || ballCnt == 3){
+else if(c2_btn_y){ // || ballCnt == 3){ comment this back in when we are ready to do auto 3 ball reject
   MyAppendage.Intake_Down();
   MyAppendage.Intake_Out();
 }
