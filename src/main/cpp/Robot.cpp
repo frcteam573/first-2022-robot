@@ -255,7 +255,7 @@ void Robot::AutonomousPeriodic(){
       bool reached_angle;
 
       if (state_drive == 0){
-        reached_angle = MyDrive.turnto_gyro(17.5);
+        reached_angle = MyDrive.turnto_gyro(90);
         if (reached_angle){
           state_drive++;
           MyDrive.reset_drive_s();
