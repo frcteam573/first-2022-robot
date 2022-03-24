@@ -61,7 +61,7 @@ void Drive::DashboardCreate(){
   frc::SmartDashboard::PutNumber("KPH_in", kph_in); 
 
   frc::SmartDashboard::PutNumber("KP_Gyro", -0.0027); 
-  frc::SmartDashboard::PutNumber("KP_DriveDist", 0.001); 
+  frc::SmartDashboard::PutNumber("KP_DriveDist", -0.07); 
 
   left_drive_old = 0;
   right_drive_old = 0;
@@ -534,13 +534,17 @@ double Drive::Remap_Val(double i, double threshold)
       bool Drive::driveto_distance (double distance){
         double distance_in = s_leftdrive_enc -> GetPosition();
         bool atdistance = false;
+        distance_in = -1*distance_in;
 
-        distance = 42*5/(4*3.14)*distance;
+        distance = 0.183*distance;
         double error = distance - distance_in;
         double kp = 0.001;
-        kp = frc::SmartDashboard::GetNumber("KP_DriveDist", 0.001); 
-
+        kp = frc::SmartDashboard::GetNumber("KP_DriveDist", -0.07); 
+        frc::SmartDashboard::PutNumber("Drive Distance In",distance);
+        frc::SmartDashboard::PutNumber("Drive Distance",distance_in);
         double out = kp * error;
+
+        frc::SmartDashboard::PutNumber("Drive Out1",out);
 
             if (abs(out)<0.1){
                 out = 0;
