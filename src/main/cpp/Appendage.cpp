@@ -13,8 +13,8 @@ Appendage::Appendage()
     int m_SusanId = 13;
     //int m_HoodId = 12;
 
-    int p_IntakeId_a = 7;
-    int p_IntakeId_b = 6;
+    int p_IntakeId_a = 6;
+    int p_IntakeId_b = 7;
     int p_Hood_a = 4;
     int p_Hood_b = 5;
 

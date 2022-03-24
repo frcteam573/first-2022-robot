@@ -60,7 +60,7 @@ void Drive::DashboardCreate(){
   frc::SmartDashboard::PutNumber("KPos_in", kpos_in);
   frc::SmartDashboard::PutNumber("KPH_in", kph_in); 
 
-  frc::SmartDashboard::PutNumber("KP_Gyro", 0.001); 
+  frc::SmartDashboard::PutNumber("KP_Gyro", -0.0027); 
   frc::SmartDashboard::PutNumber("KP_DriveDist", 0.001); 
 
   left_drive_old = 0;
@@ -513,7 +513,7 @@ double Drive::Remap_Val(double i, double threshold)
 
         double error = angle - angle_in;
         double kp = 0.001;
-        kp = frc::SmartDashboard::GetNumber("KP_Gyro", 0.001); 
+        kp = frc::SmartDashboard::GetNumber("KP_Gyro", -0.0027); 
   
 
         double out = kp * error;
