@@ -87,7 +87,8 @@ void Appendage::DashboardCreate(){
   //frc::SmartDashboard::PutNumber("Turret Enc Deadzone", turret_enc_deadzone);
   frc::SmartDashboard::PutNumber("Turret Cam Deadzone", turret_cam_deadzone);
   frc::SmartDashboard::PutNumber("Shooter Deadzone", turret_shooter_deadzone);
-  
+   
+  shooterout_old = 0;
 }
 /*
  * Allows robot to Intake Balls
@@ -225,8 +226,14 @@ bool Appendage::Shooter_Encoder(){
 
     output = this->Remap_Val(output, 0.99);
 
+    if(abs(output - shooterout_old)>0.3){
+       output =  0.3*(output - shooterout_old)/abs(output - shooterout_old) + shooterout_old;
+    }
+
     m_Shooter1 -> Set(output);
     m_Shooter2 -> Set(output);
+
+    shooterout_old = output;
 
     //Output to dash for testing
     //frc::SmartDashboard::PutNumber("Shooter Target Out", shooter_target_in);
@@ -272,8 +279,14 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
 
     output = this->Remap_Val(output, 0.99);
 
+     if(abs(output - shooterout_old)>0.3){
+       output =  0.3*(output - shooterout_old)/abs(output - shooterout_old) + shooterout_old;
+    }
+
     m_Shooter1 -> Set(output);
     m_Shooter2 -> Set(output);
+
+    shooterout_old = output;
 
     //Output to dash for testing
     //frc::SmartDashboard::PutNumber("Shooter Current", current);
@@ -289,6 +302,7 @@ void Appendage::Shooter_Off()
 {
     m_Shooter1->Set(0);
     m_Shooter2->Set(0);
+    shooterout_old = 0;
 }
 
 /*

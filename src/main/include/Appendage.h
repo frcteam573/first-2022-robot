@@ -86,6 +86,7 @@ public:
     static double turret_cam_deadzone;
     static double feedfor;
     int ct;
+    double shooterout_old;
 
     void dashboard();
 
