@@ -94,6 +94,7 @@ class Robot : public frc::TimedRobot {
   bool align;
   bool atspeed;
   int intakedelay;
+  int intakedelay2;
   int state_drive;
 
  

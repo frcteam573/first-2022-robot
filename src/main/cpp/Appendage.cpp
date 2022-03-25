@@ -100,13 +100,13 @@ bool Appendage::Intake_In(char color_in){
     double intakespeed = .75;//frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
     m_Intake1->Set(intakespeed);
 
-    //bool output = false;
+    bool output = false;
 
-    bool output = s_LightGate->Get();
+  //  bool output = s_LightGate->Get();
     
-    //if (color_in = !'W'){
-   //     output = true;
-    //}
+    if (color_in == 'W'){
+        output = true;
+    }
     return output;
 }
 
@@ -551,10 +551,10 @@ ct=0;
 int Appendage::BallCounter(char colorIn){
     int BallCnt = 0;
     
-    if (s_LightGate->Get()){
+    if (!s_LightGate->Get()){
         BallCnt+=1;
     }
-    if (s_LightGate2->Get()){
+    if (!s_LightGate2->Get()){
         BallCnt+=1;
     }
     if (colorIn != 'W'){
