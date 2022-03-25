@@ -25,6 +25,7 @@ Appendage::Appendage()
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter1 = new rev::CANSparkMax{m_ShooterId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter2 = new rev::CANSparkMax{m_ShooterId2, rev::CANSparkMax::MotorType::kBrushless};
+    
     m_Intake1 -> SetInverted(true);
     m_Intake2 -> SetInverted(true);
     m_Feeder = new rev::CANSparkMax{m_FeederId, rev::CANSparkMax::MotorType::kBrushless};
@@ -38,10 +39,11 @@ Appendage::Appendage()
 
     // CANEncoder was deprecated as of 2022
     
-    s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter1->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+    s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter2->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
     s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
     s_LightGate = new frc::DigitalInput(s_LightGateId);
     s_LightGate2 = new frc::DigitalInput(s_LightGate2Id);
+    
 }
 
 /*
@@ -77,7 +79,7 @@ void Appendage::DashboardCreate(){
     static double feedfor = 0.2;
    
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
-  //frc::SmartDashboard::PutNumber("Shooter Feed Forward In", feedfor);
+  frc::SmartDashboard::PutNumber("Shooter Feed Forward In", feedfor);
   frc::SmartDashboard::PutNumber("Shooter Target In", shooter_target_in);
   //frc::SmartDashboard::PutNumber("Feed Speed", feed_roller_speed);
   //frc::SmartDashboard::PutNumber("PreFeed Speed", prefeed_roller_speed);
@@ -205,19 +207,19 @@ bool Appendage::Shooter_Encoder(){
     // Read in value from dashboard
     double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 0.00007);
     double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
-    //double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
+    double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
     double kP = shooter_p_in;
     double target = shooter_target_in;
 
-    double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
+    double gear_ratio = 2/1; // Gear ratio between shooter motor encoder and shooter wheel
 
     current = current * gear_ratio;
 
     double err = target - current;
 
     //double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
-    double shooter_f_in = 0.000099 * target - 0.02;
+    //double shooter_f_in = 0.000099 * target - 0.02;
 
     double output = (err * kP) + shooter_f_in;  
 
@@ -233,7 +235,7 @@ bool Appendage::Shooter_Encoder(){
        output =  0.3*(output - shooterout_old)/abs(output - shooterout_old) + shooterout_old;
     }
 
-    m_Shooter1 -> Set(output);
+    m_Shooter1 -> Set(-output);
     m_Shooter2 -> Set(output);
 
     shooterout_old = output;
@@ -262,7 +264,7 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
         target = 22.013*distance+4363.45;
     }
 
-    double gear_ratio = 1/1; // Gear ratio between shooter motor encoder and shooter wheel
+    double gear_ratio = 2/1; // Gear ratio between shooter motor encoder and shooter wheel
 
     current = current * gear_ratio;
 
@@ -286,7 +288,7 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
        output =  0.3*(output - shooterout_old)/abs(output - shooterout_old) + shooterout_old;
     }
 
-    m_Shooter1 -> Set(output);
+    m_Shooter1 -> Set(-output);
     m_Shooter2 -> Set(output);
 
     shooterout_old = output;
@@ -566,7 +568,7 @@ int Appendage::BallCounter(char colorIn){
 
 /*Appendage Dashboard*/
     void Appendage::dashboard(){
-        frc::SmartDashboard::PutNumber("Shooter Enc", s_Shooter_Encoder -> GetVelocity());
+        frc::SmartDashboard::PutNumber("Shooter Enc", (s_Shooter_Encoder -> GetVelocity())*2);
         frc::SmartDashboard::PutNumber("Susan Enc", s_Susan_Encoder -> GetPosition());
         frc::SmartDashboard::PutBoolean("LightGate",s_LightGate->Get());
     }
