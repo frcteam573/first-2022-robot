@@ -201,8 +201,8 @@ void Robot::AutonomousPeriodic(){
       }
             else if (counter <= (270 + auto_timer) ){
         MyDrive.Joystick_Drive(0,0);
-        MyAppendage.Intake_Down();
-        bool LightGate_val = MyAppendage.Intake_In();
+        MyAppendage.Intake_Up();
+        MyAppendage.Intake_Off();
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
         MyAppendage.Articulate(distance);
@@ -212,17 +212,6 @@ void Robot::AutonomousPeriodic(){
 
       else if (counter <= (570 + auto_timer)){
         auto_ball_pickedup = true;
-        if (intakedelay < 10){
-            MyAppendage.Intake_In();
-          }
-          else{
-            MyAppendage.Intake_Off();
-          }
-          intakedelay ++;
-          if (intakedelay > 500){
-            intakedelay = 30;
-          }
-        MyAppendage.Intake_Up();
 
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
@@ -342,7 +331,7 @@ void Robot::AutonomousPeriodic(){
             MyDrive.Joystick_Drive(0,0);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
             MyAppendage.Articulate(distance);
-            atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim + 2);
+            atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
 
             counter2 ++;
         }
@@ -362,7 +351,7 @@ void Robot::AutonomousPeriodic(){
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
         MyAppendage.Articulate(distance);
-        atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim+2);
+        atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
 
         if (align && atspeed){
