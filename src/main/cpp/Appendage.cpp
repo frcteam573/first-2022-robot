@@ -492,7 +492,7 @@ ct=0;
 
   m_colorMatcher->AddColorMatch(kBlueTarget);
   m_colorMatcher->AddColorMatch(kRedTarget);
-  m_colorMatcher->AddColorMatch(kWhiteTarget);
+  //m_colorMatcher->AddColorMatch(kWhiteTarget);
 
 }
 
@@ -526,7 +526,9 @@ ct=0;
       double confidence = 0.0;
 
       frc::Color matchedColor = m_colorMatcher->MatchClosestColor(detectedColor, confidence); // Determine color
-
+      double color_prox = m_colorSensor-> GetProximity();
+      frc::SmartDashboard::PutNumber("ColorProx",color_prox);
+     if(color_prox>200){
       if (matchedColor == kBlueTarget) {
         colorString = "B";
          colorchar =  'B';
@@ -534,15 +536,16 @@ ct=0;
         colorString = "R";
         colorchar =  'R';
 
-      } else if (matchedColor == kWhiteTarget) {
-        colorString = "W";
-        colorchar =  'W';
-     
-      } else {
+      }  else {
         colorString = "B";
         colorchar =  'B';
 
       }
+     }
+     else{
+        colorString = "W";
+        colorchar =  'W';
+     }
 
 
 

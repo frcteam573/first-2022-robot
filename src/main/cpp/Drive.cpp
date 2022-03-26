@@ -12,8 +12,8 @@ Drive::Drive(){
     int rightdriveID2 = 8;
     int leftclimbID = 4;
     int rightclimbID = 5;   
-    int climberlockIDa = 0;
-    int climberlockIDb = 1;
+    int climberlockIDa = 1;
+    int climberlockIDb = 0;
     int climber_tiltIDa = 2;
     int climber_tiltIDb = 3;
 

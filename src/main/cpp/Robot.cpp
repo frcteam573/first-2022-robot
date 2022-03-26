@@ -555,6 +555,8 @@ void Robot::TeleopInit()
   endgame_unlock = false;
   shooter_test = false;
   trim_state = false;
+  intake_toomany = 0;
+
 
   MyAppendage.controlpanel_colorsense_init();
 
@@ -800,6 +802,7 @@ void Robot::TeleopPeriodic(){
 // Extend / Retract Intake
 //Run intake
 if (c2_leftbumper){
+    intake_toomany = 0;
     MyAppendage.Intake_Down();
     intakedelay = 0;
 
@@ -814,8 +817,14 @@ if (c2_leftbumper){
     //frc::SmartDashboard::PutString("Intake State", "Off");
   }
 }
-else if(c2_btn_y || ballCnt == 3){ //comment this back in when we are ready to do auto 3 ball reject
+else if(c2_btn_y || ballCnt == 3 || intake_toomany > 0){ //comment this back in when we are ready to do auto 3 ball reject
   
+  if (ballCnt == 3){
+    intake_toomany = 25;
+  }
+
+  intake_toomany --;
+
   if (intakedelay2 < 10){
     MyAppendage.Intake_In(ball_color);
   }
