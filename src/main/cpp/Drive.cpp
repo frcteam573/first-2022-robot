@@ -552,6 +552,7 @@ double Drive::Remap_Val(double i, double threshold)
             }
 
         out = Remap_Val(out,0.99);
+        out = pow(out,0.33);
         drive_straight(false,out);
 
         return atdistance;
