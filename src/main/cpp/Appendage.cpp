@@ -39,7 +39,7 @@ Appendage::Appendage()
 
     // CANEncoder was deprecated as of 2022
     
-    s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter2->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
+    s_Shooter_Encoder = new rev::SparkMaxRelativeEncoder{m_Shooter1->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor,42)};
     s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
     s_LightGate = new frc::DigitalInput(s_LightGateId);
     s_LightGate2 = new frc::DigitalInput(s_LightGate2Id);
@@ -207,7 +207,7 @@ bool Appendage::Shooter_Encoder(){
     // Read in value from dashboard
     double shooter_p_in = frc::SmartDashboard::GetNumber("Shooter P In", 0.00007);
     double shooter_target_in = frc::SmartDashboard::GetNumber("Shooter Target In", 3000);
-    double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
+    //double shooter_f_in = frc::SmartDashboard::GetNumber("Shooter Feed Forward In", 0.2);
 
     double kP = shooter_p_in;
     double target = shooter_target_in;
@@ -219,7 +219,8 @@ bool Appendage::Shooter_Encoder(){
     double err = target - current;
 
     //double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
-    //double shooter_f_in = 0.000099 * target - 0.02;
+    double shooter_f_in = 0.00009 * target + 0.0072;
+    
 
     double output = (err * kP) + shooter_f_in;  
 
@@ -235,8 +236,8 @@ bool Appendage::Shooter_Encoder(){
        output =  0.3*(output - shooterout_old)/abs(output - shooterout_old) + shooterout_old;
     }
 
-    m_Shooter1 -> Set(-output);
-    m_Shooter2 -> Set(output);
+    m_Shooter1 -> Set(output);
+    m_Shooter2 -> Set(-output);
 
     shooterout_old = output;
 
@@ -271,7 +272,8 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
     double err = target - current;
 
     //double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
-    double shooter_f_in = 0.000099 * target - 0.02;
+
+    double shooter_f_in = 0.00009 * target + 0.0072;
 
     double output = (err * kP) + shooter_f_in;  
 
@@ -288,8 +290,8 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
        output =  0.3*(output - shooterout_old)/abs(output - shooterout_old) + shooterout_old;
     }
 
-    m_Shooter1 -> Set(-output);
-    m_Shooter2 -> Set(output);
+    m_Shooter1 -> Set(output);
+    m_Shooter2 -> Set(-output);
 
     shooterout_old = output;
 
