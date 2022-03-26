@@ -256,14 +256,14 @@ void Robot::AutonomousPeriodic(){
       bool reached_angle;
 
       if (counter <= 150){
-       // reached_angle = MyDrive.turnto_gyro(90);
+       reached_angle = MyDrive.turnto_gyro(18);
         //if (reached_angle){
           //state_drive++;
           //MyDrive.reset_drive_s();
        // }
       
      // else if (state_drive == 1){
-        reached_distance = MyDrive.driveto_distance(60);
+        // reached_distance = MyDrive.driveto_distance(-60);
         /*if (reached_distance){
             state_drive++;
             MyDrive.reset_drive_s();
@@ -289,7 +289,7 @@ void Robot::AutonomousPeriodic(){
         moved = false;
       }
 
-      else if (counter <= 45 || (FourBallSecondTime && counter2 < 136)){
+      else if (counter <= 45 || (FourBallSecondTime && counter2 < 451)){
 
         
         MyAppendage.Intake_Down();
@@ -306,24 +306,24 @@ void Robot::AutonomousPeriodic(){
             if(counter2==0){
               MyDrive.reset_drive_s();
             }
-           MyDrive.turnto_gyro(15);
+           MyDrive.turnto_gyro(17);
             
           }
-          else if (counter2 <= 85){
+          else if (counter2 <= 300){
             if(counter2==36){
               MyDrive.reset_drive_s();
             }
-           MyDrive.driveto_distance(36);
+           MyDrive.driveto_distance(200);
             
           }
-          else if(counter2<=135){
+          else if(counter2<=310){
             MyDrive.Joystick_Drive(0,0);
           }
-          else if (counter2 <= 185){
-            if(counter2==86){
+          else if (counter2 <= 450){
+            if(counter2==311){
               MyDrive.reset_drive_s();
             }
-           MyDrive.driveto_distance(-36);
+           MyDrive.driveto_distance(-200);
             
           }
           else{
@@ -342,7 +342,7 @@ void Robot::AutonomousPeriodic(){
             MyDrive.Joystick_Drive(0,0);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
             MyAppendage.Articulate(distance);
-            atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
+            atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim + 2);
 
             counter2 ++;
         }

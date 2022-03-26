@@ -60,7 +60,7 @@ void Drive::DashboardCreate(){
   frc::SmartDashboard::PutNumber("KPos_in", kpos_in);
   frc::SmartDashboard::PutNumber("KPH_in", kph_in); 
 
-  frc::SmartDashboard::PutNumber("KP_Gyro", -0.0027); 
+  frc::SmartDashboard::PutNumber("KP_Gyro", -0.007); 
   frc::SmartDashboard::PutNumber("KP_DriveDist", -0.07); 
 
   left_drive_old = 0;
@@ -551,9 +551,11 @@ double Drive::Remap_Val(double i, double threshold)
                 atdistance = true;
             }
 
-        out = Remap_Val(out,0.99);
-        out = pow(out,0.33);
-        drive_straight(false,out);
+        out = Remap_Val(out,0.7);
+        Joystick_Drive(out,out);
+       // double outsign = out/abs(out);
+       // out = outsign*pow(out,0.33);
+       // drive_straight(false,out);
 
         return atdistance;
     }
