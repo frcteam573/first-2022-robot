@@ -15,8 +15,8 @@ Appendage::Appendage()
 
     int p_IntakeId_a = 6;
     int p_IntakeId_b = 7;
-    int p_Hood_a = 4;
-    int p_Hood_b = 5;
+    int p_Hood_a = 2;
+    int p_Hood_b = 3;
 
     int s_LightGateId = 1;
     int s_LightGate2Id = 2;
@@ -259,10 +259,10 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
     distance = distance + (trim * 6); // Every trim value will be 6 inches futher / closer
     double target;
     if(distance <= 70){ // 70 in is hood up down cut off
-        target = 39.51*distance+2336.81;
+        target = 13.1389*distance+3269.23;
     }
     else{
-        target = 22.013*distance+4363.45;
+        target = 13.1389*distance+3269.23;
     }
 
     double gear_ratio = 2/1; // Gear ratio between shooter motor encoder and shooter wheel
