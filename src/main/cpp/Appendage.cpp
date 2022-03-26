@@ -486,7 +486,7 @@ void Appendage::controlpanel_colorsense_init(){
 
 ct=0;
   //Any updates here also have to be done in Appendage.h
-  static constexpr frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);
+  static constexpr frc::Color kBlueTarget = frc::Color(0.1433, 0.427, 0.429);
   static constexpr frc::Color kRedTarget = frc::Color(0.561, 0.232, 0.114);
   static constexpr frc::Color kWhiteTarget = frc::Color(0.365, 0.464, 0.169);
 
@@ -523,7 +523,7 @@ ct=0;
 
       std::string colorString;
       char colorchar;
-      double confidence = 0.99;
+      double confidence = 0.0;
 
       frc::Color matchedColor = m_colorMatcher->MatchClosestColor(detectedColor, confidence); // Determine color
 
@@ -539,8 +539,8 @@ ct=0;
         colorchar =  'W';
      
       } else {
-        colorString = "Unknown";
-        colorchar =  'W';
+        colorString = "B";
+        colorchar =  'B';
 
       }
 
