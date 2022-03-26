@@ -58,6 +58,14 @@ class Drive {
         bool driveto_distance (double distance);
         void reset_drive_s();
 
+        int climber_retract_nolimit_left();
+        int climber_extend_nolimit_left();
+
+        int climber_retract_nolimit_right();
+        int climber_extend_nolimit_right();
+
+        void climber_off_left();
+        void climber_off_right();
 
         double left_drive_old;
         double right_drive_old;
