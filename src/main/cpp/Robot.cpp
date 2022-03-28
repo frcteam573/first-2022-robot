@@ -278,7 +278,7 @@ void Robot::AutonomousPeriodic(){
         moved = false;
       }
 
-      else if (counter <= 100 || (FourBallSecondTime && counter2 < 416)){
+      else if (counter <= 100 || (FourBallSecondTime && counter2 < 391)){
 
         
         MyAppendage.Intake_Down();
@@ -308,7 +308,7 @@ void Robot::AutonomousPeriodic(){
           else if(counter2<=235){
             MyDrive.Joystick_Drive(0,0);
           }
-          else if (counter2 <= 415){
+          else if (counter2 <= 390){
             if(counter2==236){
               MyDrive.reset_drive_s();
             }
