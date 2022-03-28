@@ -434,7 +434,7 @@ void Robot::AutonomousPeriodic(){
         if (counter == 301){
           MyDrive.reset_drive_s();
         }
-
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
         MyDrive.turnto_gyro(110);
       }
       else if (counter <= 425) {
@@ -443,7 +443,7 @@ void Robot::AutonomousPeriodic(){
         if (counter == 351){
           MyDrive.reset_drive_s();
         }
-
+      
         MyDrive.driveto_distance(175);
         MyAppendage.Intake_In();
         MyAppendage.Intake_Down();
