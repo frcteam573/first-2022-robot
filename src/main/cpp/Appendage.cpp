@@ -75,7 +75,7 @@ void Appendage::DashboardCreate(){
     static double turret_min_enc = -335;
     static double turret_enc_deadzone = 1;
     static double turret_cam_deadzone = 1;
-    static double turret_shooter_deadzone = 150;
+    static double turret_shooter_deadzone = 100;
     static double feedfor = 0.2;
    
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
@@ -279,7 +279,7 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
 
     bool atspeed = false;
 
-    double i = frc::SmartDashboard::GetNumber("Shooter Deadzone", 150);
+    double i = frc::SmartDashboard::GetNumber("Shooter Deadzone", 100);
     if (abs (err) < i){
         atspeed = true;
     }
