@@ -270,7 +270,7 @@ void Robot::AutonomousPeriodic(){
       // 4 Ball Autonomous No Path Planning
       // Delay doesn't work
 
-      if (counter < 15){
+      if (counter < 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
         MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
@@ -278,7 +278,7 @@ void Robot::AutonomousPeriodic(){
         moved = false;
       }
 
-      else if (counter <= 45 || (FourBallSecondTime && counter2 < 416)){
+      else if (counter <= 100 || (FourBallSecondTime && counter2 < 416)){
 
         
         MyAppendage.Intake_Down();
@@ -322,11 +322,11 @@ void Robot::AutonomousPeriodic(){
           counter2 ++;
         }
         else{
-          MyDrive.camera_intake(intake_camera_x, -0.7);
+          MyDrive.camera_intake(intake_camera_x, -0.5);
         }
 
       }
-      else if (counter <= 150 || (FourBallSecondTime && counter2 <= 187)){
+      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 187)){
 
             MyDrive.Joystick_Drive(0,0);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
