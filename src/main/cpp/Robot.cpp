@@ -302,7 +302,7 @@ void Robot::AutonomousPeriodic(){
             if(counter2==36){
               MyDrive.reset_drive_s();
             }
-           MyDrive.driveto_distance(200);
+           MyDrive.driveto_distance(220);
             
           }
           else if(counter2<=235){
