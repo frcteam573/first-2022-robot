@@ -298,18 +298,18 @@ void Robot::AutonomousPeriodic(){
            MyDrive.turnto_gyro(17);
             
           }
-          else if (counter2 <= 250){
+          else if (counter2 <= 225){
             if(counter2==36){
               MyDrive.reset_drive_s();
             }
            MyDrive.driveto_distance(200);
             
           }
-          else if(counter2<=260){
+          else if(counter2<=235){
             MyDrive.Joystick_Drive(0,0);
           }
           else if (counter2 <= 415){
-            if(counter2==261){
+            if(counter2==236){
               MyDrive.reset_drive_s();
             }
            MyDrive.driveto_distance(-200);
