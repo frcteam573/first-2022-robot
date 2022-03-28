@@ -295,24 +295,33 @@ void Robot::AutonomousPeriodic(){
             if(counter2==0){
               MyDrive.reset_drive_s();
             }
-           MyDrive.turnto_gyro(17);
+           MyDrive.turnto_gyro(0);
             
           }
-          else if (counter2 <= 225){
+          else if (counter2 <= 270){
             if(counter2==36){
               MyDrive.reset_drive_s();
             }
-           MyDrive.driveto_distance(220);
+
+            if (counter2 >= 170 && intake_camera_exist == 1){
+                MyDrive.camera_intake(intake_camera_x, 0.7);
+            }
+
+              else{
+
+           MyDrive.driveto_distance(290);
+
+              }
             
           }
-          else if(counter2<=235){
+          else if(counter2<=275){
             MyDrive.Joystick_Drive(0,0);
           }
           else if (counter2 <= 390){
-            if(counter2==236){
+            if(counter2==276){
               MyDrive.reset_drive_s();
             }
-           MyDrive.driveto_distance(-200);
+           MyDrive.driveto_distance(-250);
             
           }
           else{
