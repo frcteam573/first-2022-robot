@@ -24,6 +24,7 @@ also: merge into main before each event, Before event create event branch and me
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/livewindow/LiveWindow.h>
 #include <tuple>
 
 void Robot::RobotInit()
@@ -34,7 +35,8 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoName4BallNoPath, kAutoName4BallNoPath); //4 Ball 2
   m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); 
 
-
+  
+  frc::LiveWindow::DisableAllTelemetry();
   //frc::SmartDashboard::PutBoolean("St Test", false);
   m_alliance.SetDefaultOption(kBlue, kBlue);
   m_alliance.AddOption(kRed, kRed);

@@ -149,16 +149,14 @@ double Drive::Remap_Val(double i, double threshold)
             int output = 0;
             double climboutleft;
             double climboutright;
-            if(s_leftclimber_enc->GetPosition() < 160){
+            if(s_leftclimber_enc->GetPosition() < 170){
 
                 double k_c = 0.01;
-                double err = 161 - s_leftclimber_enc->GetPosition();
+                double err = 171 - s_leftclimber_enc->GetPosition();
 
                 climboutleft = Remap_Val(err*k_c,0.99);
 
-                if(s_leftclimber_enc->GetPosition() > 50){
-                    output = 2;
-                }
+                
 
             }
             else{climboutleft = 0;}
@@ -184,6 +182,9 @@ double Drive::Remap_Val(double i, double threshold)
                 m_leftclimb -> Set(0);
                 m_rightclimb -> Set(0);
             }
+            if(s_leftclimber_enc->GetPosition() > 50){
+                    output = 2;
+                }
             
             climb_lock ++;
             }
