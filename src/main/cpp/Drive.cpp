@@ -250,7 +250,9 @@ double Drive::Remap_Val(double i, double threshold)
 
 
         
-
+void Drive:: climber_count_reset(){
+    climb_lock = 0;
+}
         int Drive::climber_retract(){
            
             //unlock climbers and retract

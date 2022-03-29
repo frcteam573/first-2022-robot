@@ -57,6 +57,7 @@ class Drive {
         bool turnto_gyro (double angle);
         bool driveto_distance (double distance);
         void reset_drive_s();
+        void climber_count_reset();
 
 
         double left_drive_old;

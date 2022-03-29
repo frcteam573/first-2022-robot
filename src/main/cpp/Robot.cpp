@@ -745,7 +745,6 @@ void Robot::TeleopPeriodic(){
 
       switch (climber_state){
         case 0:
-          //tie(output,output_1) = MyDrive.climber_setpoint("retract");
           output = MyDrive.climber_retract();
             
             climber_count = 0;
@@ -754,16 +753,18 @@ void Robot::TeleopPeriodic(){
               climber_state ++;
             }
             break;
-
             case 1:
-          //tie(output,output_1) = MyDrive.climber_setpoint("extend");
+              MyDrive.climber_count_reset();
+              climber_state ++;
+            break;
+            case 2:
+          
            output = MyDrive.climber_extend();
             if (output==2){
               climber_state ++;
             }
             break;
-
-            case 2:
+            case 3:
             output = MyDrive.climber_extend();
             
             MyDrive.climber_tiltout();
@@ -773,14 +774,24 @@ void Robot::TeleopPeriodic(){
             }
             break;
 
-            case 3:
+            case 4:
+              MyDrive.climber_count_reset();
+              climber_state ++;
+            break;
+
+            case 5:
             MyDrive.climber_tiltin();
             output = MyDrive.climber_extend();
             if (output == 1 && climber_count >= 15){
-              climber_state = 0;
+              climber_state ++;
             }
               climber_count ++;
               break;
+
+            case 6:
+              MyDrive.climber_count_reset();
+              climber_state=0;
+            break;
       }
     }
     else{
