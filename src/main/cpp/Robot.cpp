@@ -121,7 +121,7 @@ void Robot::AutonomousInit()
   //     kAutoNameDefault);
 
   fmt::print("Auto selected: {}\n", m_autoSelected);
-
+  MyAppendage.controlpanel_colorsense_init();
 }
 
 void Robot::AutonomousPeriodic(){
@@ -133,6 +133,8 @@ void Robot::AutonomousPeriodic(){
   //Reset shooter variables
   bool align = false;
   bool atspeed = false;
+  char ball_color = MyAppendage.controlpanel_colorsense_periodic();
+
 
 
   // -------- Read in Shooter camera Stuff -----------------------------------------------
@@ -273,12 +275,12 @@ void Robot::AutonomousPeriodic(){
       if (counter < 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
-        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x -5, turret_direction, false, false, true);
         MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
 
-      else if (counter <= 100 || (FourBallSecondTime && counter2 < 391)){
+      else if (counter <= 100 || (FourBallSecondTime && counter2 < 290)){
 
         
         MyAppendage.Intake_Down();
@@ -291,19 +293,31 @@ void Robot::AutonomousPeriodic(){
         moved = true;
 
         if (FourBallSecondTime){
-          if (counter2 <= 35){
+         /* if (counter2 <= 35){
             if(counter2==0){
               MyDrive.reset_drive_s();
             }
            MyDrive.turnto_gyro(0);
-            
-          }
-          else if (counter2 <= 270){
-            if(counter2==36){
+            }
+          */
+
+          if (counter2 <= 235){
+            if(counter2==0){
               MyDrive.reset_drive_s();
             }
+        
+        bool LightGate_val = MyAppendage.Intake_In(ball_color);
 
-            if (counter2 >= 170 && intake_camera_exist == 1){
+          if (LightGate_val){
+            MyAppendage.Intake2_In();
+          }
+          else{
+            MyAppendage.Intake2_Off();
+            //frc::SmartDashboard::PutString("Intake State", "Off");
+
+  }
+
+            if (counter2 >= 135 && intake_camera_exist == 1){
                 MyDrive.camera_intake(intake_camera_x, 0.7);
             }
 
@@ -314,11 +328,12 @@ void Robot::AutonomousPeriodic(){
               }
             
           }
-          else if(counter2<=275){
+    
+          else if(counter2<=240){
             MyDrive.Joystick_Drive(0,0);
           }
-          else if (counter2 <= 390){
-            if(counter2==276){
+          else if (counter2 <= 290){
+            if(counter2==241){
               MyDrive.reset_drive_s();
             }
            MyDrive.driveto_distance(-250);
@@ -335,7 +350,7 @@ void Robot::AutonomousPeriodic(){
         }
 
       }
-      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 187)){
+      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 310)){
 
             MyDrive.Joystick_Drive(0,0);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
