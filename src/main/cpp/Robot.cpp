@@ -49,6 +49,7 @@ void Robot::RobotInit()
   shooter_trim = 0;
   frc::SmartDashboard::PutNumber("Shooter Trim", shooter_trim);
 
+  frc::SmartDashboard::PutBoolean("Climber reset", false); 
 // Initial pnematic states
   MyAppendage.Intake_Up();
   MyDrive.climber_hold();
@@ -711,7 +712,30 @@ void Robot::TeleopPeriodic(){
     endgame_unlock = false;
   }
 
-  if (endgame_unlock){
+  bool climber_reset = frc::SmartDashboard::GetBoolean("Climber reset", false);
+  if (climber_reset) {
+    if (c1_lefttrigger > 0.5 || c1_leftbmp || c1_righttrigger > 0.5 || c1_rightbmp) {
+      if (c1_leftbmp){
+        MyDrive.climber_extend_nolimit_left();
+
+      } else if (c1_lefttrigger > 0.5) {
+        MyDrive.climber_retract_nolimit_left();
+      } else {
+        MyDrive.climber_off_left();
+      }
+      if (c1_rightbmp){
+        MyDrive.climber_extend_nolimit_right();
+
+      } else if (c1_righttrigger > 0.5) {
+        MyDrive.climber_retract_nolimit_right();
+      } else {
+        MyDrive.climber_off_right();
+      }
+    } else {
+      MyDrive.climber_hold();
+    }
+  }
+  else if (endgame_unlock){
     bool output;
     bool output_1;
     
