@@ -32,7 +32,7 @@ Appendage::Appendage()
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
     p_Hood = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_Hood_a, p_Hood_b};
 
-    m_colorSensor = new rev::ColorSensorV3(frc::I2C::Port::kMXP);
+    m_colorSensor = new rev::ColorSensorV3(frc::I2C::Port::kOnboard);
     m_colorMatcher = new rev::ColorMatch;
 
     p_Intake = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_IntakeId_a, p_IntakeId_b};
