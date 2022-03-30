@@ -744,7 +744,7 @@ void Robot::TeleopPeriodic(){
     }
 
     else if (c1_btn_x){ //Auto climb
-
+      frc::SmartDashboard::PutNumber("CLimberState",climber_state);
       switch (climber_state){
         case 0:
           output = MyDrive.climber_retract();
@@ -760,11 +760,11 @@ void Robot::TeleopPeriodic(){
               climber_state ++;
             break;
             case 2:
-          
-           output = MyDrive.climber_extend();
-            if (output==2){
-              climber_state ++;
-            }
+              output = MyDrive.climber_extend();
+              frc::SmartDashboard::PutNumber("Climbout",output);
+              if (output==2){
+                climber_state ++;
+              }
             break;
             case 3:
             output = MyDrive.climber_extend();
