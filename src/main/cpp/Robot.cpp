@@ -277,7 +277,7 @@ void Robot::AutonomousPeriodic(){
       if (counter < 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
-        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x -5, turret_direction, false, false, true);
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
         MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
       }
@@ -290,7 +290,7 @@ void Robot::AutonomousPeriodic(){
         MyAppendage.Shooter_Off();
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
-        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
+        MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
         intakedelay = 0;
         moved = true;
 
@@ -316,19 +316,14 @@ void Robot::AutonomousPeriodic(){
           else{
             MyAppendage.Intake2_Off();
             //frc::SmartDashboard::PutString("Intake State", "Off");
-
-  }
+          }
 
             if (counter2 >= 135 && intake_camera_exist == 1){
-                MyDrive.camera_intake(intake_camera_x, 0.7);
+                MyDrive.camera_intake(intake_camera_x, -0.6);
             }
-
-              else{
-
-           MyDrive.driveto_distance(290);
-
-              }
-            
+            else{
+              MyDrive.driveto_distance(290);
+            } 
           }
     
           else if(counter2<=240){
