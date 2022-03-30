@@ -8,7 +8,7 @@
 #include "Drive.h"
 #include "Appendage.h"
 #include "Led.h"
-#include "Paths.h"
+//#include "Paths.h"
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/Joystick.h>
@@ -32,7 +32,7 @@ class Robot : public frc::TimedRobot {
   Appendage MyAppendage;
   Led MyLed;
   Log MyLog;
-  Paths MyPath;
+  //Paths MyPath;
 
   void RobotInit() override;
   void RobotPeriodic() override;

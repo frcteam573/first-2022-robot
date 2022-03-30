@@ -762,26 +762,19 @@ void Robot::TeleopPeriodic(){
             case 2:
               output = MyDrive.climber_extend();
               frc::SmartDashboard::PutNumber("Climbout",output);
-              if (output==2){
+              if (climber_count >= 10){
+                MyDrive.climber_tiltout();
+              }
+              climber_count ++;
+              if (output == 1){
                 climber_state ++;
               }
             break;
             case 3:
-            output = MyDrive.climber_extend();
-            
-            MyDrive.climber_tiltout();
-
-            if (output == 1){
-              climber_state ++;
-            }
-            break;
-
-            case 4:
               MyDrive.climber_count_reset();
               climber_state ++;
             break;
-
-            case 5:
+            case 4:
             MyDrive.climber_tiltin();
             output = MyDrive.climber_extend();
             if (output == 1 && climber_count >= 15){
@@ -790,7 +783,7 @@ void Robot::TeleopPeriodic(){
               climber_count ++;
               break;
 
-            case 6:
+            case 5:
               MyDrive.climber_count_reset();
               climber_state=0;
             break;

@@ -184,9 +184,7 @@ double Drive::Remap_Val(double i, double threshold)
             else{
                 m_leftclimb -> Set(0);
                 m_rightclimb -> Set(0);
-                output = 1;
             }
-            
             
             climb_lock ++;
             }
@@ -197,9 +195,7 @@ double Drive::Remap_Val(double i, double threshold)
                 m_rightclimb -> Set(0);
                 p_climberlock-> Set(frc::DoubleSolenoid::Value::kForward);
             }
-            if(leftclm < -49.0){
-                    output = 2;
-              }
+
             return output;
 
             }
