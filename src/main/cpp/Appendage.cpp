@@ -75,7 +75,7 @@ void Appendage::DashboardCreate(){
     static double turret_min_enc = -335;
     static double turret_enc_deadzone = 1;
     static double turret_cam_deadzone = 1;
-    static double turret_shooter_deadzone = 100;
+    static double shooter_deadzone = 100;
     static double feedfor = 0.2;
    
   frc::SmartDashboard::PutNumber("Shooter P In", shooter_p_in);
@@ -85,13 +85,13 @@ void Appendage::DashboardCreate(){
   //frc::SmartDashboard::PutNumber("PreFeed Speed", prefeed_roller_speed);
   //frc::SmartDashboard::PutNumber("Turret Speed", turret_speed);
   //frc::SmartDashboard::PutNumber("Intake Speed", intake_speed);
-  frc::SmartDashboard::PutNumber("Turret Camera P", k_turret_cam);
-  frc::SmartDashboard::PutNumber("Turret Enconder P", k_turret_enc);
+  //frc::SmartDashboard::PutNumber("Turret Camera P", k_turret_cam);
+  //frc::SmartDashboard::PutNumber("Turret Enconder P", k_turret_enc);
   //frc::SmartDashboard::PutNumber("Turret Max Encoder", turret_max_enc);
   //frc::SmartDashboard::PutNumber("Turret Min Encoder", turret_min_enc);
   //frc::SmartDashboard::PutNumber("Turret Enc Deadzone", turret_enc_deadzone);
-  frc::SmartDashboard::PutNumber("Turret Cam Deadzone", turret_cam_deadzone);
-  frc::SmartDashboard::PutNumber("Shooter Deadzone", turret_shooter_deadzone);
+  //frc::SmartDashboard::PutNumber("Turret Cam Deadzone", turret_cam_deadzone);
+  frc::SmartDashboard::PutNumber("Shooter Deadzone", shooter_deadzone);
    
   shooterout_old = 0;
 }
