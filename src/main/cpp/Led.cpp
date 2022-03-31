@@ -41,6 +41,9 @@ void Led::led_control(std::string input){
     else if(input == "White"){
         m_leds->Set(0.93);
     }
+    else if(input == "Green"){
+        m_leds ->Set(0.77);
+    }
 
     else if(input=="Rainbow"){
         m_leds->Set(-0.99);

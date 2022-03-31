@@ -318,7 +318,7 @@ void Robot::AutonomousPeriodic(){
             //frc::SmartDashboard::PutString("Intake State", "Off");
           }
 
-            if (counter2 >= 135 && intake_camera_exist == 1){
+            if (counter2 >= 50 && intake_camera_exist == 1){
                 MyDrive.camera_intake(intake_camera_x, -0.6);
             }
             else{
@@ -1037,6 +1037,7 @@ else {
   else{
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
 
+
   }
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
@@ -1071,7 +1072,9 @@ else {
    // MyAppendage.Rotate_Off();
        tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
-    
+        align = false;
+
+        
     if(!c2_leftbumper){
       MyAppendage.Intake2_Off();
       MyAppendage.Feeder_Off();
@@ -1089,7 +1092,7 @@ if (endgame_unlock){
 }
 
 else if (align && !atspeed){
-  MyLed.led_control("Yellow");
+  MyLed.led_control("Blue");
 }
 
 else if (!align && atspeed){
@@ -1098,6 +1101,12 @@ else if (!align && atspeed){
 
 else if (align && atspeed){
   MyLed.led_control("Green");
+}
+
+
+else if (shooter_camera_exist > 0.7){
+    MyLed.led_control("Hot_Pink");
+
 }
 
 else if (intake_camera_exist == 1){

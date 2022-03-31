@@ -88,12 +88,12 @@ double Drive::deadband(double input, double deadband_size){
     left_out = deadband(left_out,0.05);
     right_out = deadband(right_out,0.05);
 
-    if(abs(left_out - left_drive_old)>0.5){
-       left_out =  0.5*(left_out - left_drive_old)/abs(left_out - left_drive_old) + left_drive_old;
+    if(abs(left_out - left_drive_old)>0.3){
+       left_out =  0.3*(left_out - left_drive_old)/abs(left_out - left_drive_old) + left_drive_old;
     }
 
-    if(abs(right_out - right_drive_old)>0.5){
-       right_out =  0.5*(right_out - right_drive_old)/abs(right_out - right_drive_old) + right_drive_old;
+    if(abs(right_out - right_drive_old)>0.3){
+       right_out =  0.3*(right_out - right_drive_old)/abs(right_out - right_drive_old) + right_drive_old;
     }
 
     m_leftdrive -> Set(left_out);

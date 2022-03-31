@@ -85,8 +85,8 @@ void Appendage::DashboardCreate(){
   //frc::SmartDashboard::PutNumber("PreFeed Speed", prefeed_roller_speed);
   //frc::SmartDashboard::PutNumber("Turret Speed", turret_speed);
   //frc::SmartDashboard::PutNumber("Intake Speed", intake_speed);
-  //frc::SmartDashboard::PutNumber("Turret Camera P", k_turret_cam);
-  //frc::SmartDashboard::PutNumber("Turret Enconder P", k_turret_enc);
+  frc::SmartDashboard::PutNumber("Turret Camera P", k_turret_cam);
+  frc::SmartDashboard::PutNumber("Turret Enconder P", k_turret_enc);
   //frc::SmartDashboard::PutNumber("Turret Max Encoder", turret_max_enc);
   //frc::SmartDashboard::PutNumber("Turret Min Encoder", turret_min_enc);
   //frc::SmartDashboard::PutNumber("Turret Enc Deadzone", turret_enc_deadzone);
@@ -336,20 +336,22 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
 {
 
     double error,
-        k = 0.03,
+        k = 0.07,
         k_fixedpos = 0.025,
         output = 0,
         currEnc, maxEnc = 335, minEnc = -335, turret_enc_deadzone = 1, turret_cam_deadzone = 1;
 
     bool align = false;
 
-     /*k = frc::SmartDashboard::GetNumber("Turret Camera P", 0.03);
+     /*
+     k = frc::SmartDashboard::GetNumber("Turret Camera P", 0.07);
      k_fixedpos = frc::SmartDashboard::GetNumber("Turret Enconder P", 0.025);
      maxEnc = frc::SmartDashboard::GetNumber("Turret Max Encoder", 335);
      minEnc = frc::SmartDashboard::GetNumber("Turret Min Encoder", -335);
      turret_enc_deadzone = frc::SmartDashboard::GetNumber("Turret Enc Deadzone", 1);
      turret_cam_deadzone = frc::SmartDashboard::GetNumber("Turret Cam Deadzone", 1);
     */
+
 // Fixed positiion
     if (fixedgoal){
         error = 0 - s_Susan_Encoder->GetPosition();
