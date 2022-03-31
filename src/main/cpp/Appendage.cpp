@@ -339,7 +339,7 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         k = 0.07,
         k_fixedpos = 0.025,
         output = 0,
-        currEnc, maxEnc = 335, minEnc = -335, turret_enc_deadzone = 1, turret_cam_deadzone = 1;
+        currEnc, maxEnc = 130, minEnc = -335, turret_enc_deadzone = 1, turret_cam_deadzone = 1;
 
     bool align = false;
 
@@ -378,7 +378,7 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         double setpoint;
 
         if(currpos >= 0){
-            setpoint = 335;     // Need to update with 180 degree encoder value
+            setpoint = -335;     // Need to update with 180 degree encoder value
         }
         else{
             setpoint = -335;
