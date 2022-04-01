@@ -20,6 +20,7 @@ Appendage::Appendage()
 
     int s_LightGateId = 1;
     int s_LightGate2Id = 2;
+    int s_LightGate3Id = 0;
 
     m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
@@ -32,8 +33,8 @@ Appendage::Appendage()
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
     p_Hood = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_Hood_a, p_Hood_b};
 
-    m_colorSensor = new rev::ColorSensorV3(frc::I2C::Port::kOnboard);
-    m_colorMatcher = new rev::ColorMatch;
+   // m_colorSensor = new rev::ColorSensorV3(frc::I2C::Port::kOnboard);
+   // m_colorMatcher = new rev::ColorMatch;
 
     p_Intake = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_IntakeId_a, p_IntakeId_b};
 
@@ -43,7 +44,7 @@ Appendage::Appendage()
     s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
     s_LightGate = new frc::DigitalInput(s_LightGateId);
     s_LightGate2 = new frc::DigitalInput(s_LightGate2Id);
-    
+    s_LightGate3 = new frc::DigitalInput(s_LightGate3Id);
 }
 
 /*
@@ -98,17 +99,12 @@ void Appendage::DashboardCreate(){
 /*
  * Allows robot to Intake Balls
  */
-bool Appendage::Intake_In(char color_in){
+bool Appendage::Intake_In(){
     double intakespeed = .75;//frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
     m_Intake1->Set(intakespeed);
 
-    bool output = false;
-
-  //  bool output = s_LightGate->Get();
+    bool output = s_LightGate3->Get();
     
-    if (color_in == 'W'){
-        output = true;
-    }
     return output;
 }
 
@@ -484,6 +480,7 @@ void Appendage::Articulate(double distance){
 }
 
 // color sensor
+/*
 void Appendage::controlpanel_colorsense_init(){
 
 ct=0;
@@ -497,6 +494,8 @@ ct=0;
   //m_colorMatcher->AddColorMatch(kWhiteTarget);
 
 }
+
+
 
   char Appendage::controlpanel_colorsense_periodic(){
     // Fucntion spins contorl panel to specified color recieved from driver station
@@ -522,7 +521,7 @@ ct=0;
     frc::SmartDashboard::PutString("DB/String 2",encoder_valstr2); */
       
     //Run the color match algorithm on our detected color
-
+/*
       std::string colorString;
       char colorchar;
       double confidence = 0.0;
@@ -556,8 +555,9 @@ ct=0;
 
       return colorchar;
 }
+*/
 
-int Appendage::BallCounter(char colorIn){
+int_fast16_t Appendage::BallCounter(){
     int BallCnt = 0;
     
     if (!s_LightGate->Get()){
@@ -566,7 +566,7 @@ int Appendage::BallCounter(char colorIn){
     if (!s_LightGate2->Get()){
         BallCnt+=1;
     }
-    if (colorIn != 'W'){
+    if (!s_LightGate3 -> Get()){
         BallCnt+=1;
     }
     

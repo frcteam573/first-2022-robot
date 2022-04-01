@@ -123,7 +123,7 @@ void Robot::AutonomousInit()
   //     kAutoNameDefault);
 
   fmt::print("Auto selected: {}\n", m_autoSelected);
-  MyAppendage.controlpanel_colorsense_init();
+//  MyAppendage.controlpanel_colorsense_init();
 }
 
 void Robot::AutonomousPeriodic(){
@@ -135,7 +135,7 @@ void Robot::AutonomousPeriodic(){
   //Reset shooter variables
   bool align = false;
   bool atspeed = false;
-  char ball_color = MyAppendage.controlpanel_colorsense_periodic();
+  //char ball_color = MyAppendage.controlpanel_colorsense_periodic();
 
 
 
@@ -308,7 +308,7 @@ void Robot::AutonomousPeriodic(){
               MyDrive.reset_drive_s();
             }
         
-        bool LightGate_val = MyAppendage.Intake_In(ball_color);
+        bool LightGate_val = MyAppendage.Intake_In();
 
           if (LightGate_val){
             MyAppendage.Intake2_In();
@@ -556,7 +556,7 @@ void Robot::TeleopInit()
   intake_toomany = 0;
 
 
-  MyAppendage.controlpanel_colorsense_init();
+ // MyAppendage.controlpanel_colorsense_init();
 
   shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
 
@@ -566,6 +566,7 @@ void Robot::TeleopInit()
   if (m_allianceselected == "Blue")
   {
     alliance_color = "blue";
+
     //sfrc::SmartDashboard::PutString("Alliance","Blue");
   }
   else{
@@ -575,8 +576,8 @@ void Robot::TeleopInit()
   //frc::SmartDashboard::PutString("Alliance",alliance_color);
 }
 void Robot::TeleopPeriodic(){
-  char ball_color = MyAppendage.controlpanel_colorsense_periodic();
-  int ballCnt = MyAppendage.BallCounter(ball_color);
+  //char ball_color = MyAppendage.controlpanel_colorsense_periodic();
+  int ballCnt = MyAppendage.BallCounter();
   frc::SmartDashboard::PutNumber("Ball Count",ballCnt);
 
   //Compressor Code
@@ -745,7 +746,7 @@ void Robot::TeleopPeriodic(){
     }
 
     else if (c1_btn_x){ //Auto climb
-      frc::SmartDashboard::PutNumber("CLimberState",climber_state);
+      //frc::SmartDashboard::PutNumber("CLimberState",climber_state);
       switch (climber_state){
         case 0:
           output = MyDrive.climber_retract();
@@ -763,7 +764,7 @@ void Robot::TeleopPeriodic(){
             break;
             case 2:
               output = MyDrive.climber_extend();
-              frc::SmartDashboard::PutNumber("Climbout",output);
+              //frc::SmartDashboard::PutNumber("Climbout",output);
               if (climber_count >= 5){
                 MyDrive.climber_tiltout();
               }
@@ -817,7 +818,7 @@ if (c2_leftbumper){
     MyAppendage.Intake_Down();
     intakedelay = 0;
 
-    bool LightGate_val = MyAppendage.Intake_In(ball_color);
+    bool LightGate_val = MyAppendage.Intake_In();
     
 
   if (LightGate_val && !shooter_test){
@@ -837,7 +838,7 @@ else if(c2_btn_y || ballCnt == 3 || intake_toomany > 0){ //comment this back in 
   intake_toomany --;
 
   if (intakedelay2 < 10){
-    MyAppendage.Intake_In(ball_color);
+    MyAppendage.Intake_In();
   }
   else{MyAppendage.Intake_Out();
   }
@@ -847,7 +848,7 @@ else if(c2_btn_y || ballCnt == 3 || intake_toomany > 0){ //comment this back in 
 }
 else{
   if (intakedelay < 10){
-    MyAppendage.Intake_In(ball_color);
+    MyAppendage.Intake_In();
   }
   else{
     MyAppendage.Intake_Off();
@@ -1036,15 +1037,8 @@ else {
     frc::SmartDashboard::PutBoolean("Alligned", align);
     frc::SmartDashboard::PutBoolean("AtSpeed", atspeed);
 
-  if((alliance_color == "blue" && ball_color == 'R') || (alliance_color == "red" && ball_color == 'B')){
-      tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x + 5, turret_direction, false, false, false);
-
-  }
-  else{
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
 
-
-  }
 
     if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
       MyAppendage.Feeder_In();
@@ -1057,21 +1051,6 @@ else {
 
   }
 
-
-  else if((alliance_color == "blue" && ball_color == 'R') || (alliance_color == "red" && ball_color == 'B')){
-  
-  atspeed = MyAppendage.Shooter_Encoder_distance(-96.5, 0);
-
-  if( atspeed ){ // Shoot ball
-    MyAppendage.Feeder_In();
-    MyAppendage.Intake2_In();
-  }
-  else{
-    MyAppendage.Feeder_Off();
-    MyAppendage.Intake2_Off();
-  }
-
-  }
 
   else {
     MyAppendage.Shooter_Off();
