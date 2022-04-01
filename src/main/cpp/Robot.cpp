@@ -689,11 +689,17 @@ void Robot::TeleopPeriodic(){
     }
   }
 
+  else if (c1_righttrigger > 0.5 && !endgame_unlock){
+     drive_straight_first = true;
+
+    MyDrive.Joystick_Drive(c1_joy_leftdrive, c1_joy_rightdrive);
+  }
+
   else // Joystick drive
   {
     drive_straight_first = true;
 
-    MyDrive.Joystick_Drive(c1_joy_leftdrive, c1_joy_rightdrive);
+    MyDrive.Joystick_Drive_slow(c1_joy_leftdrive, c1_joy_rightdrive);
   }
   /* ---------------------- CLIMBER CODE -----------------------------*/
 
@@ -965,7 +971,7 @@ else if (c2_btn_a){
 
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
-  atspeed = MyAppendage.Shooter_Encoder_distance(1, 0);
+  atspeed = MyAppendage.Shooter_Encoder_distance(-96.5, 0);
   MyAppendage.Articulate(120); //harcode for close shot
 
   if(c2_right_trigger > 0.5){ // Shoot ball
@@ -982,7 +988,7 @@ else if (c2_btn_a){
 else if (c2_btn_x){
   //shoot out
 
-  atspeed = MyAppendage.Shooter_Encoder_distance(1, 0);
+  atspeed = MyAppendage.Shooter_Encoder_distance(-96.5, 0);
 
   if( (c2_right_trigger > 0.5)){ // Shoot ball
     MyAppendage.Feeder_In();
@@ -1054,7 +1060,7 @@ else {
 
   else if((alliance_color == "blue" && ball_color == 'R') || (alliance_color == "red" && ball_color == 'B')){
   
-  atspeed = MyAppendage.Shooter_Encoder_distance(1, 0);
+  atspeed = MyAppendage.Shooter_Encoder_distance(-96.5, 0);
 
   if( atspeed ){ // Shoot ball
     MyAppendage.Feeder_In();

@@ -105,6 +105,36 @@ double Drive::deadband(double input, double deadband_size){
     right_drive_old = right_out;
 }
 
+//Joustick drive slow
+
+void Drive::Joystick_Drive_slow(double LeftStick, double RightStick){
+
+    LeftStick = LeftStick*0.909;
+    RightStick = RightStick*0.909;
+
+    double left_out = LeftStick*LeftStick*LeftStick;
+    double right_out = RightStick*RightStick*RightStick;
+    
+    left_out = deadband(left_out,0.05);
+    right_out = deadband(right_out,0.05);
+
+    if(abs(left_out - left_drive_old)>0.3){
+       left_out =  0.3*(left_out - left_drive_old)/abs(left_out - left_drive_old) + left_drive_old;
+    }
+
+    if(abs(right_out - right_drive_old)>0.3){
+       right_out =  0.3*(right_out - right_drive_old)/abs(right_out - right_drive_old) + right_drive_old;
+    }
+
+    m_leftdrive -> Set(left_out);
+    m_leftdrive2 -> Set(left_out);
+    m_rightdrive -> Set(right_out);
+    m_rightdrive2 -> Set(right_out);
+
+    left_drive_old = left_out;
+    right_drive_old = right_out;
+}
+
 //DRIVE STRAIGHT//
         void Drive::drive_straight(bool first, double joystick_y){
        
