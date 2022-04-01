@@ -71,7 +71,7 @@ void Appendage::DashboardCreate(){
     static double intake_speed = 0.75;
     static double k_turret_cam = 0.03;
     static double k_turret_enc = 0.025;
-    static double turret_max_enc = 335;
+    static double turret_max_enc = 95;
     static double turret_min_enc = -335;
     static double turret_enc_deadzone = 1;
     static double turret_cam_deadzone = 1;
@@ -339,14 +339,14 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         k = 0.07,
         k_fixedpos = 0.025,
         output = 0,
-        currEnc, maxEnc = 130, minEnc = -335, turret_enc_deadzone = 1, turret_cam_deadzone = 1;
+        currEnc, maxEnc = 95, minEnc = -335, turret_enc_deadzone = 1, turret_cam_deadzone = 1;
 
     bool align = false;
 
      /*
      k = frc::SmartDashboard::GetNumber("Turret Camera P", 0.07);
      k_fixedpos = frc::SmartDashboard::GetNumber("Turret Enconder P", 0.025);
-     maxEnc = frc::SmartDashboard::GetNumber("Turret Max Encoder", 335);
+     maxEnc = frc::SmartDashboard::GetNumber("Turret Max Encoder", 95);
      minEnc = frc::SmartDashboard::GetNumber("Turret Min Encoder", -335);
      turret_enc_deadzone = frc::SmartDashboard::GetNumber("Turret Enc Deadzone", 1);
      turret_cam_deadzone = frc::SmartDashboard::GetNumber("Turret Cam Deadzone", 1);
