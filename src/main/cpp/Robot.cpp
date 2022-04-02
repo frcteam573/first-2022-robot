@@ -198,16 +198,21 @@ void Robot::AutonomousPeriodic(){
       if ((counter - auto_timer) <= 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
-        MyDrive.camera_intake(intake_camera_x, 0);
+       // MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
-      }
+     
+     }
+
       else if (counter <= (150 + auto_timer) ){
-        MyDrive.camera_intake(intake_camera_x, -0.5);
+      //  MyDrive.camera_intake(intake_camera_x, -0.5);
+        MyDrive.Joystick_Drive(-0.5, -0.5);
         MyAppendage.Intake_Down();
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
         bool LightGate_val = MyAppendage.Intake_In();
         moved = true;
       }
+
+
             else if (counter <= (270 + auto_timer) ){
         MyDrive.Joystick_Drive(0,0);
         MyAppendage.Intake_Up();
