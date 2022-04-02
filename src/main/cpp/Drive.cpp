@@ -207,7 +207,7 @@ double Drive::Remap_Val(double i, double threshold)
   if (climboutright !=0 ||climboutleft!=0){
      p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
-            if (climb_lock > 2){
+            if (climb_lock > 3){
                 m_leftclimb -> Set(climboutleft);
                 m_rightclimb -> Set(climboutright);
             }
@@ -258,7 +258,7 @@ double Drive::Remap_Val(double i, double threshold)
   if (climboutright !=0 ||climboutleft!=0){
      p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
-            if (climb_lock > 2){
+            if (climb_lock > 3){
                 m_leftclimb -> Set(climboutleft);
                 m_rightclimb -> Set(climboutright);
             }
@@ -289,13 +289,34 @@ void Drive:: climber_count_reset(){
            
             //unlock climbers and retract
             int output;
-            if(s_leftclimber_enc->GetPosition() > 5 ){
+
+            double left_out = 0;
+            double right_out = 0;
+            if(s_leftclimber_enc->GetPosition() > 2 ){
             output = 0;
+            left_out = -1;
+            }
+
+                else {
+                    left_out = 0;
+                }
+
+            if(s_rightclimber_enc->GetPosition() < -2 ){
+            output = 0;
+            right_out = 1;
+            }
+
+                else {
+                    right_out = 0;
+                }
+            if (left_out != 0 || right_out != 0){
+
+            
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
-            if (climb_lock > 2){
-                m_leftclimb -> Set(-1);
-                m_rightclimb -> Set(1);
+            if (climb_lock > 3){
+                m_leftclimb -> Set(left_out);
+                m_rightclimb -> Set(right_out);
             }
             else{
                 m_leftclimb -> Set(0);
@@ -303,6 +324,7 @@ void Drive:: climber_count_reset(){
             }
             climb_lock ++;
             }
+        
             else{
                 output = 1; 
                 m_leftclimb -> Set(0);
@@ -504,7 +526,7 @@ void Drive:: climber_count_reset(){
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
           
     
-            if (climb_lock > 2){
+            if (climb_lock > 3){
                 m_leftclimb -> Set(1);
                 m_rightclimb -> Set(-1);
             }
@@ -530,7 +552,7 @@ void Drive:: climber_count_reset(){
             output = 0;
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
-            if (climb_lock > 2){
+            if (climb_lock > 3){
                 m_leftclimb -> Set(-1);
                 m_rightclimb -> Set(1);
             }

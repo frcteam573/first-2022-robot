@@ -282,7 +282,7 @@ void Robot::AutonomousPeriodic(){
         moved = false;
       }
 
-      else if (counter <= 100 || (FourBallSecondTime && counter2 < 290)){
+      else if (counter <= 100 || (FourBallSecondTime && counter2 < 315)){
 
         
         MyAppendage.Intake_Down();
@@ -295,16 +295,16 @@ void Robot::AutonomousPeriodic(){
         moved = true;
 
         if (FourBallSecondTime){
-         /* if (counter2 <= 35){
+         if (counter2 <= 15){
             if(counter2==0){
               MyDrive.reset_drive_s();
             }
-           MyDrive.turnto_gyro(0);
+           MyDrive.turnto_gyro(10);
             }
-          */
+          
 
-          if (counter2 <= 235){
-            if(counter2==0){
+          else if (counter2 <= 235){
+            if(counter2==16){
               MyDrive.reset_drive_s();
             }
         
@@ -333,7 +333,7 @@ void Robot::AutonomousPeriodic(){
             if(counter2==241){
               MyDrive.reset_drive_s();
             }
-           MyDrive.driveto_distance(-250);
+           MyDrive.driveto_distance(-230);
             
           }
           else{
@@ -347,7 +347,7 @@ void Robot::AutonomousPeriodic(){
         }
 
       }
-      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 310)){
+      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 335)){
 
             MyDrive.Joystick_Drive(0,0);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
