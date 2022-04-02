@@ -207,13 +207,13 @@ double Drive::Remap_Val(double i, double threshold)
   if (climboutright !=0 ||climboutleft!=0){
      p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
-            if (climb_lock > 3){
+            if (climb_lock > 2){
                 m_leftclimb -> Set(climboutleft);
                 m_rightclimb -> Set(climboutright);
             }
             else{
-                m_leftclimb -> Set(0);
-                m_rightclimb -> Set(0);
+                m_leftclimb -> Set(-0.5);
+                m_rightclimb -> Set(0.5);
             }
             
             climb_lock ++;
