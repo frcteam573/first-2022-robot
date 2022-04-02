@@ -328,7 +328,7 @@ double Appendage::Get_Distance(double camera_y)
 /*
  * Moves Turret
  */
-std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool fixedgoal, bool endgame, bool kAuto)
+std::tuple<bool, bool> Appendage::Rotate(int trim, double distance, double camera_exists, double camera_x, bool direction, bool fixedgoal, bool endgame, bool kAuto)
 {
 
     double error,
@@ -394,7 +394,11 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         
 
         if(camera_exists == 1){ 
-            error = 0 - camera_x;
+
+          double offset = ( atan (trim / (distance + 24)) ) * 180/3.14;
+
+            error = 0 - (camera_x - offset);
+            
             output = k * error;
 
             if(abs(error)<turret_cam_deadzone){   // Need to set range when testing.
