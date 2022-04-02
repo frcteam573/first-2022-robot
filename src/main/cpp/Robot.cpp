@@ -565,7 +565,7 @@ void Robot::TeleopInit()
  // MyAppendage.controlpanel_colorsense_init();
 
   shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
-    shooter_trim_LR = frc::SmartDashboard::GetNumber("Shooter Trim  LR", 0);
+shooter_trim_LR = frc::SmartDashboard::GetNumber("Shooter Trim LR", 0);
 
 
   // Get alliance station color
