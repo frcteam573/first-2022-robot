@@ -22,6 +22,9 @@ Appendage::Appendage()
     int s_LightGate2Id = 2;
     int s_LightGate3Id = 0;
 
+    int m_HoodServoId = 2;
+    int s_HoodPotId = 2;
+
     m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter1 = new rev::CANSparkMax{m_ShooterId1, rev::CANSparkMax::MotorType::kBrushless};
@@ -45,6 +48,9 @@ Appendage::Appendage()
     s_LightGate = new frc::DigitalInput(s_LightGateId);
     s_LightGate2 = new frc::DigitalInput(s_LightGate2Id);
     s_LightGate3 = new frc::DigitalInput(s_LightGate3Id);
+
+    m_HoodServo = new frc::Servo(m_HoodServoId);
+    s_HoodPot = new frc::AnalogInput(s_HoodPotId);
 }
 
 /*
@@ -473,15 +479,54 @@ void Appendage::Rotate_Off()
     m_Susan->Set(0);
 }
 
-void Appendage::Articulate(double distance){
+bool Appendage::Articulate(double distance){
 
-    if (distance > 70){
-        p_Hood->Set(frc::DoubleSolenoid::Value::kReverse);
+    bool returnout = false;
+    double k_servo = 0.01;
+    double min_potrange = 0;
+    double max_potrange = 5;
+
+    double current = s_HoodPot->GetVoltage();
+
+    double goal = 0.1*distance+.1;
+
+    double error = goal - current;
+
+    double output = k_servo*error;
+
+    output = (output/(max_potrange-min_potrange)*180)+90;
+
+    if(output > 85 && output < 95){
+        output = 90;
+        returnout = true;
+    } 
+    else if (output >= 179){
+        output = 179;
     }
+    else if (output <= 1){
+        output = 1;
+    }
+    
+    m_HoodServo ->SetAngle(90); // Need to change this is output once ready to test
+    return returnout;
+}
 
-    else 
-        {p_Hood->Set(frc::DoubleSolenoid::Value::kForward);}
+void Appendage::Hood_Up(){
 
+    m_HoodServo -> SetAngle(179); 
+
+}
+
+void Appendage::Hood_Down(){
+
+    m_HoodServo -> SetAngle(1); 
+    
+}
+
+void Appendage::Hood_Off(){
+
+    m_HoodServo -> SetAngle(90); 
+    
 }
 
 // color sensor
@@ -583,4 +628,5 @@ int_fast16_t Appendage::BallCounter(){
         frc::SmartDashboard::PutNumber("Shooter Enc", (s_Shooter_Encoder -> GetVelocity())*2);
         frc::SmartDashboard::PutNumber("Susan Enc", s_Susan_Encoder -> GetPosition());
         frc::SmartDashboard::PutBoolean("LightGate",s_LightGate->Get());
+        frc::SmartDashboard::PutBoolean("Hood Pos",s_HoodPot->GetVoltage());
     }

@@ -600,6 +600,7 @@ void Robot::TeleopPeriodic(){
 
   bool align = false;
   bool atspeed = false;
+  bool athood = false;
 
   //********** Read in Joystick Values ******************************************
   //------------- Driver Controller ---------------------------------------------
@@ -993,12 +994,15 @@ else if (shooter_test){ // Shooter Test
     MyAppendage.Intake2_Off();
   }
 
-// Hood Pnematic Test section
+// Hood Test section
   if(c2_btn_a){
-    MyAppendage.Articulate(12); // 12 is just some random number needs to get updated.
+    MyAppendage.Hood_Up();
   }
-  if(c2_btn_b){
-    MyAppendage.Articulate(150); // 150 is just some random number needs to get updated.
+  else if(c2_btn_b){
+    MyAppendage.Hood_Down();
+  }
+  else{
+    MyAppendage.Hood_Off();
   }
 }
 
@@ -1068,14 +1072,15 @@ else {
   {
     //Get shooter aligned and up to speed
     atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
-    MyAppendage.Articulate(distance);
+    athood = MyAppendage.Articulate(distance);
     frc::SmartDashboard::PutBoolean("Alligned", align);
     frc::SmartDashboard::PutBoolean("AtSpeed", atspeed);
+    frc::SmartDashboard::PutBoolean("AtHood", athood);
 
     tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
 
 
-    if(align && atspeed && (c2_right_trigger > 0.5)){ // Shoot ball
+    if(align && atspeed && athood && (c2_right_trigger > 0.5)){ // Shoot ball
       MyAppendage.Feeder_In();
       MyAppendage.Intake2_In();
     }
@@ -1119,7 +1124,12 @@ else if (!align && atspeed){
   MyLed.led_control("Red");
 }
 
-else if (align && atspeed){
+else if (align && atspeed && !athood){
+  MyLed.led_control("Orange");
+}
+
+
+else if (align && atspeed && athood){
   MyLed.led_control("Green");
 }
 
@@ -1145,6 +1155,7 @@ frc::SmartDashboard::PutBoolean("Endgame State", endgame_unlock);
 frc::SmartDashboard::PutBoolean("Shooter Test State", shooter_test);
 frc::SmartDashboard::PutBoolean("Shooter At Speed", atspeed);
 frc::SmartDashboard::PutBoolean("Shooter Aligned", align);
+frc::SmartDashboard::PutBoolean("Shooter Hood Pos", athood);
 frc::SmartDashboard::PutNumber("Camera Distance", distance);
 
 //Drive Current Compares

@@ -8,6 +8,8 @@
 #include "frc/smartdashboard/SmartDashboard.h"
 #include <tuple>
 #include <frc/DigitalInput.h>
+#include <frc/Servo.h>
+#include <frc/AnalogInput.h>
 //#include <frc/util/color.h>
 //#include "rev/ColorSensorV3.h"
 //#include "rev/ColorMatch.h"
@@ -40,6 +42,9 @@ private:
     frc::DigitalInput *s_LightGate2;
     frc::DigitalInput *s_LightGate3;
 
+    frc::Servo *m_HoodServo;
+    frc::AnalogInput *s_HoodPot;
+
 public:
     Appendage();
     bool Intake_In();
@@ -70,12 +75,16 @@ public:
     double Get_Distance(double camera_y);
     std::tuple<bool, bool> Rotate(int trim, double distance, double camera_exists, double camera_x, bool direction, bool lowgoal, bool endgame, bool kAuto);
     void Rotate_Off();
-    void Articulate(double distance);
+    bool Articulate(double distance);
 
     void Rotate_left();
     void Rotate_right();
 
     void DashboardCreate();
+
+    void Hood_Up();
+    void Hood_Down();
+    void Hood_Off();
 
     static double shooter_p_in;
     static double shooter_target_in;
