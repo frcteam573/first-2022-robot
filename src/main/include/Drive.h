@@ -34,6 +34,8 @@ class Drive {
     public:
         Drive();
         void Joystick_Drive(double LeftStick, double RightStick);
+        void Joystick_Drive_slow(double LeftStick, double RightStick);
+
         int climber_extend();
         int climber_retract();
         void climber_hold();

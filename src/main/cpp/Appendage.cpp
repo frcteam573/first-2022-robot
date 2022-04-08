@@ -20,6 +20,7 @@ Appendage::Appendage()
 
     int s_LightGateId = 1;
     int s_LightGate2Id = 2;
+    int s_LightGate3Id = 0;
 
     m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
@@ -32,8 +33,8 @@ Appendage::Appendage()
     m_Susan = new rev::CANSparkMax{m_SusanId, rev::CANSparkMax::MotorType::kBrushless};
     p_Hood = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_Hood_a, p_Hood_b};
 
-    m_colorSensor = new rev::ColorSensorV3(frc::I2C::Port::kOnboard);
-    m_colorMatcher = new rev::ColorMatch;
+   // m_colorSensor = new rev::ColorSensorV3(frc::I2C::Port::kOnboard);
+   // m_colorMatcher = new rev::ColorMatch;
 
     p_Intake = new frc::DoubleSolenoid{frc::PneumaticsModuleType::REVPH, p_IntakeId_a, p_IntakeId_b};
 
@@ -43,7 +44,7 @@ Appendage::Appendage()
     s_Susan_Encoder = new rev::SparkMaxRelativeEncoder{m_Susan->GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)};
     s_LightGate = new frc::DigitalInput(s_LightGateId);
     s_LightGate2 = new frc::DigitalInput(s_LightGate2Id);
-    
+    s_LightGate3 = new frc::DigitalInput(s_LightGate3Id);
 }
 
 /*
@@ -71,7 +72,7 @@ void Appendage::DashboardCreate(){
     static double intake_speed = 0.75;
     static double k_turret_cam = 0.03;
     static double k_turret_enc = 0.025;
-    static double turret_max_enc = 335;
+    static double turret_max_enc = 95;
     static double turret_min_enc = -335;
     static double turret_enc_deadzone = 1;
     static double turret_cam_deadzone = 1;
@@ -98,17 +99,12 @@ void Appendage::DashboardCreate(){
 /*
  * Allows robot to Intake Balls
  */
-bool Appendage::Intake_In(char color_in){
+bool Appendage::Intake_In(){
     double intakespeed = .75;//frc::SmartDashboard::GetNumber("Intake Speed", 0.99);
     m_Intake1->Set(intakespeed);
 
-    bool output = false;
-
-  //  bool output = s_LightGate->Get();
+    bool output = s_LightGate3->Get();
     
-    if (color_in == 'W'){
-        output = true;
-    }
     return output;
 }
 
@@ -255,8 +251,9 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
      
     
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
-    double kP = 0.00007;
-    distance = distance + (trim * 6); // Every trim value will be 6 inches futher / closer
+    //double kP = 0.00007;
+    double kP = frc::SmartDashboard::GetNumber("Shooter P In", 0.00007);
+    distance = distance + (trim * 3); // Every trim value will be 6 inches futher / closer
     double target;
     if(distance <= 70){ // 70 in is hood up down cut off
         target = 13.1389*distance+3269.23;
@@ -332,21 +329,21 @@ double Appendage::Get_Distance(double camera_y)
 /*
  * Moves Turret
  */
-std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, bool direction, bool fixedgoal, bool endgame, bool kAuto)
+std::tuple<bool, bool> Appendage::Rotate(int trim, double distance, double camera_exists, double camera_x, bool direction, bool fixedgoal, bool endgame, bool kAuto)
 {
 
     double error,
         k = 0.07,
         k_fixedpos = 0.025,
         output = 0,
-        currEnc, maxEnc = 335, minEnc = -335, turret_enc_deadzone = 1, turret_cam_deadzone = 1;
+        currEnc, maxEnc = 95, minEnc = -335, turret_enc_deadzone = 1, turret_cam_deadzone = 1;
 
     bool align = false;
 
      /*
      k = frc::SmartDashboard::GetNumber("Turret Camera P", 0.07);
      k_fixedpos = frc::SmartDashboard::GetNumber("Turret Enconder P", 0.025);
-     maxEnc = frc::SmartDashboard::GetNumber("Turret Max Encoder", 335);
+     maxEnc = frc::SmartDashboard::GetNumber("Turret Max Encoder", 95);
      minEnc = frc::SmartDashboard::GetNumber("Turret Min Encoder", -335);
      turret_enc_deadzone = frc::SmartDashboard::GetNumber("Turret Enc Deadzone", 1);
      turret_cam_deadzone = frc::SmartDashboard::GetNumber("Turret Cam Deadzone", 1);
@@ -378,7 +375,7 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         double setpoint;
 
         if(currpos >= 0){
-            setpoint = 335;     // Need to update with 180 degree encoder value
+            setpoint = -335;     // Need to update with 180 degree encoder value
         }
         else{
             setpoint = -335;
@@ -398,7 +395,11 @@ std::tuple<bool, bool> Appendage::Rotate(double camera_exists, double camera_x, 
         
 
         if(camera_exists == 1){ 
-            error = 0 - camera_x;
+
+          double offset = ( atan (trim / (distance + 24)) ) * 180/3.14;
+
+            error = 0 - (camera_x - offset);
+            
             output = k * error;
 
             if(abs(error)<turret_cam_deadzone){   // Need to set range when testing.
@@ -484,6 +485,7 @@ void Appendage::Articulate(double distance){
 }
 
 // color sensor
+/*
 void Appendage::controlpanel_colorsense_init(){
 
 ct=0;
@@ -497,6 +499,8 @@ ct=0;
   //m_colorMatcher->AddColorMatch(kWhiteTarget);
 
 }
+
+
 
   char Appendage::controlpanel_colorsense_periodic(){
     // Fucntion spins contorl panel to specified color recieved from driver station
@@ -522,7 +526,7 @@ ct=0;
     frc::SmartDashboard::PutString("DB/String 2",encoder_valstr2); */
       
     //Run the color match algorithm on our detected color
-
+/*
       std::string colorString;
       char colorchar;
       double confidence = 0.0;
@@ -556,8 +560,9 @@ ct=0;
 
       return colorchar;
 }
+*/
 
-int Appendage::BallCounter(char colorIn){
+int_fast16_t Appendage::BallCounter(){
     int BallCnt = 0;
     
     if (!s_LightGate->Get()){
@@ -566,7 +571,7 @@ int Appendage::BallCounter(char colorIn){
     if (!s_LightGate2->Get()){
         BallCnt+=1;
     }
-    if (colorIn != 'W'){
+    if (!s_LightGate3 -> Get()){
         BallCnt+=1;
     }
     

@@ -105,6 +105,36 @@ double Drive::deadband(double input, double deadband_size){
     right_drive_old = right_out;
 }
 
+//Joustick drive slow
+
+void Drive::Joystick_Drive_slow(double LeftStick, double RightStick){
+
+    LeftStick = LeftStick*0.909;
+    RightStick = RightStick*0.909;
+
+    double left_out = LeftStick*LeftStick*LeftStick;
+    double right_out = RightStick*RightStick*RightStick;
+    
+    left_out = deadband(left_out,0.05);
+    right_out = deadband(right_out,0.05);
+
+    if(abs(left_out - left_drive_old)>0.3){
+       left_out =  0.3*(left_out - left_drive_old)/abs(left_out - left_drive_old) + left_drive_old;
+    }
+
+    if(abs(right_out - right_drive_old)>0.3){
+       right_out =  0.3*(right_out - right_drive_old)/abs(right_out - right_drive_old) + right_drive_old;
+    }
+
+    m_leftdrive -> Set(left_out);
+    m_leftdrive2 -> Set(left_out);
+    m_rightdrive -> Set(right_out);
+    m_rightdrive2 -> Set(right_out);
+
+    left_drive_old = left_out;
+    right_drive_old = right_out;
+}
+
 //DRIVE STRAIGHT//
         void Drive::drive_straight(bool first, double joystick_y){
        
@@ -182,8 +212,8 @@ double Drive::Remap_Val(double i, double threshold)
                 m_rightclimb -> Set(climboutright);
             }
             else{
-                m_leftclimb -> Set(0);
-                m_rightclimb -> Set(0);
+                m_leftclimb -> Set(-0.5);
+                m_rightclimb -> Set(0.5);
             }
             
             climb_lock ++;
@@ -228,7 +258,7 @@ double Drive::Remap_Val(double i, double threshold)
   if (climboutright !=0 ||climboutleft!=0){
      p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
-            if (climb_lock > 2){
+            if (climb_lock > 3){
                 m_leftclimb -> Set(climboutleft);
                 m_rightclimb -> Set(climboutright);
             }
@@ -259,13 +289,34 @@ void Drive:: climber_count_reset(){
            
             //unlock climbers and retract
             int output;
-            if(s_leftclimber_enc->GetPosition() > 5 ){
+
+            double left_out = 0;
+            double right_out = 0;
+            if(s_leftclimber_enc->GetPosition() > 2 ){
             output = 0;
+            left_out = -1;
+            }
+
+                else {
+                    left_out = 0;
+                }
+
+            if(s_rightclimber_enc->GetPosition() < -2 ){
+            output = 0;
+            right_out = 1;
+            }
+
+                else {
+                    right_out = 0;
+                }
+            if (left_out != 0 || right_out != 0){
+
+            
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
-            if (climb_lock > 2){
-                m_leftclimb -> Set(-1);
-                m_rightclimb -> Set(1);
+            if (climb_lock > 3){
+                m_leftclimb -> Set(left_out);
+                m_rightclimb -> Set(right_out);
             }
             else{
                 m_leftclimb -> Set(0);
@@ -273,6 +324,7 @@ void Drive:: climber_count_reset(){
             }
             climb_lock ++;
             }
+        
             else{
                 output = 1; 
                 m_leftclimb -> Set(0);
@@ -474,7 +526,7 @@ void Drive:: climber_count_reset(){
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
           
     
-            if (climb_lock > 2){
+            if (climb_lock > 3){
                 m_leftclimb -> Set(1);
                 m_rightclimb -> Set(-1);
             }
@@ -500,7 +552,7 @@ void Drive:: climber_count_reset(){
             output = 0;
             p_climberlock-> Set(frc::DoubleSolenoid::Value::kReverse);
 
-            if (climb_lock > 2){
+            if (climb_lock > 3){
                 m_leftclimb -> Set(-1);
                 m_rightclimb -> Set(1);
             }

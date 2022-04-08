@@ -83,6 +83,7 @@ class Robot : public frc::TimedRobot {
   double auto_timer;
   bool shooter_test;
   double shooter_trim;
+  double shooter_trim_LR;
   bool auto_ball_pickedup;
   bool firsttimethru;
   bool trim_state;
@@ -97,5 +98,6 @@ class Robot : public frc::TimedRobot {
   int intakedelay2;
   int state_drive;
   int intake_toomany;
+  bool trim_state_LR;
  
 };
