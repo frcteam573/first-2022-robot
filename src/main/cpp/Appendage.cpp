@@ -269,18 +269,15 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
     double kP = frc::SmartDashboard::GetNumber("Shooter P In", 0.00007);
   //  distance = distance + (trim * 3); // Every trim value will be 6 inches futher / closer
     double target;
-    if(distance <= 70){ // 70 in is hood up down cut off
-        target = 13.1389*distance+3269.23;
-    }
-    else{
-        target = 13.1389*distance+3269.23;
-    }
-
+    //target = 16.5971*distance+2981.52; // No hood calibrated 4/9/22 Keep commented out
+    target = 13.737*distance + 3242; // Distance with hood
     double gear_ratio = 2/1; // Gear ratio between shooter motor encoder and shooter wheel
 
     current = current * gear_ratio;
 
     double err = target - current;
+
+   frc::SmartDashboard::PutNumber("Shooter Error" , err);
 
     //double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
 
@@ -333,7 +330,7 @@ double Appendage::Get_Distance(double camera_y)
         angleMount, angleCam = camera_y;
 
     // height are in (inches), angles are in degrees
-    heightGoal = 102.8125, heightBot = 41.5, angleMount = 34; // From CAD not measured on robot
+    heightGoal = 102.8125, heightBot = 41.5, angleMount = 28; // From measured on robot
     double PI = 3.14159265;
     double rads = (angleMount + angleCam) * PI / 180.0;
     distance = (heightGoal - heightBot) / tan(rads);
@@ -490,13 +487,20 @@ void Appendage::Rotate_Off()
 bool Appendage::Articulate(double distance){
 
     bool returnout = false;
-    double k_servo = 0.01;
-    double min_potrange = 3.502; // all the way extended
-    double max_potrange = 4.125; // all the way retracted
+    double k_servo = 40;
+    double min_potrange = 3.278; // all the way extended
+    double max_potrange = 3.969; // all the way retracted
 
-    double current = (s_HoodPot->GetVoltage()) / (max_potrange - min_potrange);
+    double current = s_HoodPot->GetVoltage() + 0.1;
 
-    double goal = 0.1*distance+.1;
+    double goal = -0.00398*distance+3.9897;
+    if (goal < min_potrange) {
+        goal = min_potrange;
+    }
+
+     if (goal > max_potrange) {
+        goal = max_potrange;
+    }
 
     double error = goal - current;
 
@@ -504,9 +508,9 @@ bool Appendage::Articulate(double distance){
 
     output = (output*90)+90;
 
-    if(output > 85 && output < 95){
+    if(output > 87 && output < 93){
         output = 90;
-        returnout = true;
+        
     } 
     else if (output >= 179){
         output = 179;
@@ -519,7 +523,12 @@ bool Appendage::Articulate(double distance){
         output=90;
     }
     
-    m_HoodServo ->SetAngle(90); // Need to change this is output once ready to test
+    m_HoodServo ->SetAngle(output); // Need to change this is output once ready to test
+
+     if(output > 70 && output < 110){
+        returnout = true;
+        
+    } 
     return returnout;
 }
 
@@ -536,6 +545,7 @@ bool Appendage::Articulate_tune(double distance){
     double current = (s_HoodPot->GetVoltage()); /// (max_potrange - min_potrange);
 
     double goal = frc::SmartDashboard::GetNumber("Hood Voltage" , 3.5);
+
 
   //  double goal = 0.1*distance+.1;
 

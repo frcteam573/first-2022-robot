@@ -981,7 +981,7 @@ else if (shooter_test){ // Shooter Test
 
 // Shooter wheel test section
   if (c2_left_trigger > 0.5){
-   // MyAppendage.Shooter_Encoder();
+   MyAppendage.Shooter_Encoder();
       MyAppendage.Articulate_tune(0);
   }
   else{
@@ -1056,7 +1056,7 @@ else if (c2_btn_b){
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
   atspeed = MyAppendage.Shooter_Encoder_distance(170,shooter_trim);
-  MyAppendage.Articulate(144); //harcode for far shot
+  athood = MyAppendage.Articulate(144); //harcode for far shot
 
   if(c2_right_trigger > 0.5){ // Shoot ball
     MyAppendage.Feeder_In();
@@ -1099,7 +1099,7 @@ else {
   else {
     MyAppendage.Shooter_Off();
    // MyAppendage.Rotate_Off();
-   MyAppendage.Hood_Off();
+   MyAppendage.Articulate(130);
    //MyAppendage.Articulate(70); // Needs to be updated to set midpoint for hood to rest at.
        tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
