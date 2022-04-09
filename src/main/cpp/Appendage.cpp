@@ -99,6 +99,8 @@ void Appendage::DashboardCreate(){
   //frc::SmartDashboard::PutNumber("Turret Enc Deadzone", turret_enc_deadzone);
   frc::SmartDashboard::PutNumber("Turret Cam Deadzone", turret_cam_deadzone);
   frc::SmartDashboard::PutNumber("Shooter Deadzone", turret_shooter_deadzone);
+frc::SmartDashboard::PutNumber("Hood K", 40);
+  frc::SmartDashboard::PutNumber("Hood Voltage", 3.5);
    
   shooterout_old = 0;
 }
@@ -154,7 +156,7 @@ void Appendage::Intake2_Out()
  */
 void Appendage::Intake2_Off()
 {
-  if ((s_LightGate3-> Get()) && !(s_LightGate2 -> Get())){
+  if ((s_LightGate3-> Get()) && !(s_LightGate -> Get())){
      m_Intake2->Set(0.75);
   }
 
@@ -521,15 +523,58 @@ bool Appendage::Articulate(double distance){
     return returnout;
 }
 
+
+
+bool Appendage::Articulate_tune(double distance){
+
+    bool returnout = false;
+    double k_servo = frc::SmartDashboard::GetNumber("Hood K", 40);
+
+    double min_potrange = 3.278; // all the way extended
+    double max_potrange = 3.969; // all the way retracted
+
+    double current = (s_HoodPot->GetVoltage()); /// (max_potrange - min_potrange);
+
+    double goal = frc::SmartDashboard::GetNumber("Hood Voltage" , 3.5);
+
+  //  double goal = 0.1*distance+.1;
+
+    double error = goal - current;
+
+    double output = k_servo*error;
+
+    output = (output*90)+90;
+
+    if(output > 82 && output < 98){
+        output = 90;
+        returnout = true;
+    } 
+    else if (output >= 179){
+        output = 179;
+    }
+    else if (output <= 1){
+        output = 1;
+    }
+
+    if (current == 0){
+        output=90;
+    }
+    
+    frc::SmartDashboard::PutNumber("Hood Out" , output);
+
+    m_HoodServo ->SetAngle(output); // Need to change this is output once ready to test
+    return returnout;
+}
+
 void Appendage::Hood_Up(){
 
-    m_HoodServo -> SetAngle(179); 
+    m_HoodServo -> SetAngle(1); 
 
 }
 
 void Appendage::Hood_Down(){
 
-    m_HoodServo -> SetAngle(1); 
+    m_HoodServo -> SetAngle(179); 
     
 }
 

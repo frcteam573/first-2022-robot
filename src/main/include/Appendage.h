@@ -51,6 +51,8 @@ public:
     int BallCounter();
     void Intake_Out();
     void Intake_Off();
+    bool Articulate_tune(double distance);
+
 
     void Intake2_In();
     void Intake2_Out();

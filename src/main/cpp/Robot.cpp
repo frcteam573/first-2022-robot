@@ -981,7 +981,8 @@ else if (shooter_test){ // Shooter Test
 
 // Shooter wheel test section
   if (c2_left_trigger > 0.5){
-    MyAppendage.Shooter_Encoder();
+   // MyAppendage.Shooter_Encoder();
+      MyAppendage.Articulate_tune(0);
   }
   else{
     MyAppendage.Shooter_Off();
@@ -998,13 +999,13 @@ else if (shooter_test){ // Shooter Test
   }
 
 // Hood Test section
-  if(c2_btn_a){
+  if(c2_btn_a && !c2_left_trigger >0.5){
     MyAppendage.Hood_Up();
   }
-  else if(c2_btn_b){
+  else if(c2_btn_b && !c2_left_trigger >0.5){
     MyAppendage.Hood_Down();
   }
-  else{
+  else if(!c2_left_trigger >0.5){
     MyAppendage.Hood_Off();
   }
 }
