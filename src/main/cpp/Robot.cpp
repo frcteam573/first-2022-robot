@@ -1186,8 +1186,9 @@ void Robot::DisabledInit() {
   MyDrive.climber_hold();
 }
 
-void Robot::DisabledPeriodic() {}
-
+void Robot::DisabledPeriodic() {
+    MyDrive.climber_hold();
+}  
 void Robot::TestInit() {}
 
 void Robot::TestPeriodic() {}

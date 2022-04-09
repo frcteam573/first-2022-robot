@@ -154,7 +154,13 @@ void Appendage::Intake2_Out()
  */
 void Appendage::Intake2_Off()
 {
+  if ((s_LightGate3-> Get()) && !(s_LightGate2 -> Get())){
+     m_Intake2->Set(0.75);
+  }
+
+    else{
     m_Intake2->Set(0);
+    }
 }
 /*
  * Allows robot to Intake Balls
@@ -483,10 +489,10 @@ bool Appendage::Articulate(double distance){
 
     bool returnout = false;
     double k_servo = 0.01;
-    double min_potrange = 0;
-    double max_potrange = 5;
+    double min_potrange = 3.502; // all the way extended
+    double max_potrange = 4.125; // all the way retracted
 
-    double current = s_HoodPot->GetVoltage();
+    double current = (s_HoodPot->GetVoltage()) / (max_potrange - min_potrange);
 
     double goal = 0.1*distance+.1;
 
@@ -494,7 +500,7 @@ bool Appendage::Articulate(double distance){
 
     double output = k_servo*error;
 
-    output = (output/(max_potrange-min_potrange)*180)+90;
+    output = (output*90)+90;
 
     if(output > 85 && output < 95){
         output = 90;
@@ -505,6 +511,10 @@ bool Appendage::Articulate(double distance){
     }
     else if (output <= 1){
         output = 1;
+    }
+
+    if (current == 0){
+        output=90;
     }
     
     m_HoodServo ->SetAngle(90); // Need to change this is output once ready to test
@@ -628,5 +638,5 @@ int_fast16_t Appendage::BallCounter(){
         frc::SmartDashboard::PutNumber("Shooter Enc", (s_Shooter_Encoder -> GetVelocity())*2);
         frc::SmartDashboard::PutNumber("Susan Enc", s_Susan_Encoder -> GetPosition());
         frc::SmartDashboard::PutBoolean("LightGate",s_LightGate->Get());
-        frc::SmartDashboard::PutBoolean("Hood Pos",s_HoodPot->GetVoltage());
+        frc::SmartDashboard::PutNumber("Hood Pos",s_HoodPot->GetVoltage());
     }
