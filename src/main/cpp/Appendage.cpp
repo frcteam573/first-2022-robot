@@ -265,7 +265,7 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
     //double kP = 0.00007;
     double kP = frc::SmartDashboard::GetNumber("Shooter P In", 0.00007);
-    distance = distance + (trim * 3); // Every trim value will be 6 inches futher / closer
+  //  distance = distance + (trim * 3); // Every trim value will be 6 inches futher / closer
     double target;
     if(distance <= 70){ // 70 in is hood up down cut off
         target = 13.1389*distance+3269.23;
