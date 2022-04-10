@@ -134,12 +134,12 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic(){
 
   m_autoSelected = m_chooser.GetSelected();
-  //Compressor Code
-  compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
+  
 
   //Reset shooter variables
   bool align = false;
   bool atspeed = false;
+  bool athood = false;
   //char ball_color = MyAppendage.controlpanel_colorsense_periodic();
 
 
@@ -196,6 +196,8 @@ void Robot::AutonomousPeriodic(){
 
     if (m_autoSelected == kAutoName2Ball){
       // 2 Ball Autonomous
+      //Compressor Code
+      compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
       if ((counter - auto_timer) <= 20){
         MyAppendage.Intake_Down();
@@ -221,21 +223,23 @@ void Robot::AutonomousPeriodic(){
         MyAppendage.Intake_Off();
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
+        athood = MyAppendage.Articulate(distance);
         atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         moved = true;
             }
 
       else if (counter <= (570 + auto_timer)){
         auto_ball_pickedup = true;
+        //Compressor Code
+        compressor.Disable();
 
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
+        athood = MyAppendage.Articulate(distance);
         atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
 
-        if (align && atspeed){
+        if (align && atspeed && athood){
           MyAppendage.Feeder_In();
           MyAppendage.Intake2_In();
         }
@@ -245,6 +249,9 @@ void Robot::AutonomousPeriodic(){
         }
       }
       else{
+        //Compressor Code
+        compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
+        MyAppendage.Articulate(130);
         MyAppendage.Shooter_Off();
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
@@ -291,7 +298,10 @@ void Robot::AutonomousPeriodic(){
         MyAppendage.Intake_In();
         MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
         MyDrive.camera_intake(intake_camera_x, 0);
+        MyAppendage.Articulate(130);
         moved = false;
+          //Compressor Code
+        compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
       }
 
       else if (counter <= 100 || (FourBallSecondTime && counter2 < 315)){
@@ -302,6 +312,7 @@ void Robot::AutonomousPeriodic(){
         MyAppendage.Shooter_Off();
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
+        MyAppendage.Hood_Off();
         MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
         intakedelay = 0;
         moved = true;
@@ -345,7 +356,7 @@ void Robot::AutonomousPeriodic(){
             if(counter2==241){
               MyDrive.reset_drive_s();
             }
-           MyDrive.driveto_distance(-150);
+           MyDrive.driveto_distance(-220);
             
           }
           else{
@@ -363,12 +374,15 @@ void Robot::AutonomousPeriodic(){
 
             MyDrive.Joystick_Drive(0,0);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-            MyAppendage.Articulate(distance);
+            athood = MyAppendage.Articulate(distance);
             atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
 
             counter2 ++;
         }
       else if (counter < 250 || FourBallSecondTime){
+
+          //Compressor Code
+        compressor.Disable();
         auto_ball_pickedup = true;
         if (intakedelay < 10){
             MyAppendage.Intake_In();
@@ -383,11 +397,11 @@ void Robot::AutonomousPeriodic(){
         MyAppendage.Intake_Up();
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
+        athood = MyAppendage.Articulate(distance);
         atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
 
-        if (align && atspeed){
+        if (align && atspeed && athood){
           MyAppendage.Feeder_In();
           MyAppendage.Intake2_In();
         }
@@ -397,6 +411,8 @@ void Robot::AutonomousPeriodic(){
         }
       }
       else{
+        //Compressor Code
+        compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
         counter2 = 0;
         auto_ball_pickedup = false;
         FourBallSecondTime = true;
@@ -409,13 +425,17 @@ void Robot::AutonomousPeriodic(){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
         MyDrive.camera_intake(intake_camera_x, 0);
+        MyAppendage.Articulate(130);
         moved = false;
+        //Compressor Code
+        compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
       }
       else if (counter <= 100 ){
         MyDrive.camera_intake(intake_camera_x, -0.5);
         MyAppendage.Intake_Down();
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
         bool LightGate_val = MyAppendage.Intake_In();
+        MyAppendage.Articulate(130);
         moved = true;
       }
         else if (counter <= 175 ){
@@ -424,7 +444,7 @@ void Robot::AutonomousPeriodic(){
          MyAppendage.Intake_In();
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
+        athood = MyAppendage.Articulate(distance);
         atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         moved = true;
         }
@@ -434,11 +454,13 @@ void Robot::AutonomousPeriodic(){
        
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
+        athood = MyAppendage.Articulate(distance);
         atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
+          //Compressor Code
+        compressor.Disable();
 
-        if (align && atspeed){
+        if (align && atspeed && athood){
           MyAppendage.Feeder_In();
           MyAppendage.Intake2_In();
         }
@@ -448,11 +470,14 @@ void Robot::AutonomousPeriodic(){
         }
       } else if (counter <= 300) {
         //Drive to next ball.
+          //Compressor Code
+        compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
         MyAppendage.Shooter_Off();
         MyAppendage.Rotate_Off();
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
+        MyAppendage.Articulate(130);
 
         if (counter == 251){
           MyDrive.reset_drive_s();
@@ -504,22 +529,23 @@ void Robot::AutonomousPeriodic(){
         MyAppendage.Intake_Off();
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
+        athood = MyAppendage.Articulate(distance);
         atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         moved = true;
         }
 
       else if (counter <= 750 ){
         auto_ball_pickedup = true;
-        
+          //Compressor Code
+        compressor.Disable();
 
         //double distance = MyAppendage.Get_Distance(shooter_camera_y);
         tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
-        MyAppendage.Articulate(distance);
+        athood = MyAppendage.Articulate(distance);
         atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
         MyDrive.Joystick_Drive(0,0);
 
-        if (align && atspeed){
+        if (align && atspeed && athood){
           MyAppendage.Feeder_In();
           MyAppendage.Intake2_In();
         }
@@ -530,16 +556,21 @@ void Robot::AutonomousPeriodic(){
       }   
         
       else{
+        //Compressor Code
+        compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
         MyAppendage.Shooter_Off();
         MyAppendage.Feeder_Off();
         MyAppendage.Intake2_Off();
         MyAppendage.Rotate_Off();
+        MyAppendage.Hood_Off();
         MyDrive.Joystick_Drive(0,0);
 
       }
 
     } // end 3ball auto
     else{ // Simple drive straight auto
+      //Compressor Code
+        compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
       if (counter < (100 + auto_timer))
       { // 100 = 2 seconds
@@ -595,10 +626,7 @@ void Robot::TeleopPeriodic(){
   int ballCnt = MyAppendage.BallCounter();
   frc::SmartDashboard::PutNumber("Ball Count",ballCnt);
 
-  //Compressor Code
-  compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
-
-  //Reset shooter variables
+   //Reset shooter variables
 
   bool align = false;
   bool atspeed = false;
@@ -964,9 +992,15 @@ if (endgame_unlock){ // Endgame shooter
   MyAppendage.Feeder_Off();
   MyAppendage.Intake2_Off();
   MyAppendage.Articulate(140);
+
+   //Compressor Code
+  compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 }
 
 else if (shooter_test){ // Shooter Test
+
+ //Compressor Code
+  compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
   // Turret Test Section
   if (c2_btn_start){
@@ -1013,6 +1047,8 @@ else if (shooter_test){ // Shooter Test
 else if (c2_btn_a){
   //Low Fixed shoot
 
+  //Compressor Code
+    compressor.Disable();
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
   atspeed = MyAppendage.Shooter_Encoder_distance(-96.5, 0);
@@ -1031,6 +1067,7 @@ else if (c2_btn_a){
 
 else if (c2_btn_x){
   //shoot out
+  
 
   atspeed = MyAppendage.Shooter_Encoder_distance(-96.5, 0);
 
@@ -1053,6 +1090,9 @@ else if (c2_btn_b){
 
   //High Fixed shoot
 
+  //Compressor Code
+    compressor.Disable();
+
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
   atspeed = MyAppendage.Shooter_Encoder_distance(170,shooter_trim);
@@ -1074,6 +1114,8 @@ else {
   
   if (c2_left_trigger >= 0.5)
   {
+     //Compressor Code
+    compressor.Disable();
     //Get shooter aligned and up to speed
     atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
     athood = MyAppendage.Articulate(distance);
@@ -1100,7 +1142,9 @@ else {
     MyAppendage.Shooter_Off();
    // MyAppendage.Rotate_Off();
    MyAppendage.Articulate(130);
-   //MyAppendage.Articulate(70); // Needs to be updated to set midpoint for hood to rest at.
+    //Compressor Code
+    compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
+   
        tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
         align = false;
