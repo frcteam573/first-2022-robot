@@ -211,7 +211,7 @@ void Robot::AutonomousPeriodic(){
       //  MyDrive.camera_intake(intake_camera_x, -0.5);
         MyDrive.Joystick_Drive(-0.5, -0.5);
         MyAppendage.Intake_Down();
-        tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, true);
+        tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
         bool LightGate_val = MyAppendage.Intake_In();
         moved = true;
       }
@@ -304,7 +304,7 @@ void Robot::AutonomousPeriodic(){
         compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
       }
 
-      else if (counter <= 100 || (FourBallSecondTime && counter2 < 315)){
+      else if (counter <= 100 || (FourBallSecondTime && counter2 < 340)){
 
         
         MyAppendage.Intake_Down();
@@ -1111,11 +1111,11 @@ else if (c2_btn_b){
 
 
 else {
-  
+
   if (c2_left_trigger >= 0.5)
   {
      //Compressor Code
-    compressor.Disable();
+    compressor.Stop();
     //Get shooter aligned and up to speed
     atspeed = MyAppendage.Shooter_Encoder_distance(distance,shooter_trim);
     athood = MyAppendage.Articulate(distance);

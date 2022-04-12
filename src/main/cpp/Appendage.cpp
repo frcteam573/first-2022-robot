@@ -487,7 +487,7 @@ void Appendage::Rotate_Off()
 bool Appendage::Articulate(double distance){
 
 //****************************************************
-    double offset = 3.4; // This value is the value the hood pot read when the hood is at the 3.5 line marked on the piece. 
+    double offset = 3.29; // This value is the value the hood pot read when the hood is at the 3.5 line marked on the piece. 
     //Only change here rest is taken care off
 
 //*****************************************************
@@ -495,7 +495,7 @@ bool Appendage::Articulate(double distance){
     bool returnout = false;
     double k_servo = 40;
     double min_potrange = 3.278; // all the way extended
-    double max_potrange = 3.969; // all the way retracted
+    double max_potrange = 3.59; // all the way retracted
 
     double current = s_HoodPot->GetVoltage() + offset;
 
