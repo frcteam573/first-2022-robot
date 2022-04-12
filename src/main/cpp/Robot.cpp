@@ -990,7 +990,7 @@ if (endgame_unlock){ // Endgame shooter
   //MyAppendage.Rotate_Off(); // Only for testing, line above should be used for competition.
   MyAppendage.Shooter_Off();
   MyAppendage.Feeder_Off();
-  MyAppendage.Intake2_Off();
+  MyAppendage.Intake2_OffOff();
   MyAppendage.Articulate(140);
 
    //Compressor Code

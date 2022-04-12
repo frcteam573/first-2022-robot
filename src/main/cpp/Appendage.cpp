@@ -164,6 +164,11 @@ void Appendage::Intake2_Off()
     m_Intake2->Set(0);
     }
 }
+
+void Appendage::Intake2_OffOff(){
+    m_Intake2->Set(0);
+}
+
 /*
  * Allows robot to Intake Balls
  */
@@ -487,7 +492,7 @@ void Appendage::Rotate_Off()
 bool Appendage::Articulate(double distance){
 
 //****************************************************
-    double offset = 3.29; // This value is the value the hood pot read when the hood is at the 3.5 line marked on the piece. 
+    double offset = 3.02; // This value is the value the hood pot read when the hood is at the 3.5 line marked on the piece. 
     //Only change here rest is taken care off
 
 //*****************************************************

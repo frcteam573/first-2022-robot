@@ -56,7 +56,8 @@ public:
 
     void Intake2_In();
     void Intake2_Out();
-    void Intake2_Off();    
+    void Intake2_Off();  
+    void Intake2_OffOff();  
 
     void Feeder_In();
     void Feeder_Out();
