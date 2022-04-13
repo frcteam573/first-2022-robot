@@ -22,6 +22,9 @@ Appendage::Appendage()
     int s_LightGate2Id = 2;
     int s_LightGate3Id = 0;
 
+    int m_HoodServoId = 2;
+    int s_HoodPotId = 2;
+
     m_Intake1 = new rev::CANSparkMax{m_IntakeId1, rev::CANSparkMax::MotorType::kBrushless};
     m_Intake2 = new rev::CANSparkMax{m_IntakeId2, rev::CANSparkMax::MotorType::kBrushless};
     m_Shooter1 = new rev::CANSparkMax{m_ShooterId1, rev::CANSparkMax::MotorType::kBrushless};
@@ -45,6 +48,9 @@ Appendage::Appendage()
     s_LightGate = new frc::DigitalInput(s_LightGateId);
     s_LightGate2 = new frc::DigitalInput(s_LightGate2Id);
     s_LightGate3 = new frc::DigitalInput(s_LightGate3Id);
+
+    m_HoodServo = new frc::Servo(m_HoodServoId);
+    s_HoodPot = new frc::AnalogInput(s_HoodPotId);
 }
 
 /*
@@ -93,6 +99,8 @@ void Appendage::DashboardCreate(){
   //frc::SmartDashboard::PutNumber("Turret Enc Deadzone", turret_enc_deadzone);
   frc::SmartDashboard::PutNumber("Turret Cam Deadzone", turret_cam_deadzone);
   frc::SmartDashboard::PutNumber("Shooter Deadzone", turret_shooter_deadzone);
+frc::SmartDashboard::PutNumber("Hood K", 40);
+  frc::SmartDashboard::PutNumber("Hood Voltage", 3.5);
    
   shooterout_old = 0;
 }
@@ -148,8 +156,19 @@ void Appendage::Intake2_Out()
  */
 void Appendage::Intake2_Off()
 {
+  if ((s_LightGate3-> Get()) && !(s_LightGate -> Get())){
+     m_Intake2->Set(0.75);
+  }
+
+    else{
+    m_Intake2->Set(0);
+    }
+}
+
+void Appendage::Intake2_OffOff(){
     m_Intake2->Set(0);
 }
+
 /*
  * Allows robot to Intake Balls
  */
@@ -253,20 +272,17 @@ bool Appendage::Shooter_Encoder_distance(double distance, double trim){
     double current = s_Shooter_Encoder->GetVelocity(); // Function returns RPM
     //double kP = 0.00007;
     double kP = frc::SmartDashboard::GetNumber("Shooter P In", 0.00007);
-    distance = distance + (trim * 3); // Every trim value will be 6 inches futher / closer
+  //  distance = distance + (trim * 3); // Every trim value will be 6 inches futher / closer
     double target;
-    if(distance <= 70){ // 70 in is hood up down cut off
-        target = 13.1389*distance+3269.23;
-    }
-    else{
-        target = 13.1389*distance+3269.23;
-    }
-
+    //target = 16.5971*distance+2981.52; // No hood calibrated 4/9/22 Keep commented out
+    target = 13.737*distance + 3242; // Distance with hood
     double gear_ratio = 2/1; // Gear ratio between shooter motor encoder and shooter wheel
 
     current = current * gear_ratio;
 
     double err = target - current;
+
+   frc::SmartDashboard::PutNumber("Shooter Error" , err);
 
     //double shooter_f_in = 0.0985495 * target / 1000 + 0.019278;
 
@@ -319,7 +335,7 @@ double Appendage::Get_Distance(double camera_y)
         angleMount, angleCam = camera_y;
 
     // height are in (inches), angles are in degrees
-    heightGoal = 102.8125, heightBot = 41.5, angleMount = 34; // From CAD not measured on robot
+    heightGoal = 102.8125, heightBot = 41.5, angleMount = 28; // From measured on robot
     double PI = 3.14159265;
     double rads = (angleMount + angleCam) * PI / 180.0;
     distance = (heightGoal - heightBot) / tan(rads);
@@ -473,15 +489,120 @@ void Appendage::Rotate_Off()
     m_Susan->Set(0);
 }
 
-void Appendage::Articulate(double distance){
+bool Appendage::Articulate(double distance){
 
-    if (distance > 70){
-        p_Hood->Set(frc::DoubleSolenoid::Value::kReverse);
+//****************************************************
+    double offset = 3.02; // This value is the value the hood pot read when the hood is at the 3.5 line marked on the piece. 
+    //Only change here rest is taken care off
+
+//*****************************************************
+    offset = 3.5 - offset;
+    bool returnout = false;
+    double k_servo = 40;
+    double min_potrange = 3.278; // all the way extended
+    double max_potrange = 3.59; // all the way retracted
+
+    double current = s_HoodPot->GetVoltage() + offset;
+
+    double goal = -0.00398*distance+3.9897;
+    if (goal < min_potrange) {
+        goal = min_potrange;
     }
 
-    else 
-        {p_Hood->Set(frc::DoubleSolenoid::Value::kForward);}
+     if (goal > max_potrange) {
+        goal = max_potrange;
+    }
 
+    double error = goal - current;
+
+    double output = k_servo*error;
+
+    output = (output*90)+90;
+
+    if(output > 87 && output < 93){
+        output = 90;
+        
+    } 
+    else if (output >= 179){
+        output = 179;
+    }
+    else if (output <= 1){
+        output = 1;
+    }
+
+    if (current == 0){
+        output=90;
+    }
+    
+    m_HoodServo ->SetAngle(output); // Need to change this is output once ready to test
+
+     if(output > 70 && output < 110){
+        returnout = true;
+        
+    } 
+    return returnout;
+}
+
+
+
+bool Appendage::Articulate_tune(double distance){
+
+    bool returnout = false;
+    double k_servo = frc::SmartDashboard::GetNumber("Hood K", 40);
+
+    double min_potrange = 3.278; // all the way extended
+    double max_potrange = 3.969; // all the way retracted
+
+    double current = (s_HoodPot->GetVoltage()); /// (max_potrange - min_potrange);
+
+    double goal = frc::SmartDashboard::GetNumber("Hood Voltage" , 3.5);
+
+
+  //  double goal = 0.1*distance+.1;
+
+    double error = goal - current;
+
+    double output = k_servo*error;
+
+    output = (output*90)+90;
+
+    if(output > 82 && output < 98){
+        output = 90;
+        returnout = true;
+    } 
+    else if (output >= 179){
+        output = 179;
+    }
+    else if (output <= 1){
+        output = 1;
+    }
+
+    if (current == 0){
+        output=90;
+    }
+    
+    frc::SmartDashboard::PutNumber("Hood Out" , output);
+
+    m_HoodServo ->SetAngle(output); // Need to change this is output once ready to test
+    return returnout;
+}
+
+void Appendage::Hood_Up(){
+
+    m_HoodServo -> SetAngle(1); 
+
+}
+
+void Appendage::Hood_Down(){
+
+    m_HoodServo -> SetAngle(179); 
+    
+}
+
+void Appendage::Hood_Off(){
+
+    m_HoodServo -> SetAngle(90); 
+    
 }
 
 // color sensor
@@ -583,4 +704,5 @@ int_fast16_t Appendage::BallCounter(){
         frc::SmartDashboard::PutNumber("Shooter Enc", (s_Shooter_Encoder -> GetVelocity())*2);
         frc::SmartDashboard::PutNumber("Susan Enc", s_Susan_Encoder -> GetPosition());
         frc::SmartDashboard::PutBoolean("LightGate",s_LightGate->Get());
+        frc::SmartDashboard::PutNumber("Hood Pos",s_HoodPot->GetVoltage());
     }
