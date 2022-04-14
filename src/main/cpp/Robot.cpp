@@ -356,7 +356,16 @@ void Robot::AutonomousPeriodic(){
             if(counter2==241){
               MyDrive.reset_drive_s();
             }
-           MyDrive.driveto_distance(-220);
+
+          if (shooter_camera_exist == 1 ){
+
+           MyDrive.camera_shooter(shooter_camera_x, 0.5);
+          }
+
+          else {
+            MyDrive.driveto_distance(-220);
+          }
+
             
           }
           else{
