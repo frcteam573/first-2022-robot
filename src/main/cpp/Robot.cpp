@@ -33,7 +33,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoName2Ball, kAutoName2Ball); // 2 ball
   m_chooser.AddOption(kAutoName3BallPath, kAutoName3BallPath); // 3 ball
   m_chooser.AddOption(kAutoName4BallNoPath, kAutoName4BallNoPath); //4 Ball 2
-  m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); 
+ // m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); 
 
   
   frc::LiveWindow::DisableAllTelemetry();
@@ -326,7 +326,7 @@ void Robot::AutonomousPeriodic(){
             }
           
 
-          else if (counter2 <= 235){
+          else if (counter2 <= 231){
             if(counter2==16){
               MyDrive.reset_drive_s();
             }
