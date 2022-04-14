@@ -452,7 +452,7 @@ void Drive:: climber_count_reset(){
     void Drive::camera_shooter(double camera_x, double joystick_y){
        
        double error = 0-camera_x;
-       double constant = -0.01;
+       double constant = 0.01;
 
 
         double turn_out = constant*error; 
