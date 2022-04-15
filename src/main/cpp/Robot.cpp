@@ -369,7 +369,7 @@ void Robot::AutonomousPeriodic(){
 
           if (shooter_camera_exist == 1){
 
-           MyDrive.camera_shooter(shooter_camera_x, 0.5);
+           MyDrive.camera_shooter(shooter_camera_x, 0.4);
           }
 
           else {
@@ -390,7 +390,7 @@ void Robot::AutonomousPeriodic(){
           counter2 ++;
         }
         else{
-          MyDrive.camera_intake(intake_camera_x, -0.5);
+          MyDrive.camera_intake(intake_camera_x, -0.55);
         }
 
       }
