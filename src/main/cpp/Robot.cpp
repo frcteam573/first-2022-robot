@@ -308,7 +308,7 @@ void Robot::AutonomousPeriodic(){
         compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
       }
 
-      else if (counter <= 100 || (FourBallSecondTime && counter2 < 340)){
+      else if (counter <= 100 || (FourBallSecondTime && counter2 < 335)){
 
         
         MyAppendage.Intake_Down();
@@ -394,7 +394,7 @@ void Robot::AutonomousPeriodic(){
         }
 
       }
-      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 335)){
+      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 350)){
 
             MyDrive.Joystick_Drive(0,0);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
@@ -1075,7 +1075,7 @@ else if (c2_btn_a){
     compressor.Disable();
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
-  atspeed = MyAppendage.Shooter_Encoder_distance(-96.5, 0);
+  atspeed = MyAppendage.Shooter_Encoder_distance(-85.5, 0);
   MyAppendage.Articulate(120); //harcode for close shot
 
   if(c2_right_trigger > 0.5){ // Shoot ball

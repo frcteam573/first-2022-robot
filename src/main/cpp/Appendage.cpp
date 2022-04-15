@@ -492,19 +492,20 @@ void Appendage::Rotate_Off()
 bool Appendage::Articulate(double distance){
 
 //****************************************************
-    double offset = 3.02; // This value is the value the hood pot read when the hood is at the 3.5 line marked on the piece. 
+    double offset = 0; // This value is the value the hood pot read when the hood is at the 3.5 line marked on the piece. 
     //Only change here rest is taken care off
 
 //*****************************************************
     offset = 3.5 - offset;
     bool returnout = false;
     double k_servo = 40;
-    double min_potrange = 3.278; // all the way extended
-    double max_potrange = 3.59; // all the way retracted
+    double min_potrange = 3.307; // all the way extended
+    double max_potrange = 3.56; // all the way retracted
 
-    double current = s_HoodPot->GetVoltage() + offset;
+    double current = s_HoodPot->GetVoltage(); //+ offset;
 
     double goal = -0.00398*distance+3.9897;
+    frc::SmartDashboard::PutNumber("Hood Dist",goal);
     if (goal < min_potrange) {
         goal = min_potrange;
     }
@@ -512,12 +513,15 @@ bool Appendage::Articulate(double distance){
      if (goal > max_potrange) {
         goal = max_potrange;
     }
+    frc::SmartDashboard::PutNumber("Hood Dist 2",goal);
 
     double error = goal - current;
+    frc::SmartDashboard::PutNumber("Hood Error",error);
 
     double output = k_servo*error;
 
     output = (output*90)+90;
+    frc::SmartDashboard::PutNumber("Hood Output PreCap", output);
 
     if(output > 87 && output < 93){
         output = 90;
@@ -533,7 +537,7 @@ bool Appendage::Articulate(double distance){
     if (current == 0){
         output=90;
     }
-    
+    frc::SmartDashboard::PutNumber("Hood Out",output);
     m_HoodServo ->SetAngle(output); // Need to change this is output once ready to test
 
      if(output > 70 && output < 110){
