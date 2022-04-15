@@ -363,7 +363,15 @@ void Robot::AutonomousPeriodic(){
           }
 
           else {
+            if (counter2 >= 250 && counter2 <= 260){
+
+            MyDrive.turnto_gyro(10);
+            }
+
+            else {
             MyDrive.driveto_distance(-220);
+
+            }
           }
 
             
