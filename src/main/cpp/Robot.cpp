@@ -97,6 +97,7 @@ void Robot::AutonomousInit()
   counter2 = 0;
   state_drive = 0;
   MyDrive.reset_drive_s();
+  four_ball_cnt = 0;
 
 
   // 4ball auto stuff
@@ -293,6 +294,9 @@ void Robot::AutonomousPeriodic(){
       // 4 Ball Autonomous No Path Planning
       // Delay doesn't work
 
+       int ballCnt = MyAppendage.BallCounter();
+       frc::SmartDashboard::PutNumber("Ball Count",ballCnt);
+
       if (counter < 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
@@ -341,7 +345,12 @@ void Robot::AutonomousPeriodic(){
             //frc::SmartDashboard::PutString("Intake State", "Off");
           }
 
-            if (counter2 >= 50 && intake_camera_exist == 1){
+   if (ballCnt > 0 ){
+            four_ball_cnt = ballCnt;
+
+          } 
+
+            if (counter2 >= 50 && intake_camera_exist == 1 && four_ball_cnt == 0){
                 MyDrive.camera_intake(intake_camera_x, -0.6);
             }
             else{
@@ -357,22 +366,20 @@ void Robot::AutonomousPeriodic(){
               MyDrive.reset_drive_s();
             }
 
-          if (shooter_camera_exist == 1 ){
+
+          if (shooter_camera_exist == 1){
 
            MyDrive.camera_shooter(shooter_camera_x, 0.5);
           }
 
           else {
-            if (counter2 >= 250 && counter2 <= 260){
+            
 
-            MyDrive.turnto_gyro(10);
-            }
-
-            else {
+    
             MyDrive.driveto_distance(-220);
 
             }
-          }
+          
 
             
           }
