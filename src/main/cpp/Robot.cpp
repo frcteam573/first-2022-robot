@@ -200,12 +200,15 @@ void Robot::AutonomousPeriodic(){
       //Compressor Code
       compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
+      if (counter < 2){
+        MyAppendage.Hood_Off();}
+
       if ((counter - auto_timer) <= 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
        // MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
-     
+        MyAppendage.Hood_Off();
      }
 
       else if (counter <= (150 + auto_timer) ){
