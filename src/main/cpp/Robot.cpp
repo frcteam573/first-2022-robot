@@ -121,7 +121,7 @@ void Robot::AutonomousInit()
   }
 
 
-
+  
   shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
     shooter_trim_LR = frc::SmartDashboard::GetNumber("Shooter Trim LR", 0);
   m_autoSelected = m_chooser.GetSelected();
@@ -397,7 +397,7 @@ void Robot::AutonomousPeriodic(){
         }
 
       }
-      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 350)){
+      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 355)){
 
             MyDrive.Joystick_Drive(0,0);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
