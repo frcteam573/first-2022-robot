@@ -14,8 +14,8 @@ Drive::Drive(){
     int rightclimbID = 5;   
     int climberlockIDa = 1;
     int climberlockIDb = 0;
-    int climber_tiltIDa = 5;
-    int climber_tiltIDb = 4;
+    int climber_tiltIDa = 2;
+    int climber_tiltIDb = 3;
 
 
 // Define motors, sensors, and pneumatics here

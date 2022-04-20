@@ -15,8 +15,8 @@ Appendage::Appendage()
 
     int p_IntakeId_a = 6;
     int p_IntakeId_b = 7;
-    int p_Hood_a = 2;
-    int p_Hood_b = 3;
+    int p_Hood_a = 15;
+    int p_Hood_b = 14;
 
     int s_LightGateId = 1;
     int s_LightGate2Id = 2;
