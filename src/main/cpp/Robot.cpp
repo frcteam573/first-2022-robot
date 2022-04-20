@@ -164,7 +164,7 @@ void Robot::AutonomousPeriodic(){
 
   double distance = MyAppendage.Get_Distance(shooter_camera_y);
 
-  distance = distance + (shooter_trim * 3); // Every trim value will be 6 inches futher / closer
+  distance = distance + (shooter_trim * 1.5); // Every trim value will be 6 inches futher / closer
 
   // ----------------------------------------------------------
 
@@ -977,7 +977,7 @@ else{
 }
 
 frc::SmartDashboard::PutNumber("Shooter Trim", shooter_trim);
- distance = distance + (shooter_trim * 3); // Every trim value will be 6 inches futher / closer
+ distance = distance + (shooter_trim * 1.5); // Every trim value will be 6 inches futher / closer
 
 //SHOOTER TRIM LR
 
