@@ -370,12 +370,22 @@ void Robot::AutonomousPeriodic(){
             }
 
 
-          if (shooter_camera_exist == 1){
+          if (counter2 < 250){
+            MyDrive.turnto_gyro(10);
+          }
+
+        
+
+          else if (shooter_camera_exist == 1){
 
            MyDrive.camera_shooter(shooter_camera_x, 0.4);
           }
 
           else {
+
+            if(counter2 == 250){
+              MyDrive.reset_drive_s();
+            }
             
 
     
