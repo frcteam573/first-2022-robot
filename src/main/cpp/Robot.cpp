@@ -364,19 +364,16 @@ void Robot::AutonomousPeriodic(){
           else if(counter2<=240){
             MyDrive.Joystick_Drive(0,0);
           }
-          else if (counter2 <= 290){
+          else if (counter2 <= 300){
             if(counter2==241){
               MyDrive.reset_drive_s();
             }
-
-
-  
 
         
 
           if (shooter_camera_exist == 1){
 
-           MyDrive.camera_shooter(shooter_camera_x, 0.4);
+           MyDrive.camera_shooter(shooter_camera_x, 0.6);
           }
 
           else {
