@@ -14,8 +14,8 @@ Drive::Drive(){
     int rightclimbID = 5;   
     int climberlockIDa = 1;
     int climberlockIDb = 0;
-    int climber_tiltIDa = 5;
-    int climber_tiltIDb = 4;
+    int climber_tiltIDa = 2;
+    int climber_tiltIDb = 3;
 
 
 // Define motors, sensors, and pneumatics here
@@ -182,10 +182,10 @@ double Drive::Remap_Val(double i, double threshold)
             double leftclm = s_leftclimber_enc->GetPosition();
             double rightclm = s_rightclimber_enc->GetPosition();
             
-            if(leftclm < 174){
+            if(leftclm < 178){
 
                 double k_c = 0.01;
-                double err = 179 - leftclm;
+                double err = 183 - leftclm;
 
                 climboutleft = Remap_Val(err*k_c,0.99);
 
@@ -195,10 +195,10 @@ double Drive::Remap_Val(double i, double threshold)
             else{climboutleft = 0;}
             
 
-            if(rightclm > -174 ){
+            if(rightclm > -178 ){
 
                 double k_c = 0.01;
-                double err = -179 - rightclm;
+                double err = -183 - rightclm;
 
                 climboutright = Remap_Val(err*k_c,0.99);
             }
@@ -439,6 +439,27 @@ void Drive:: climber_count_reset(){
 
            double left_out = joystick_y*joystick_y*joystick_y + turn_out;
            double right_out = joystick_y*joystick_y*joystick_y - turn_out;
+
+        m_leftdrive -> Set(left_out);
+        m_leftdrive2 -> Set(left_out);
+        m_rightdrive -> Set(right_out);
+        m_rightdrive2 -> Set(right_out);
+
+    }
+
+/* CAMERA shooter */
+
+    void Drive::camera_shooter(double camera_x, double joystick_y){
+       
+       double error = 0-camera_x;
+       double constant = 0.01;
+
+
+        double turn_out = constant*error; 
+        turn_out = Remap_Val (turn_out, 0.7);
+
+           double left_out = joystick_y + turn_out;
+           double right_out = joystick_y - turn_out;
 
         m_leftdrive -> Set(left_out);
         m_leftdrive2 -> Set(left_out);

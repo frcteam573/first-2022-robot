@@ -100,5 +100,6 @@ class Robot : public frc::TimedRobot {
   int state_drive;
   int intake_toomany;
   bool trim_state_LR;
- 
+  int four_ball_cnt;
+
 };

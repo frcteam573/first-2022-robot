@@ -33,7 +33,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoName2Ball, kAutoName2Ball); // 2 ball
   m_chooser.AddOption(kAutoName3BallPath, kAutoName3BallPath); // 3 ball
   m_chooser.AddOption(kAutoName4BallNoPath, kAutoName4BallNoPath); //4 Ball 2
-  m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); 
+ // m_chooser.AddOption(kAutoNameCustom2, kAutoNameCustom2); 
 
   
   frc::LiveWindow::DisableAllTelemetry();
@@ -97,6 +97,7 @@ void Robot::AutonomousInit()
   counter2 = 0;
   state_drive = 0;
   MyDrive.reset_drive_s();
+  four_ball_cnt = 0;
 
 
   // 4ball auto stuff
@@ -120,7 +121,7 @@ void Robot::AutonomousInit()
   }
 
 
-
+  
   shooter_trim = frc::SmartDashboard::GetNumber("Shooter Trim", 0);
     shooter_trim_LR = frc::SmartDashboard::GetNumber("Shooter Trim LR", 0);
   m_autoSelected = m_chooser.GetSelected();
@@ -163,7 +164,7 @@ void Robot::AutonomousPeriodic(){
 
   double distance = MyAppendage.Get_Distance(shooter_camera_y);
 
-  distance = distance + (shooter_trim * 3); // Every trim value will be 6 inches futher / closer
+  distance = distance + (shooter_trim * 1.5); // Every trim value will be 6 inches futher / closer
 
   // ----------------------------------------------------------
 
@@ -199,12 +200,15 @@ void Robot::AutonomousPeriodic(){
       //Compressor Code
       compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
 
+      if (counter < 2){
+        MyAppendage.Hood_Off();}
+
       if ((counter - auto_timer) <= 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
        // MyDrive.camera_intake(intake_camera_x, 0);
         moved = false;
-     
+        MyAppendage.Hood_Off();
      }
 
       else if (counter <= (150 + auto_timer) ){
@@ -293,6 +297,9 @@ void Robot::AutonomousPeriodic(){
       // 4 Ball Autonomous No Path Planning
       // Delay doesn't work
 
+       int ballCnt = MyAppendage.BallCounter();
+       frc::SmartDashboard::PutNumber("Ball Count",ballCnt);
+
       if (counter < 20){
         MyAppendage.Intake_Down();
         MyAppendage.Intake_In();
@@ -304,7 +311,7 @@ void Robot::AutonomousPeriodic(){
         compressor.EnableAnalog(units::pounds_per_square_inch_t(85), units::pounds_per_square_inch_t (120));
       }
 
-      else if (counter <= 100 || (FourBallSecondTime && counter2 < 340)){
+      else if (counter <= 100 || (FourBallSecondTime && counter2 < 335)){
 
         
         MyAppendage.Intake_Down();
@@ -326,7 +333,7 @@ void Robot::AutonomousPeriodic(){
             }
           
 
-          else if (counter2 <= 235){
+          else if (counter2 <= 231){
             if(counter2==16){
               MyDrive.reset_drive_s();
             }
@@ -341,7 +348,12 @@ void Robot::AutonomousPeriodic(){
             //frc::SmartDashboard::PutString("Intake State", "Off");
           }
 
-            if (counter2 >= 50 && intake_camera_exist == 1){
+   if (ballCnt > 0 ){
+            four_ball_cnt = ballCnt;
+
+          } 
+
+            if (counter2 >= 50 && intake_camera_exist == 1 && four_ball_cnt == 0){
                 MyDrive.camera_intake(intake_camera_x, -0.6);
             }
             else{
@@ -352,11 +364,26 @@ void Robot::AutonomousPeriodic(){
           else if(counter2<=240){
             MyDrive.Joystick_Drive(0,0);
           }
-          else if (counter2 <= 290){
+          else if (counter2 <= 300){
             if(counter2==241){
               MyDrive.reset_drive_s();
             }
-           MyDrive.driveto_distance(-220);
+
+        
+
+          if (shooter_camera_exist == 1){
+
+           MyDrive.camera_shooter(shooter_camera_x, 0.6);
+          }
+
+          else {
+              MyDrive.Joystick_Drive(0.45, .5);
+    
+        //    MyDrive.driveto_distance(-220);
+
+            }
+          
+
             
           }
           else{
@@ -366,11 +393,11 @@ void Robot::AutonomousPeriodic(){
           counter2 ++;
         }
         else{
-          MyDrive.camera_intake(intake_camera_x, -0.5);
+          MyDrive.camera_intake(intake_camera_x, -0.55);
         }
 
       }
-      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 335)){
+      else if (counter <= 175 || (FourBallSecondTime && counter2 <= 355)){
 
             MyDrive.Joystick_Drive(0,0);
             tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, false, false, false);
@@ -950,7 +977,7 @@ else{
 }
 
 frc::SmartDashboard::PutNumber("Shooter Trim", shooter_trim);
- distance = distance + (shooter_trim * 3); // Every trim value will be 6 inches futher / closer
+ distance = distance + (shooter_trim * 1.5); // Every trim value will be 6 inches futher / closer
 
 //SHOOTER TRIM LR
 
@@ -1051,7 +1078,7 @@ else if (c2_btn_a){
     compressor.Disable();
   tie(align,turret_direction) = MyAppendage.Rotate(shooter_trim_LR, distance, shooter_camera_exist, shooter_camera_x, turret_direction, true, false, false);
 
-  atspeed = MyAppendage.Shooter_Encoder_distance(-96.5, 0);
+  atspeed = MyAppendage.Shooter_Encoder_distance(-85.5, 0);
   MyAppendage.Articulate(120); //harcode for close shot
 
   if(c2_right_trigger > 0.5){ // Shoot ball

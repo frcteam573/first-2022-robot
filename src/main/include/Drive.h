@@ -60,6 +60,7 @@ class Drive {
         bool driveto_distance (double distance);
         void reset_drive_s();
         void climber_count_reset();
+        void camera_shooter(double camera_x, double joystick_y);
 
 
         double left_drive_old;
